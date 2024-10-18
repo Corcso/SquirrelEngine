@@ -14,11 +14,11 @@ int GraphicsDX11::init(int width, int height)
     // Begin Windows Window Setup
 
     // Define and register window class with OS
-    WNDCLASSEX windowClass;
+    WNDCLASSEX windowClass = { 0 };
     windowClass.cbSize = sizeof(WNDCLASSEX);
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc = &WndProc;
-    windowClass.hInstance = nullptr;
+    windowClass.hInstance = GetModuleHandle(NULL);
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     windowClass.lpszMenuName = nullptr;
@@ -53,6 +53,7 @@ int GraphicsDX11::init(int width, int height)
 
     // Setup swap chain description, this is responsible for swapping the back & front buffers
     DXGI_SWAP_CHAIN_DESC swapChainDescription;
+    ZeroMemory(&swapChainDescription, sizeof(DXGI_SWAP_CHAIN_DESC)); // Required to remove any default options.
 
     swapChainDescription.BufferCount = 1;
     swapChainDescription.BufferDesc.Width = width;
@@ -114,6 +115,7 @@ int GraphicsDX11::init(int width, int height)
 
     // Create the depth buffer for use with the depth/stencil view.
     D3D11_TEXTURE2D_DESC depthStencilBufferDescription;
+    ZeroMemory(&depthStencilBufferDescription, sizeof(D3D11_TEXTURE2D_DESC));
 
     depthStencilBufferDescription.ArraySize = 1;
     depthStencilBufferDescription.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -141,6 +143,7 @@ int GraphicsDX11::init(int width, int height)
 
     // Setup depth/stencil state, this is the rules for the depth/stencil tests.
     D3D11_DEPTH_STENCIL_DESC depthStencilStateDescription;
+    ZeroMemory(&depthStencilStateDescription, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
     depthStencilStateDescription.DepthEnable = TRUE;
     depthStencilStateDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -155,6 +158,7 @@ int GraphicsDX11::init(int width, int height)
 
     // Setup rasterizer state, this is the rules for the rasterizer
     D3D11_RASTERIZER_DESC rasterizerDescription;
+    ZeroMemory(&rasterizerDescription, sizeof(D3D11_RASTERIZER_DESC));
 
     rasterizerDescription.AntialiasedLineEnable = FALSE;
     rasterizerDescription.CullMode = D3D11_CULL_BACK;
