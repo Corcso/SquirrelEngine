@@ -73,6 +73,15 @@ private:
     /// Initialises the constant buffers which are used in the base shaders. 
     /// </summary>
     void initialiseConstantBuffers();
+
+    ComPtr<ID3D11VertexShader> baseVertexShader;
+    ComPtr<ID3D11PixelShader> basePixelShader;
+    ComPtr<ID3D11InputLayout> baseInputLayout;
+
+    /// <summary>
+    /// Initialises base shaders.
+    /// </summary>
+    void initialiseShaders();
 };
 
 #endif

@@ -188,6 +188,10 @@ int GraphicsDX11::init(int width, int height)
 
     // Initialise constant buffers
     initialiseConstantBuffers();
+
+    // TODO Add shader init
+
+    // TODO Ready rasteriser and output merger
 }
 
 // Temp here
@@ -215,6 +219,10 @@ LRESULT GraphicsDX11::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 }
 
 void GraphicsDX11::initialiseConstantBuffers() {
+    return;
+}
+void GraphicsDX11::initialiseShaders()
+{
     return;
 }
 #endif
