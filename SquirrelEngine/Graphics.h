@@ -2,6 +2,6 @@
 class Graphics
 {
 public:
-	virtual void init() = 0;
+	virtual int init(int width, int height) = 0;
 };
 
