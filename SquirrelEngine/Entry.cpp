@@ -26,9 +26,10 @@ int main() {
 		1, 1, -2, 1};
 
 	SQ::Vec4 myVectorOut = matrix * myVector;
-
-	std::cout << myVectorOut.X << myVectorOut.Y << myVectorOut.Z;
-
+	
+	DirectX::XMFLOAT4 myV = myVector;
+	std::cout << myV.x << myV.y << myV.z;
+	
 	return graphicsService->init(500, 200);
 }
 

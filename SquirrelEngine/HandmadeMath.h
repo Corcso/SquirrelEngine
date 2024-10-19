@@ -223,6 +223,12 @@ extern "C"
 #define MOD(a, m) (((a) % (m)) >= 0 ? ((a) % (m)) : (((a) % (m)) + (m)))
 #define SQUARE(x) ((x) * (x))
 
+// Include DX Math if using direct X for implicit conversion definitions
+#ifdef DX11
+#include <DirectXMath.h>
+#endif // DX11
+
+
 typedef union Vec2
 {
     struct
@@ -251,6 +257,14 @@ typedef union Vec2
     inline float &operator[](const int &Index)
     {
         return Elements[Index];
+    }
+#endif
+#ifdef DX11
+    inline operator DirectX::XMFLOAT2() const {
+        return DirectX::XMFLOAT2(X, Y);
+    }
+    inline operator DirectX::XMFLOAT2A() const {
+        return DirectX::XMFLOAT2A(X, Y);
     }
 #endif
 } Vec2;
@@ -302,6 +316,14 @@ typedef union Vec3
     inline float &operator[](const int &Index)
     {
         return Elements[Index];
+    }
+#endif
+#ifdef DX11
+    inline operator DirectX::XMFLOAT3() const {
+        return DirectX::XMFLOAT3(X, Y, Z);
+    }
+    inline operator DirectX::XMFLOAT3A() const {
+        return DirectX::XMFLOAT3A(X, Y, Z);
     }
 #endif
 } Vec3;
@@ -368,6 +390,14 @@ typedef union Vec4
         return Elements[Index];
     }
 #endif
+#ifdef DX11
+    inline operator DirectX::XMFLOAT4() const {
+        return DirectX::XMFLOAT4(X, Y, Z, W);
+    }
+    inline operator DirectX::XMFLOAT4A() const {
+        return DirectX::XMFLOAT4A(X, Y, Z, W);
+    }
+#endif
 } Vec4;
 
 typedef union Mat2
@@ -394,6 +424,15 @@ typedef union Mat3
         return Columns[Index];
     }
 #endif
+#ifdef DX11
+    inline operator DirectX::XMFLOAT3X3() const{
+        return DirectX::XMFLOAT3X3(
+            Elements[0][0], Elements[0][1], Elements[0][2],
+            Elements[1][0], Elements[1][1], Elements[1][2],
+            Elements[2][0], Elements[2][1], Elements[2][2]
+        );
+    }
+#endif
 } Mat3;
 
 typedef union Mat4
@@ -405,6 +444,24 @@ typedef union Mat4
     inline Vec4 &operator[](const int &Index)
     {
         return Columns[Index];
+    }
+#endif
+#ifdef DX11
+    inline operator DirectX::XMFLOAT4X4() const {
+        return DirectX::XMFLOAT4X4(
+            Elements[0][0], Elements[0][1], Elements[0][2], Elements[0][3],
+            Elements[1][0], Elements[1][1], Elements[1][2], Elements[1][3],
+            Elements[2][0], Elements[2][1], Elements[2][2], Elements[2][3],
+            Elements[3][0], Elements[3][1], Elements[3][2], Elements[3][3]
+        );
+    }
+    inline operator DirectX::XMMATRIX() const {
+        return DirectX::XMMATRIX(
+            Elements[0][0], Elements[0][1], Elements[0][2], Elements[0][3],
+            Elements[1][0], Elements[1][1], Elements[1][2], Elements[1][3],
+            Elements[2][0], Elements[2][1], Elements[2][2], Elements[2][3],
+            Elements[3][0], Elements[3][1], Elements[3][2], Elements[3][3]
+        );
     }
 #endif
 } Mat4;
