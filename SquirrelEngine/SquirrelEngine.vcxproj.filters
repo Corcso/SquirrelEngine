@@ -30,7 +30,7 @@
     <ClInclude Include="Graphics.h">
       <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="HandmadeMath.h">
+    <ClInclude Include="Math.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

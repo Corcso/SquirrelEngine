@@ -7,7 +7,7 @@
 #include "GraphicsDX11.h"
 #endif // DX11
 
-#include "HandmadeMath.h"
+#include "Math.h"
 
 // For testing
 #include <iostream>
