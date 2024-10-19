@@ -2,205 +2,206 @@
 
 #ifdef DX11
 #include "GraphicsDX11.h"
-
-int GraphicsDX11::init(int width, int height)
-{
-    // Check for DirectX Math library support.
-    if (!DirectX::XMVerifyCPUSupport())
+namespace SQ {
+    int GraphicsDX11::init(int width, int height)
     {
-        return 1;
-    }
+        // Check for DirectX Math library support.
+        if (!DirectX::XMVerifyCPUSupport())
+        {
+            return 1;
+        }
 
-    // Begin Windows Window Setup
+        // Begin Windows Window Setup
 
-    // Define and register window class with OS
-    WNDCLASSEX windowClass = { 0 };
-    windowClass.cbSize = sizeof(WNDCLASSEX);
-    windowClass.style = CS_HREDRAW | CS_VREDRAW;
-    windowClass.lpfnWndProc = &WndProc;
-    windowClass.hInstance = GetModuleHandle(NULL);
-    windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    windowClass.lpszMenuName = nullptr;
-    windowClass.lpszClassName = WINDOW_CLASS_NAME;
+        // Define and register window class with OS
+        WNDCLASSEX windowClass = { 0 };
+        windowClass.cbSize = sizeof(WNDCLASSEX);
+        windowClass.style = CS_HREDRAW | CS_VREDRAW;
+        windowClass.lpfnWndProc = &WndProc;
+        windowClass.hInstance = GetModuleHandle(NULL);
+        windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+        windowClass.lpszMenuName = nullptr;
+        windowClass.lpszClassName = WINDOW_CLASS_NAME;
 
-    if (!RegisterClassEx(&windowClass)) {
-        return 2;
-    }
+        if (!RegisterClassEx(&windowClass)) {
+            return 2;
+        }
 
-    // Setup window
-     
-    // Client rect is the size of the renderable area (entire window)
-    RECT clientRect = { 0, 0, width, height };
-    // Window rect is the client rect asjusted for the top bar
-    RECT windowRect = clientRect;
-    AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+        // Setup window
 
-    window = CreateWindowW(WINDOW_CLASS_NAME, L"Game",
-        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-        windowRect.right - windowRect.left,
-        windowRect.bottom - windowRect.top,
-        nullptr, nullptr, nullptr, nullptr);
+        // Client rect is the size of the renderable area (entire window)
+        RECT clientRect = { 0, 0, width, height };
+        // Window rect is the client rect asjusted for the top bar
+        RECT windowRect = clientRect;
+        AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-    if (!window) {
-        return 3;
-    }
+        window = CreateWindowW(WINDOW_CLASS_NAME, L"Game",
+            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+            windowRect.right - windowRect.left,
+            windowRect.bottom - windowRect.top,
+            nullptr, nullptr, nullptr, nullptr);
 
-    ShowWindow(window, 0);
-    UpdateWindow(window);
+        if (!window) {
+            return 3;
+        }
 
-    // Begin DirectX11 Setup
+        ShowWindow(window, 0);
+        UpdateWindow(window);
 
-    // Setup swap chain description, this is responsible for swapping the back & front buffers
-    DXGI_SWAP_CHAIN_DESC swapChainDescription;
-    ZeroMemory(&swapChainDescription, sizeof(DXGI_SWAP_CHAIN_DESC)); // Required to remove any default options.
+        // Begin DirectX11 Setup
 
-    swapChainDescription.BufferCount = 1;
-    swapChainDescription.BufferDesc.Width = width;
-    swapChainDescription.BufferDesc.Height = height;
-    swapChainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    swapChainDescription.BufferDesc.RefreshRate = DXGI_RATIONAL{ 0, 1 }; // Uncapped Frame Rate
-    swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    swapChainDescription.OutputWindow = window;
-    swapChainDescription.SampleDesc.Count = 1; 
-    swapChainDescription.SampleDesc.Quality = 0;
-    swapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    swapChainDescription.Windowed = TRUE;
+        // Setup swap chain description, this is responsible for swapping the back & front buffers
+        DXGI_SWAP_CHAIN_DESC swapChainDescription;
+        ZeroMemory(&swapChainDescription, sizeof(DXGI_SWAP_CHAIN_DESC)); // Required to remove any default options.
 
-    // Set device flags, only notable one is debug if debug build
-    UINT createDeviceFlags = 0;
+        swapChainDescription.BufferCount = 1;
+        swapChainDescription.BufferDesc.Width = width;
+        swapChainDescription.BufferDesc.Height = height;
+        swapChainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        swapChainDescription.BufferDesc.RefreshRate = DXGI_RATIONAL{ 0, 1 }; // Uncapped Frame Rate
+        swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        swapChainDescription.OutputWindow = window;
+        swapChainDescription.SampleDesc.Count = 1;
+        swapChainDescription.SampleDesc.Quality = 0;
+        swapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+        swapChainDescription.Windowed = TRUE;
+
+        // Set device flags, only notable one is debug if debug build
+        UINT createDeviceFlags = 0;
 #if _DEBUG
-    createDeviceFlags = D3D11_CREATE_DEVICE_DEBUG; //Set flags to debug mode if debugging
+        createDeviceFlags = D3D11_CREATE_DEVICE_DEBUG; //Set flags to debug mode if debugging
 #endif
 
-    // Feature levels of direct X Supported
-    D3D_FEATURE_LEVEL featureLevels[] =
-    {
-        D3D_FEATURE_LEVEL_11_1,
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0,
-        D3D_FEATURE_LEVEL_9_3,
-        D3D_FEATURE_LEVEL_9_2,
-        D3D_FEATURE_LEVEL_9_1
-    };
-    // Stores the feature level actually used
-    D3D_FEATURE_LEVEL featureLevel;
+        // Feature levels of direct X Supported
+        D3D_FEATURE_LEVEL featureLevels[] =
+        {
+            D3D_FEATURE_LEVEL_11_1,
+            D3D_FEATURE_LEVEL_11_0,
+            D3D_FEATURE_LEVEL_10_1,
+            D3D_FEATURE_LEVEL_10_0,
+            D3D_FEATURE_LEVEL_9_3,
+            D3D_FEATURE_LEVEL_9_2,
+            D3D_FEATURE_LEVEL_9_1
+        };
+        // Stores the feature level actually used
+        D3D_FEATURE_LEVEL featureLevel;
 
-    // Create the device, device context and swap chain
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE,
-        nullptr, createDeviceFlags, featureLevels, _countof(featureLevels),
-        D3D11_SDK_VERSION, &swapChainDescription, swapChain.GetAddressOf(), device.GetAddressOf(), &featureLevel,
-        deviceContext.GetAddressOf());
+        // Create the device, device context and swap chain
+        HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE,
+            nullptr, createDeviceFlags, featureLevels, _countof(featureLevels),
+            D3D11_SDK_VERSION, &swapChainDescription, swapChain.GetAddressOf(), device.GetAddressOf(), &featureLevel,
+            deviceContext.GetAddressOf());
 
-    // Fail and return error code if any creation fails
-    if (FAILED(hr))
-    {
-        return 4;
+        // Fail and return error code if any creation fails
+        if (FAILED(hr))
+        {
+            return 4;
+        }
+
+        // Get the back buffer (from swap chain) and use that to create the render target view (which will render to that)
+        ID3D11Texture2D* backBuffer;
+        hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
+        if (FAILED(hr))
+        {
+            return 5;
+        }
+
+        hr = device->CreateRenderTargetView(backBuffer, nullptr, renderTargetView.GetAddressOf());
+        if (FAILED(hr))
+        {
+            return 6;
+        }
+
+        // Create the depth buffer for use with the depth/stencil view.
+        D3D11_TEXTURE2D_DESC depthStencilBufferDescription;
+        ZeroMemory(&depthStencilBufferDescription, sizeof(D3D11_TEXTURE2D_DESC));
+
+        depthStencilBufferDescription.ArraySize = 1;
+        depthStencilBufferDescription.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        depthStencilBufferDescription.CPUAccessFlags = 0; // No CPU access required.
+        depthStencilBufferDescription.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //24 depth bits, 8 stencil
+        depthStencilBufferDescription.Width = width;
+        depthStencilBufferDescription.Height = height;
+        depthStencilBufferDescription.MipLevels = 1;
+        depthStencilBufferDescription.SampleDesc.Count = 1;
+        depthStencilBufferDescription.SampleDesc.Quality = 0;
+        depthStencilBufferDescription.Usage = D3D11_USAGE_DEFAULT;
+
+        hr = device->CreateTexture2D(&depthStencilBufferDescription, nullptr, depthStencilBuffer.GetAddressOf());
+        if (FAILED(hr))
+        {
+            return 7;
+        }
+
+        // Create depth stencil view
+        hr = device->CreateDepthStencilView(depthStencilBuffer.Get(), nullptr, depthStencilView.GetAddressOf());
+        if (FAILED(hr))
+        {
+            return 8;
+        }
+
+        // Setup depth/stencil state, this is the rules for the depth/stencil tests.
+        D3D11_DEPTH_STENCIL_DESC depthStencilStateDescription;
+        ZeroMemory(&depthStencilStateDescription, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+        depthStencilStateDescription.DepthEnable = TRUE;
+        depthStencilStateDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depthStencilStateDescription.DepthFunc = D3D11_COMPARISON_LESS;
+        depthStencilStateDescription.StencilEnable = FALSE;
+
+        hr = device->CreateDepthStencilState(&depthStencilStateDescription, &depthStencilState);
+        if (FAILED(hr))
+        {
+            return 9;
+        }
+
+        // Setup rasterizer state, this is the rules for the rasterizer
+        D3D11_RASTERIZER_DESC rasterizerDescription;
+        ZeroMemory(&rasterizerDescription, sizeof(D3D11_RASTERIZER_DESC));
+
+        rasterizerDescription.AntialiasedLineEnable = FALSE;
+        rasterizerDescription.CullMode = D3D11_CULL_BACK;
+        rasterizerDescription.DepthBias = 0;
+        rasterizerDescription.DepthBiasClamp = 0.0f;
+        rasterizerDescription.DepthClipEnable = TRUE;
+        rasterizerDescription.FillMode = D3D11_FILL_SOLID;
+        rasterizerDescription.FrontCounterClockwise = TRUE;
+        rasterizerDescription.MultisampleEnable = FALSE;
+        rasterizerDescription.ScissorEnable = FALSE;
+        rasterizerDescription.SlopeScaledDepthBias = 0.0f;
+
+        // Create the rasterizer state object.
+        hr = device->CreateRasterizerState(&rasterizerDescription, &rasterizerState);
+        if (FAILED(hr))
+        {
+            return 10;
+        }
+
+        // Set viewport information
+        viewport.Width = width;
+        viewport.Height = width;
+        viewport.TopLeftX = 0.0f;
+        viewport.TopLeftY = 0.0f;
+        viewport.MinDepth = 0.0f;
+        viewport.MaxDepth = 1.0f;
+
+        // Initialise constant buffers
+        initialiseConstantBuffers();
+
+        // TODO Add shader init
+
+        // TODO Ready rasteriser and output merger
+        return 0;
     }
 
-    // Get the back buffer (from swap chain) and use that to create the render target view (which will render to that)
-    ID3D11Texture2D* backBuffer;
-    hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
-    if (FAILED(hr))
+    // Temp here
+    LRESULT GraphicsDX11::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
-        return 5;
-    }
-
-    hr = device->CreateRenderTargetView(backBuffer, nullptr, renderTargetView.GetAddressOf());
-    if (FAILED(hr))
-    {
-        return 6;
-    }
-
-    // Create the depth buffer for use with the depth/stencil view.
-    D3D11_TEXTURE2D_DESC depthStencilBufferDescription;
-    ZeroMemory(&depthStencilBufferDescription, sizeof(D3D11_TEXTURE2D_DESC));
-
-    depthStencilBufferDescription.ArraySize = 1;
-    depthStencilBufferDescription.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depthStencilBufferDescription.CPUAccessFlags = 0; // No CPU access required.
-    depthStencilBufferDescription.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //24 depth bits, 8 stencil
-    depthStencilBufferDescription.Width = width;
-    depthStencilBufferDescription.Height = height;
-    depthStencilBufferDescription.MipLevels = 1;
-    depthStencilBufferDescription.SampleDesc.Count = 1;
-    depthStencilBufferDescription.SampleDesc.Quality = 0;
-    depthStencilBufferDescription.Usage = D3D11_USAGE_DEFAULT;
-
-    hr = device->CreateTexture2D(&depthStencilBufferDescription, nullptr, depthStencilBuffer.GetAddressOf());
-    if (FAILED(hr))
-    {
-        return 7;
-    }
-
-    // Create depth stencil view
-    hr = device->CreateDepthStencilView(depthStencilBuffer.Get(), nullptr, depthStencilView.GetAddressOf());
-    if (FAILED(hr))
-    {
-        return 8;
-    }
-
-    // Setup depth/stencil state, this is the rules for the depth/stencil tests.
-    D3D11_DEPTH_STENCIL_DESC depthStencilStateDescription;
-    ZeroMemory(&depthStencilStateDescription, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-    depthStencilStateDescription.DepthEnable = TRUE;
-    depthStencilStateDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilStateDescription.DepthFunc = D3D11_COMPARISON_LESS;
-    depthStencilStateDescription.StencilEnable = FALSE;
-
-    hr = device->CreateDepthStencilState(&depthStencilStateDescription, &depthStencilState);
-    if (FAILED(hr))
-    {
-        return 9;
-    }
-
-    // Setup rasterizer state, this is the rules for the rasterizer
-    D3D11_RASTERIZER_DESC rasterizerDescription;
-    ZeroMemory(&rasterizerDescription, sizeof(D3D11_RASTERIZER_DESC));
-
-    rasterizerDescription.AntialiasedLineEnable = FALSE;
-    rasterizerDescription.CullMode = D3D11_CULL_BACK;
-    rasterizerDescription.DepthBias = 0;
-    rasterizerDescription.DepthBiasClamp = 0.0f;
-    rasterizerDescription.DepthClipEnable = TRUE;
-    rasterizerDescription.FillMode = D3D11_FILL_SOLID;
-    rasterizerDescription.FrontCounterClockwise = TRUE;
-    rasterizerDescription.MultisampleEnable = FALSE;
-    rasterizerDescription.ScissorEnable = FALSE;
-    rasterizerDescription.SlopeScaledDepthBias = 0.0f;
-
-    // Create the rasterizer state object.
-    hr = device->CreateRasterizerState(&rasterizerDescription, &rasterizerState);
-    if (FAILED(hr))
-    {
-        return 10;
-    }
-
-    // Set viewport information
-    viewport.Width = width;
-    viewport.Height = width; 
-    viewport.TopLeftX = 0.0f;
-    viewport.TopLeftY = 0.0f;
-    viewport.MinDepth = 0.0f;
-    viewport.MaxDepth = 1.0f;
-
-    // Initialise constant buffers
-    initialiseConstantBuffers();
-
-    // TODO Add shader init
-
-    // TODO Ready rasteriser and output merger
-}
-
-// Temp here
-LRESULT GraphicsDX11::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    PAINTSTRUCT paintStruct;
-    HDC hDC;
-    switch (message)
-    {
+        PAINTSTRUCT paintStruct;
+        HDC hDC;
+        switch (message)
+        {
         case WM_PAINT:
         {
             hDC = BeginPaint(hwnd, &paintStruct);
@@ -214,15 +215,16 @@ LRESULT GraphicsDX11::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         break;
         default:
             return DefWindowProc(hwnd, message, wParam, lParam);
+        }
+        return 0;
     }
-    return 0;
-}
 
-void GraphicsDX11::initialiseConstantBuffers() {
-    return;
-}
-void GraphicsDX11::initialiseShaders()
-{
-    return;
+    void GraphicsDX11::initialiseConstantBuffers() {
+        return;
+    }
+    void GraphicsDX11::initialiseShaders()
+    {
+        return;
+    }
 }
 #endif

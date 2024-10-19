@@ -9,9 +9,9 @@
 
 
 int main() {
-	std::unique_ptr<Graphics> graphicsService;
+	std::unique_ptr<SQ::Graphics> graphicsService;
 #ifdef DX11
-	graphicsService.reset(new GraphicsDX11());
+	graphicsService.reset(new SQ::GraphicsDX11());
 #endif // DX11
 	return graphicsService->init(500, 200);
 }

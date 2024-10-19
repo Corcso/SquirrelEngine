@@ -20,68 +20,69 @@ template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 #include "Graphics.h"
-class GraphicsDX11 :
-    public Graphics
-{
-public:
-    virtual int init(int width, int height) final;
+namespace SQ {
+    class GraphicsDX11 :
+        public Graphics
+    {
+    public:
+        virtual int init(int width, int height) final;
 
 
-    // Windows event callback function (here for now should be moved over to input class
-    static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-private:
-    // Windows Window Handle
-    HWND window;
+        // Windows event callback function (here for now should be moved over to input class
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+    private:
+        // Windows Window Handle
+        HWND window;
 
-    // Window class name must be unique
-    const LPCWSTR WINDOW_CLASS_NAME = L"SquirrelEngineGame";
+        // Window class name must be unique
+        const LPCWSTR WINDOW_CLASS_NAME = L"SquirrelEngineGame";
 
-    // Device and device context used for GPU communication
-    ComPtr<ID3D11Device> device;
-    ComPtr<ID3D11DeviceContext> deviceContext;
+        // Device and device context used for GPU communication
+        ComPtr<ID3D11Device> device;
+        ComPtr<ID3D11DeviceContext> deviceContext;
 
-    // Swap chain used for back and front buffers
-    ComPtr<IDXGISwapChain> swapChain;
+        // Swap chain used for back and front buffers
+        ComPtr<IDXGISwapChain> swapChain;
 
-    // Render Target View for Back Buffer
-    ComPtr<ID3D11RenderTargetView> renderTargetView;
+        // Render Target View for Back Buffer
+        ComPtr<ID3D11RenderTargetView> renderTargetView;
 
-    // Viewport
-    D3D11_VIEWPORT viewport;
+        // Viewport
+        D3D11_VIEWPORT viewport;
 
-    // Depth/stencil view for use as a depth buffer.
-    ComPtr<ID3D11DepthStencilView> depthStencilView;
+        // Depth/stencil view for use as a depth buffer.
+        ComPtr<ID3D11DepthStencilView> depthStencilView;
 
-    // Depth/stencil buffer
-    ComPtr<ID3D11Texture2D> depthStencilBuffer;
+        // Depth/stencil buffer
+        ComPtr<ID3D11Texture2D> depthStencilBuffer;
 
-    // Depth stencil state for depth and stencil buffer rules
-    ComPtr<ID3D11DepthStencilState> depthStencilState;
+        // Depth stencil state for depth and stencil buffer rules
+        ComPtr<ID3D11DepthStencilState> depthStencilState;
 
-    // Rasterizer state for rasterizer rules
-    ComPtr<ID3D11RasterizerState> rasterizerState;
+        // Rasterizer state for rasterizer rules
+        ComPtr<ID3D11RasterizerState> rasterizerState;
 
-    // Constant Buffers
-    ComPtr<ID3D11Buffer> projectionBuffer; // For storing projection matrix
-    ComPtr<ID3D11Buffer> cameraBuffer; // For storing camera info & view matrix
-    ComPtr<ID3D11Buffer> worldBuffer; // For storing world matrix & positional information
+        // Constant Buffers
+        ComPtr<ID3D11Buffer> projectionBuffer; // For storing projection matrix
+        ComPtr<ID3D11Buffer> cameraBuffer; // For storing camera info & view matrix
+        ComPtr<ID3D11Buffer> worldBuffer; // For storing world matrix & positional information
 
-    ComPtr<ID3D11Buffer> materialBuffer; // For storing material information
-    ComPtr<ID3D11Buffer> lightBuffer; // For storing lighting information
+        ComPtr<ID3D11Buffer> materialBuffer; // For storing material information
+        ComPtr<ID3D11Buffer> lightBuffer; // For storing lighting information
 
-    /// <summary>
-    /// Initialises the constant buffers which are used in the base shaders. 
-    /// </summary>
-    void initialiseConstantBuffers();
+        /// <summary>
+        /// Initialises the constant buffers which are used in the base shaders. 
+        /// </summary>
+        void initialiseConstantBuffers();
 
-    ComPtr<ID3D11VertexShader> baseVertexShader;
-    ComPtr<ID3D11PixelShader> basePixelShader;
-    ComPtr<ID3D11InputLayout> baseInputLayout;
+        ComPtr<ID3D11VertexShader> baseVertexShader;
+        ComPtr<ID3D11PixelShader> basePixelShader;
+        ComPtr<ID3D11InputLayout> baseInputLayout;
 
-    /// <summary>
-    /// Initialises base shaders.
-    /// </summary>
-    void initialiseShaders();
-};
-
+        /// <summary>
+        /// Initialises base shaders.
+        /// </summary>
+        void initialiseShaders();
+    };
+}
 #endif
