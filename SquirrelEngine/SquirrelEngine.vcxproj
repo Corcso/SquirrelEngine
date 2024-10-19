@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
+    <ClInclude Include="HandmadeMath.h" />
     <ClInclude Include="PCH.h" />
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,9 @@
     <Filter Include="Services">
       <UniqueIdentifier>{26a67702-b9df-4b5d-835a-480e28374d31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{51e9df47-cc6a-49fe-8912-24663c80f19e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.h">
@@ -26,6 +29,9 @@
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="HandmadeMath.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

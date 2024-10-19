@@ -7,6 +7,7 @@
 #include "GraphicsDX11.h"
 #endif // DX11
 
+#include "HandmadeMath.h"
 
 int main() {
 	std::unique_ptr<SQ::Graphics> graphicsService;
