@@ -93,7 +93,7 @@
    Daniel Gibson (@DanielGibson)
 */
 /*
-Removal of  from Variable names and addition to SQ namespace. For Squirrel Engine.
+Removal of from Variable names and addition to SQ namespace. For Squirrel Engine.
 */
 namespace SQ{
 
