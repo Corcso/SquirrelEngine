@@ -219,6 +219,32 @@ namespace SQ {
         return 0;
     }
 
+    ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
+    {
+        ComPtr<ID3D11Buffer> toReturn;
+
+        D3D11_BUFFER_DESC bufferDescription;
+        ZeroMemory(&bufferDescription, sizeof(D3D11_BUFFER_DESC));
+
+        bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDescription.ByteWidth = size;
+        bufferDescription.CPUAccessFlags = 0;
+        bufferDescription.Usage = D3D11_USAGE_DEFAULT;
+
+        D3D11_SUBRESOURCE_DATA resourceData;
+        ZeroMemory(&resourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+
+        resourceData.pSysMem = data;
+
+        HRESULT hr = device->CreateBuffer(&bufferDescription, &resourceData, toReturn.GetAddressOf());
+        if (FAILED(hr))
+        {
+            return false;
+        }
+
+        return toReturn;
+    }
+
     void GraphicsDX11::initialiseConstantBuffers() {
         return;
     }
