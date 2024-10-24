@@ -3,6 +3,8 @@
 #include <Windows.h>
 #endif // WINDOWS
 
+#include "Services.h"
+
 #ifdef DX11
 #include "GraphicsDX11.h"
 #endif // DX11
@@ -13,9 +15,8 @@
 #include <iostream>
 
 int main() {
-	std::unique_ptr<SQ::Graphics> graphicsService;
 #ifdef DX11
-	graphicsService.reset(new SQ::GraphicsDX11());
+	SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
 
 	/*SQ::Vec4 myVector = SQ::V4(1, 2, 0, 1);
@@ -30,7 +31,7 @@ int main() {
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
 	
-	return graphicsService->init(500, 200);
+	return SQ::Services::GetGraphics()->init(500, 200);
 }
 
 #ifdef WINDOWS

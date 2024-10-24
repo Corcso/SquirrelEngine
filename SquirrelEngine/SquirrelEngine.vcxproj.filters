@@ -54,6 +54,9 @@
     <ClInclude Include="MeshDX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Services.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">
@@ -81,6 +84,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="MeshDX11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Services.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
