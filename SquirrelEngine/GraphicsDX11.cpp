@@ -219,7 +219,7 @@ namespace SQ {
         return 0;
     }
 
-    /*ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
+    ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
     {
         ComPtr<ID3D11Buffer> toReturn;
 
@@ -237,13 +237,13 @@ namespace SQ {
         resourceData.pSysMem = data;
 
         HRESULT hr = device->CreateBuffer(&bufferDescription, &resourceData, toReturn.GetAddressOf());
-        if (FAILED(hr))
+        /*if (FAILED(hr))
         {
-            return false;
-        }
+           Fail handling?
+        }*/
 
         return toReturn;
-    }*/
+    }
 
     void GraphicsDX11::initialiseConstantBuffers() {
         return;
