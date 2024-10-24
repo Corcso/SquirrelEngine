@@ -3,6 +3,11 @@
 
 #include <fstream>
 #include "Utility.h"
+
+#ifdef DX11
+#include "MeshDX11.h"
+#endif // DX11
+
 namespace SQ {
     Mesh* Mesh::Load(std::string path)
     {
@@ -18,7 +23,10 @@ namespace SQ {
         unsigned int normalIndex = 0;
 
         // Create new mesh resource to input into 
-        Mesh* toReturn = new Mesh();
+#ifdef DX11
+        // DX11 mesh if we are DX11
+        Mesh* toReturn = static_cast<Mesh*>(new MeshDX11);
+#endif // DX11
         while (std::getline(file, currentLine)) {
             // Split the line by spaces
             std::vector<std::string> lineElements = SplitString(currentLine, ' ');
@@ -48,6 +56,10 @@ namespace SQ {
             }
         }
 
+#ifdef DX11
+        // Load DX11 buffers if we are in DX11 mode
+        static_cast<MeshDX11*>(toReturn)->LoadBuffers();
+#endif // DX11
 
 
         return nullptr;

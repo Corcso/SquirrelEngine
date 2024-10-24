@@ -45,7 +45,7 @@ namespace SQ {
         /// </summary>
         /// <returns>Number of vertices of this mesh</returns>
         unsigned int GetIndexCount();
-    private:
+    protected:
         std::vector<Vertex> vertices;
         std::vector<int> indicies;
     };
