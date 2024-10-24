@@ -95,6 +95,12 @@
 /*
 Removal of from Variable names and addition to SQ namespace. For Squirrel Engine.
 */
+
+// Include DX Math if using direct X for implicit conversion definitions
+#ifdef DX11
+#include <DirectXMath.h>
+#endif // DX11
+
 namespace SQ{
 
 #ifndef HANDMADE_MATH_H
@@ -223,10 +229,7 @@ extern "C"
 #define MOD(a, m) (((a) % (m)) >= 0 ? ((a) % (m)) : (((a) % (m)) + (m)))
 #define SQUARE(x) ((x) * (x))
 
-// Include DX Math if using direct X for implicit conversion definitions
-#ifdef DX11
-#include <DirectXMath.h>
-#endif // DX11
+
 
 
 typedef union Vec2

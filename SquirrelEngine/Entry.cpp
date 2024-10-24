@@ -18,7 +18,7 @@ int main() {
 	graphicsService.reset(new SQ::GraphicsDX11());
 #endif // DX11
 
-	SQ::Vec4 myVector = SQ::V4(1, 2, 0, 1);
+	/*SQ::Vec4 myVector = SQ::V4(1, 2, 0, 1);
 	SQ::Mat4 matrix{ 
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -28,7 +28,7 @@ int main() {
 	SQ::Vec4 myVectorOut = matrix * myVector;
 	
 	DirectX::XMFLOAT4 myV = myVector;
-	std::cout << myV.x << myV.y << myV.z;
+	std::cout << myV.x << myV.y << myV.z;*/
 	
 	return graphicsService->init(500, 200);
 }

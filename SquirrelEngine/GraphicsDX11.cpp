@@ -219,7 +219,7 @@ namespace SQ {
         return 0;
     }
 
-    ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
+    /*ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
     {
         ComPtr<ID3D11Buffer> toReturn;
 
@@ -243,7 +243,7 @@ namespace SQ {
         }
 
         return toReturn;
-    }
+    }*/
 
     void GraphicsDX11::initialiseConstantBuffers() {
         return;
