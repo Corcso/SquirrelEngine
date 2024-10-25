@@ -13,6 +13,7 @@
 
 // For testing
 #include <iostream>
+#include "Mesh.h"
 
 int main() {
 #ifdef DX11
@@ -30,8 +31,10 @@ int main() {
 	
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
-	
-	return SQ::Services::GetGraphics()->init(500, 200);
+	SQ::Services::GetGraphics()->init(500, 200);
+	SQ::Mesh::Load("./Resources/TestQuad.obj");
+
+	return 0;
 }
 
 #ifdef WINDOWS

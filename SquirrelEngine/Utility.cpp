@@ -13,7 +13,7 @@ namespace SQ {
 				currentString = "";
 			}
 		}
-
+		result.push_back(currentString);
 		return result;
 	}
 }
