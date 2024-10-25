@@ -72,6 +72,19 @@ namespace SQ {
         ComPtr<ID3D11Buffer> materialBuffer; // For storing material information
         ComPtr<ID3D11Buffer> lightBuffer; // For storing lighting information
 
+        // Stores the layout of the data for the camera buffer
+        struct CameraBufferData {
+            DirectX::XMMATRIX viewMatrix;
+            DirectX::XMFLOAT3A cameraPosition;
+        };
+
+        // Stores the layout of the data for the world buffer
+        struct WorldBufferData {
+            DirectX::XMMATRIX worldMatrix;
+            DirectX::XMMATRIX normalWorldMatrix;
+        };
+
+
         /// <summary>
         /// Initialises the constant buffers which are used in the base shaders. 
         /// </summary>

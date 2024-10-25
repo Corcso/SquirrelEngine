@@ -1,7 +1,16 @@
-#include "PCH.h"
+ #include "PCH.h"
 
 #ifdef DX11
 #include "GraphicsDX11.h"
+
+// Include the compiled base shaders
+#include "DX11BaseVertex_CompiledShader.h"
+#include "DX11BasePixel_CompiledShader.h"
+
+// Include required resources
+#include "Material.h"
+#include "MeshDX11.h"
+
 namespace SQ {
     int GraphicsDX11::init(int width, int height)
     {
@@ -246,10 +255,64 @@ namespace SQ {
     }
 
     void GraphicsDX11::initialiseConstantBuffers() {
+
+        // Set up projection buffer
+        DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
+        projectionBuffer = CreateBuffer(&identity, sizeof(DirectX::XMMATRIX));
+       
+        // Set up camera buffer
+        CameraBufferData emptyCameraBuffer;
+        ZeroMemory(&emptyCameraBuffer, sizeof(CameraBufferData));
+        cameraBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(CameraBufferData));
+
+        // Set up world buffer
+        WorldBufferData emptyWorldBuffer;
+        ZeroMemory(&emptyWorldBuffer, sizeof(WorldBufferData));
+        worldBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(WorldBufferData));
+
+        // Setup material buffer (The struct exists in mesh)
+        Material::MaterialDX11Data emptyMaterialData;
+        ZeroMemory(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
+        materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
+
+        // Light buffer setup later
+
         return;
     }
     void GraphicsDX11::initialiseShaders()
     {
+        // Create shaders from compiled shader code
+        device->CreateVertexShader(&DX11BaseVertex_CompiledShader, sizeof(DX11BaseVertex_CompiledShader), NULL, baseVertexShader.GetAddressOf());
+        device->CreatePixelShader(&DX11BasePixel_CompiledShader, sizeof(DX11BasePixel_CompiledShader), NULL, basePixelShader.GetAddressOf());
+
+        // Create input layout
+        D3D11_INPUT_ELEMENT_DESC inputLayout[] = {
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0},
+            { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, textureCoordinate), D3D11_INPUT_PER_VERTEX_DATA, 0}
+        };
+
+        // Use device to create input layout 
+        device->CreateInputLayout(inputLayout, 3, &DX11BaseVertex_CompiledShader, sizeof(DX11BaseVertex_CompiledShader), baseInputLayout.GetAddressOf());
+
+        // Register input layout with input assembler
+        deviceContext->IASetInputLayout(baseInputLayout.Get());
+
+        // Set shaders
+        deviceContext->VSSetShader(baseVertexShader.Get(), NULL, NULL);
+        deviceContext->PSSetShader(basePixelShader.Get(), NULL, NULL);
+
+        // Set primitive type to triangle list
+        deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        // Set Output merger
+        deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
+        deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+        
+        // Set rasteriser
+        deviceContext->RSSetViewports(1, &viewport);
+        deviceContext->RSSetState(rasterizerState.Get());
+
         return;
     }
 }
