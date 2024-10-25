@@ -199,7 +199,7 @@ namespace SQ {
         initialiseConstantBuffers();
 
         // TODO Add shader init
-
+        initialiseShaders();
         // TODO Ready rasteriser and output merger
         return 0;
     }
