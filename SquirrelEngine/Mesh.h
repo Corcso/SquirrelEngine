@@ -47,7 +47,7 @@ namespace SQ {
         unsigned int GetIndexCount();
     protected:
         std::vector<Vertex> vertices;
-        std::vector<int> indicies;
+        std::vector<unsigned int> indicies;
     };
 }
 

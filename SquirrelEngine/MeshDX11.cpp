@@ -12,7 +12,10 @@ namespace SQ {
 		// Get graphics service which we can assume is DX11 version as we are DX11 mesh
 		GraphicsDX11* graphicsService = dynamic_cast<GraphicsDX11*>(Services::GetGraphics());
 
-		graphicsService->CreateBuffer(vertices.data(), sizeof(Vertex) * vertices.size());
+		// Create the vertex buffer
+		vertexBuffer = graphicsService->CreateBuffer(vertices.data(), sizeof(Vertex) * vertices.size());
+		// Create the index buffer
+		indexBuffer = graphicsService->CreateBuffer(indicies.data(), sizeof(unsigned int) * indicies.size());
 	}
 }
 
