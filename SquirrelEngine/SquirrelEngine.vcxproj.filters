@@ -57,13 +57,7 @@
     <ClInclude Include="Mesh.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="MeshDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Services.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Nut.h">
@@ -73,7 +67,13 @@
       <Filter>Nuts</Filter>
     </ClInclude>
     <ClInclude Include="MeshNut.h">
-      <Filter>Header Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDX11.h">
+      <Filter>Resources\API Specific Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,13 +101,7 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="MeshDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Services.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Nut.cpp">
@@ -117,7 +111,13 @@
       <Filter>Nuts</Filter>
     </ClCompile>
     <ClCompile Include="MeshNut.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDX11.cpp">
+      <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
