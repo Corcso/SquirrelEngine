@@ -11,5 +11,8 @@ namespace SQ {
 	/// <param name="delimiter">Delimiter to split by</param>
 	/// <returns>Vector of split strings</returns>
 	std::vector<std::string> SplitString(std::string string, char delimiter);
+
+
+	std::string JoinString(const std::vector<std::string>& stringsToJoin, char delimiter);
 }
 

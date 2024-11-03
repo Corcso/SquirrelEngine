@@ -28,6 +28,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{11b132bc-51de-42a1-a9b1-d8e965593933}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Nuts">
+      <UniqueIdentifier>{aa7f1e5f-d763-4099-975b-b7d8aa08d8df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.h">
@@ -63,6 +66,9 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Nut.h">
+      <Filter>Nuts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">
@@ -97,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Nut.cpp">
+      <Filter>Nuts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

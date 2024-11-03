@@ -16,4 +16,15 @@ namespace SQ {
 		result.push_back(currentString);
 		return result;
 	}
+	std::string JoinString(const std::vector<std::string>& stringsToJoin, char delimiter)
+	{
+		std::string toReturn = "";
+		
+		for (int s = 0; s < stringsToJoin.size(); ++s) {
+			toReturn += stringsToJoin[s];
+			if (s < stringsToJoin.size() - 1)toReturn += delimiter;
+		}
+
+		return toReturn;
+	}
 }
