@@ -15,6 +15,7 @@
 #include <iostream>
 #include "Mesh.h"
 #include "ResourceManager.h"
+#include "MeshNut.h"
 
 int main() {
 #ifdef DX11
@@ -37,6 +38,9 @@ int main() {
 	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 	std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 
+	SQ::MeshNut mynut;
+	mynut.SetMesh(myMesh);
+
 	std::cout << "Count of meshes " << myMesh.use_count();
 	std::cout << GetLastError();
     MSG msg = { 0 };
@@ -52,6 +56,8 @@ int main() {
         else
         {
 			SQ::Services::GetGraphics()->BeginRender();
+			SQ::Services::GetGraphics()->Render(&mynut);
+
             SQ::Services::GetGraphics()->EndRender();
             
         }

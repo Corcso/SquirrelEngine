@@ -29,6 +29,7 @@ namespace SQ {
 
 
         virtual void BeginRender() final;
+        virtual void Render(MeshNut* toRender) final;
         virtual void EndRender() final;
 
         // Windows event callback function (here for now should be moved over to input class

@@ -211,6 +211,17 @@ namespace SQ {
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
     }
 
+    void GraphicsDX11::Render(MeshNut* toRender)
+    {
+        std::shared_ptr<MeshDX11> meshToRender = std::dynamic_pointer_cast<MeshDX11>(toRender->GetMesh());
+
+        const UINT vertexStride = sizeof(Vertex);
+        const UINT vertexOffset = 0;
+        deviceContext->IASetVertexBuffers(0, 1, meshToRender->GetVertexBuffer().GetAddressOf(), &vertexStride, &vertexOffset);
+        deviceContext->IASetIndexBuffer(meshToRender->GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+        deviceContext->DrawIndexed(meshToRender->GetIndexCount(), 0, 0);
+    }
+
     void GraphicsDX11::EndRender()
     {
         swapChain->Present(0, 0);

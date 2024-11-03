@@ -17,6 +17,16 @@ namespace SQ {
 		// Create the index buffer
 		indexBuffer = graphicsService->CreateBuffer(indicies.data(), sizeof(unsigned int) * indicies.size());
 	}
+
+	ComPtr<ID3D11Buffer> MeshDX11::GetVertexBuffer()
+	{
+		return vertexBuffer;
+	}
+
+	ComPtr<ID3D11Buffer> MeshDX11::GetIndexBuffer()
+	{
+		return indexBuffer;
+	}
 }
 
 #endif // DX11
