@@ -131,11 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SquirrelGame\SquirrelGame.vcxproj">
-      <Project>{068a1029-1835-4854-a740-6b8debc026b3}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
     <ClInclude Include="Material.h" />
@@ -177,6 +172,11 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ObjectFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SquirrelGame\SquirrelGame.vcxproj">
+      <Project>{068a1029-1835-4854-a740-6b8debc026b3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
