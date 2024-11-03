@@ -69,6 +69,9 @@
     <ClInclude Include="Nut.h">
       <Filter>Nuts</Filter>
     </ClInclude>
+    <ClInclude Include="WorldNut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="Nut.cpp">
       <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldNut.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

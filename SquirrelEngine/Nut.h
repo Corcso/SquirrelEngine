@@ -65,7 +65,7 @@ namespace SQ {
 			return nullptr;
 		}
 
-
+		virtual ~Nut() {}
 	private:
 		Nut* parent;
 		std::vector<std::unique_ptr<Nut>> children;
