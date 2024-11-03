@@ -25,7 +25,7 @@ namespace SQ {
         public Graphics
     {
     public:
-        virtual int init(int width, int height) final;
+        virtual int Init(int width, int height) final;
 
 
         // Windows event callback function (here for now should be moved over to input class

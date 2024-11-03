@@ -3,6 +3,6 @@ namespace SQ {
 	class Graphics
 	{
 	public:
-		virtual int init(int width, int height) = 0;
+		virtual int Init(int width, int height) = 0;
 	};
 }

@@ -31,7 +31,7 @@ int main() {
 	
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
-	SQ::Services::GetGraphics()->init(500, 200);
+	SQ::Services::GetGraphics()->Init(500, 200);
 	SQ::Mesh::Load("./Resources/TestQuad.obj");
 
 	return 0;

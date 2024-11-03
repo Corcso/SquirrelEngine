@@ -12,7 +12,7 @@
 #include "MeshDX11.h"
 
 namespace SQ {
-    int GraphicsDX11::init(int width, int height)
+    int GraphicsDX11::Init(int width, int height)
     {
         // Check for DirectX Math library support.
         if (!DirectX::XMVerifyCPUSupport())
