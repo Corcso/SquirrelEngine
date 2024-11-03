@@ -1,5 +1,6 @@
 #pragma once
 #include "MeshNut.h"
+#include "CameraNut.h"
 
 namespace SQ {
 	class Graphics
@@ -9,7 +10,9 @@ namespace SQ {
 
 		virtual void BeginRender() = 0;
 
-		//virtual void SwitchCamera() = 0;
+		virtual void UpdateProjectionMatrix(CameraNut* camera) = 0;
+
+		virtual void SetupCameraForFrame(CameraNut* camera) = 0;
 
 		virtual void Render(MeshNut* toRender) = 0;
 

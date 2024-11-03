@@ -7,6 +7,8 @@ namespace SQ {
     {
     public:
 
+        WorldNut();
+
         void SetPosition(Vec3 position);
         void SetEulerAngles(Vec3 eulerRotation);
         void SetScale(Vec3 scale);

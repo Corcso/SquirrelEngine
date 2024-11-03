@@ -1,6 +1,14 @@
 #include "PCH.h"
 #include "WorldNut.h"
 namespace SQ {
+    WorldNut::WorldNut()
+    {
+        position = V3(0, 0, 0);
+        eulerRotation = V3(0, 0, 0);
+        scale = V3(1, 1, 1);
+        RecalculateWorldMatrices();
+    }
+
     void WorldNut::SetPosition(Vec3 position)
     {
         this->position = position;

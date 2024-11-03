@@ -29,9 +29,9 @@ struct Output {
 Output main(Input input) {
 	Output output;
 
-	output.position = mul(input.position, worldMatrix);
+    output.position = mul(float4(input.position, 1), worldMatrix);
 	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+    output.position = mul(projectionMatrix, output.position);
 
 	output.texCoord = input.texCoord;
 

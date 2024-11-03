@@ -75,6 +75,9 @@
     <ClInclude Include="MeshDX11.h">
       <Filter>Resources\API Specific Resources</Filter>
     </ClInclude>
+    <ClInclude Include="CameraNut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="MeshDX11.cpp">
       <Filter>Resources\API Specific Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraNut.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

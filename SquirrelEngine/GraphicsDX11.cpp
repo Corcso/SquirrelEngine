@@ -211,8 +211,33 @@ namespace SQ {
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
     }
 
+    void GraphicsDX11::UpdateProjectionMatrix(CameraNut* camera)
+    {
+        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovRH(camera->GetFov(), 16.0f / 9.0f, 0.001, 100);
+
+        deviceContext->UpdateSubresource(projectionBuffer.Get(), 0, NULL, &projectionMatrix, 0, 0);
+    }
+
+    void GraphicsDX11::SetupCameraForFrame(CameraNut* camera)
+    {
+        CameraBufferData thisFramesData{
+            camera->GetViewMatrix(),
+            camera->GetPosition()
+        };
+
+        deviceContext->UpdateSubresource(cameraBuffer.Get(), 0, NULL, &thisFramesData, 0, 0);
+    }
+
     void GraphicsDX11::Render(MeshNut* toRender)
     {
+
+        WorldBufferData thisNutsWorldBufferData{
+            toRender->GetSRTWorldMatrix(),
+            toRender->GetSRTWorldMatrix()
+        };
+
+        deviceContext->UpdateSubresource(worldBuffer.Get(), 0, NULL, &thisNutsWorldBufferData, 0, 0);
+
         std::shared_ptr<MeshDX11> meshToRender = std::dynamic_pointer_cast<MeshDX11>(toRender->GetMesh());
 
         const UINT vertexStride = sizeof(Vertex);
@@ -282,21 +307,25 @@ namespace SQ {
         // Set up projection buffer
         DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
         projectionBuffer = CreateBuffer(&identity, sizeof(DirectX::XMMATRIX));
+        deviceContext->VSSetConstantBuffers(0, 1, projectionBuffer.GetAddressOf());
        
         // Set up camera buffer
         CameraBufferData emptyCameraBuffer;
         ZeroMemory(&emptyCameraBuffer, sizeof(CameraBufferData));
         cameraBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(CameraBufferData));
+        deviceContext->VSSetConstantBuffers(1, 1, cameraBuffer.GetAddressOf());
 
         // Set up world buffer
         WorldBufferData emptyWorldBuffer;
         ZeroMemory(&emptyWorldBuffer, sizeof(WorldBufferData));
         worldBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(WorldBufferData));
+        deviceContext->VSSetConstantBuffers(2, 1, worldBuffer.GetAddressOf());
 
         // Setup material buffer (The struct exists in mesh)
         Material::MaterialDX11Data emptyMaterialData;
         ZeroMemory(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
         materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
+        deviceContext->PSSetConstantBuffers(0, 1, materialBuffer.GetAddressOf());
 
         // Light buffer setup later
 

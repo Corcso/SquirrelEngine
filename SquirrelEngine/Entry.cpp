@@ -41,6 +41,10 @@ int main() {
 	SQ::MeshNut mynut;
 	mynut.SetMesh(myMesh);
 
+	SQ::CameraNut myCam;
+	myCam.SetPosition(SQ::V3(0, 0, -2));
+	myCam.SetFov(70);
+
 	std::cout << "Count of meshes " << myMesh.use_count();
 	std::cout << GetLastError();
     MSG msg = { 0 };
@@ -56,6 +60,8 @@ int main() {
         else
         {
 			SQ::Services::GetGraphics()->BeginRender();
+			SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);
+			SQ::Services::GetGraphics()->SetupCameraForFrame(&myCam);
 			SQ::Services::GetGraphics()->Render(&mynut);
 
             SQ::Services::GetGraphics()->EndRender();

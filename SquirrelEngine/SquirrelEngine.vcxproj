@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CameraNut.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
     <ClInclude Include="Material.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="WorldNut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraNut.cpp" />
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsDX11.cpp" />
