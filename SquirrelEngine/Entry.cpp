@@ -32,12 +32,31 @@ int main() {
 	
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
-	SQ::Services::GetGraphics()->Init(500, 200);
+	SQ::Services::GetGraphics()->Init(500, 500);
 	SQ::ResourceManager rm;
 	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 	std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 
 	std::cout << "Count of meshes " << myMesh.use_count();
+	std::cout << GetLastError();
+    MSG msg = { 0 };
+
+    while (msg.message != WM_QUIT)
+    {
+        if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        else
+        {
+			SQ::Services::GetGraphics()->BeginRender();
+            SQ::Services::GetGraphics()->EndRender();
+            
+        }
+    }
+    return static_cast<int>(msg.wParam);
 
 
 	return 0;

@@ -49,13 +49,13 @@ namespace SQ {
             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
             windowRect.right - windowRect.left,
             windowRect.bottom - windowRect.top,
-            nullptr, nullptr, nullptr, nullptr);
+            nullptr, nullptr, GetModuleHandle(NULL), nullptr);
 
         if (!window) {
             return 3;
         }
 
-        ShowWindow(window, 0);
+        ShowWindow(window, SW_NORMAL);
         UpdateWindow(window);
 
         // Begin DirectX11 Setup
@@ -202,6 +202,18 @@ namespace SQ {
         initialiseShaders();
         // TODO Ready rasteriser and output merger
         return 0;
+    }
+
+    void GraphicsDX11::BeginRender()
+    {
+        const float clearColor[]{ 0, 1, 0, 1 };
+        deviceContext->ClearRenderTargetView(renderTargetView.Get(), clearColor);
+        deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+    }
+
+    void GraphicsDX11::EndRender()
+    {
+        swapChain->Present(0, 0);
     }
 
     // Temp here

@@ -28,6 +28,9 @@ namespace SQ {
         virtual int Init(int width, int height) final;
 
 
+        virtual void BeginRender() final;
+        virtual void EndRender() final;
+
         // Windows event callback function (here for now should be moved over to input class
         static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 

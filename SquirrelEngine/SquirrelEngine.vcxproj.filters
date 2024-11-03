@@ -70,6 +70,9 @@
       <Filter>Nuts</Filter>
     </ClInclude>
     <ClInclude Include="WorldNut.h">
+      <Filter>Nuts</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshNut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -111,6 +114,9 @@
       <Filter>Nuts</Filter>
     </ClCompile>
     <ClCompile Include="WorldNut.cpp">
+      <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshNut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
