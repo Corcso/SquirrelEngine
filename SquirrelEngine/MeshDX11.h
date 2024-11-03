@@ -11,6 +11,8 @@ namespace SQ {
     public:
         
         void LoadBuffers();
+
+        virtual ~MeshDX11() {};
     private:
         // Define the index and vertex buffer
         ComPtr<ID3D11Buffer> vertexBuffer;

@@ -14,6 +14,7 @@
 // For testing
 #include <iostream>
 #include "Mesh.h"
+#include "ResourceManager.h"
 
 int main() {
 #ifdef DX11
@@ -32,7 +33,12 @@ int main() {
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
 	SQ::Services::GetGraphics()->Init(500, 200);
-	SQ::Mesh::Load("./Resources/TestQuad.obj");
+	SQ::ResourceManager rm;
+	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
+	std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
+
+	std::cout << "Count of meshes " << myMesh.use_count();
+
 
 	return 0;
 }
