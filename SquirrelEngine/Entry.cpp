@@ -33,7 +33,7 @@ int main() {
 	
 	DirectX::XMFLOAT4 myV = myVector;
 	std::cout << myV.x << myV.y << myV.z;*/
-	SQ::Services::GetGraphics()->Init(500, 500);
+	SQ::Services::GetGraphics()->Init(1600, 900);
 	SQ::ResourceManager rm;
 	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 	std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
@@ -42,7 +42,7 @@ int main() {
 	mynut.SetMesh(myMesh);
 
 	SQ::CameraNut myCam;
-	myCam.SetPosition(SQ::V3(0, 0, -2));
+	myCam.SetPosition(SQ::V3(0, -0, -10));
 	myCam.SetFov(70);
 
 	std::cout << "Count of meshes " << myMesh.use_count();
