@@ -8,6 +8,9 @@
 #include "MeshDX11.h"
 #endif // DX11
 
+// DELETE THIS
+#include <iostream>
+
 namespace SQ {
     Mesh* Mesh::Load(std::string path)
     {
@@ -108,8 +111,8 @@ namespace SQ {
 
             }
         }
-
-
+        
+        // This part seems to be the slowest, double as slow as above. 
         // Now convert the in order vertices to a unique vertex array and a index array
         for (int v = 0; v < inOrderMesh.size(); ++v) {
             // Search for this vertex in our unique vertex vector
@@ -126,6 +129,7 @@ namespace SQ {
                 toReturn->indicies.push_back(toReturn->vertices.size());
                 toReturn->vertices.push_back(inOrderMesh[v]);
             }
+            if(v % 500 == 0) std::cout << "Processing Unique: " << (float)v / inOrderMesh.size() * 100.0f << "%\n";
         }
 
 
