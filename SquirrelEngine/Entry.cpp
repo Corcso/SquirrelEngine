@@ -35,7 +35,7 @@ int main() {
 	std::cout << myV.x << myV.y << myV.z;*/
 	SQ::Services::GetGraphics()->Init(1600, 900);
 	SQ::ResourceManager rm;
-	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/testJeep27k.obj");
+	std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<SQ::Mesh>("./Resources/handbag.obj");
 	std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<SQ::Mesh>("./Resources/TestQuad.obj");
 
 	SQ::MeshNut mynut;
@@ -60,6 +60,7 @@ int main() {
         else
         {
 			mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
+			myCam.SetEulerAngles(SQ::V3(0, myCam.GetEulerAngles().Y + 0.0001f, 0));
 
 			SQ::Services::GetGraphics()->BeginRender();
 			SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);

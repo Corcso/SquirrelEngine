@@ -3,7 +3,7 @@
 namespace SQ {
     Mat4 SQ::CameraNut::GetViewMatrix()
     {
-        return LookAt_LH(GetPosition(), V3(0, 0, 0), V3(0, 1, 0));
+        return LookAt_LH(GetPosition(), GetPosition() + GetForward(), GetUp());
     }
 
     void CameraNut::SetFov(float FOV)
