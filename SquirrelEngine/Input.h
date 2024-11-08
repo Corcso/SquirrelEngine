@@ -5,19 +5,6 @@ namespace SQ {
 	public:
 		virtual void Update() = 0;
 
-		bool IsKeyUp(char key);
-		bool IsKeyReleased(char key);
-		bool IsKeyDown(char key);
-		bool IsKeyPressed(char key);
-
-		enum class MouseButton { LEFT, RIGHT, BUTTON_COUNT };
-
-		bool IsMouseUp(MouseButton key);
-		bool IsMouseReleased(MouseButton key);
-		bool IsMouseDown(MouseButton key);
-		bool IsMousePressed(MouseButton key);
-
-	protected:
 		enum class InputState {
 			INVALID = 0x0,
 			UP = 0x1,
@@ -26,7 +13,22 @@ namespace SQ {
 			PRESSED = 0x8
 		};
 
-		InputState Keys[256];
-		InputState MouseButtons[static_cast<int>(MouseButton::BUTTON_COUNT)];
+		bool IsKeyUp(char key);
+		bool IsKeyReleased(char key);
+		bool IsKeyDown(char key);
+		bool IsKeyPressed(char key);
+
+		enum class MouseButton { LEFT, RIGHT, BUTTON_COUNT };
+
+		bool IsMouseUp(MouseButton button);
+		bool IsMouseReleased(MouseButton button);
+		bool IsMouseDown(MouseButton button);
+		bool IsMousePressed(MouseButton button);
+
+		void SetKeyState(char key, InputState state);
+		void SetMouseState(MouseButton button, InputState state);
+	protected:
+		InputState keys[256];
+		InputState mouseButtons[static_cast<int>(MouseButton::BUTTON_COUNT)];
 	};
 }

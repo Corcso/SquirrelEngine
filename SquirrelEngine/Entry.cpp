@@ -8,6 +8,10 @@
 #ifdef DX11
 #include "GraphicsDX11.h"
 #endif // DX11
+#ifdef WINDOWS
+#include "InputWindows.h"
+#endif // WINDOWS
+
 
 #include "Math.h"
 
@@ -18,6 +22,10 @@
 #include "MeshNut.h"
 
 int main() {
+
+#ifdef WINDOWS
+	SQ::Services::RegisterInput(new SQ::InputWindows());
+#endif // WINDOWS
 #ifdef DX11
 	SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
@@ -60,7 +68,10 @@ int main() {
         else
         {
 			mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
-			myCam.SetEulerAngles(SQ::V3(0, myCam.GetEulerAngles().Y + 0.0001f, 0));
+			if (SQ::Services::GetInput()->IsKeyDown(30)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X - 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
+			if (SQ::Services::GetInput()->IsKeyDown(32)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X + 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
+			if (SQ::Services::GetInput()->IsKeyDown(17)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z + 0.0005f));
+			if (SQ::Services::GetInput()->IsKeyDown(31)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z - 0.0005f));
 
 			SQ::Services::GetGraphics()->BeginRender();
 			SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);

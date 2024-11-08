@@ -5,8 +5,6 @@
 #include "Input.h"
 #include <Windows.h>
 
-
-
 namespace SQ {
     class InputWindows :
         public Input
