@@ -134,6 +134,8 @@
     <ClInclude Include="CameraNut.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputWindows.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
@@ -152,6 +154,8 @@
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsDX11.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputWindows.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshDX11.cpp" />

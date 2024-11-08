@@ -2,6 +2,7 @@
 
 #ifdef DX11
 #include "GraphicsDX11.h"
+#include "InputWindows.h"
 
 // Include the compiled base shaders
 #include "DX11BaseVertex_CompiledShader.h"
@@ -26,7 +27,7 @@ namespace SQ {
         WNDCLASSEX windowClass = { 0 };
         windowClass.cbSize = sizeof(WNDCLASSEX);
         windowClass.style = CS_HREDRAW | CS_VREDRAW;
-        windowClass.lpfnWndProc = &WndProc;
+        windowClass.lpfnWndProc = &InputWindows::WndProc;
         windowClass.hInstance = GetModuleHandle(NULL);
         windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
         windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
@@ -250,30 +251,6 @@ namespace SQ {
     void GraphicsDX11::EndRender()
     {
         swapChain->Present(0, 0);
-    }
-
-    // Temp here
-    LRESULT GraphicsDX11::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-    {
-        PAINTSTRUCT paintStruct;
-        HDC hDC;
-        switch (message)
-        {
-        case WM_PAINT:
-        {
-            hDC = BeginPaint(hwnd, &paintStruct);
-            EndPaint(hwnd, &paintStruct);
-        }
-        break;
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-        }
-        break;
-        default:
-            return DefWindowProc(hwnd, message, wParam, lParam);
-        }
-        return 0;
     }
 
     ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)

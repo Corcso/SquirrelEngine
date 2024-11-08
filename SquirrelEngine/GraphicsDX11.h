@@ -35,9 +35,6 @@ namespace SQ {
         virtual void Render(MeshNut* toRender) final;
         virtual void EndRender() final;
 
-        // Windows event callback function (here for now should be moved over to input class
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
         ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size);
     private:
         // Windows Window Handle
