@@ -68,10 +68,10 @@ int main() {
         else
         {
 			mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
-			if (SQ::Services::GetInput()->IsKeyDown(30)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X - 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
-			if (SQ::Services::GetInput()->IsKeyDown(32)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X + 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
-			if (SQ::Services::GetInput()->IsKeyDown(17)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z + 0.0005f));
-			if (SQ::Services::GetInput()->IsKeyDown(31)) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z - 0.0005f));
+			if (SQ::Services::GetInput()->IsKeyDown('A')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X - 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
+			if (SQ::Services::GetInput()->IsKeyDown('D')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X + 0.0005f, myCam.GetPosition().Y, myCam.GetPosition().Z));
+			if (SQ::Services::GetInput()->IsKeyDown('W')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z + 0.0005f));
+			if (SQ::Services::GetInput()->IsKeyDown('S')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z - 0.0005f));
 
 			SQ::Services::GetGraphics()->BeginRender();
 			SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);

@@ -31,7 +31,7 @@ namespace SQ {
 			HOME,
 			END,
 			INSERT,
-			DELETE,
+			DEL,
 			LEFT_ARROW,
 			RIGHT_ARROW,
 			UP_ARROW,
