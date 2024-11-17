@@ -59,6 +59,23 @@ namespace SQ {
         ShowWindow(window, SW_NORMAL);
         UpdateWindow(window);
 
+        //---------------------
+        // // you can #include <hidusage.h> for these defines
+#ifndef HID_USAGE_PAGE_GENERIC
+#define HID_USAGE_PAGE_GENERIC         ((USHORT) 0x01)
+#endif
+#ifndef HID_USAGE_GENERIC_MOUSE
+#define HID_USAGE_GENERIC_MOUSE        ((USHORT) 0x02)
+#endif
+
+        RAWINPUTDEVICE Rid[1];
+        Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+        Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+        Rid[0].dwFlags = RIDEV_INPUTSINK;
+        Rid[0].hwndTarget = window;
+        RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
+        //---------------------
+
         // Begin DirectX11 Setup
 
         // Setup swap chain description, this is responsible for swapping the back & front buffers
@@ -251,6 +268,23 @@ namespace SQ {
     void GraphicsDX11::EndRender()
     {
         swapChain->Present(0, 0);
+    }
+
+    Vec2 GraphicsDX11::GetRenderWindowSize()
+    {
+        return V2(viewport.Width, viewport.Height);
+    }
+
+    Vec2 GraphicsDX11::GetWindowLocation()
+    {
+        RECT rect = { NULL };
+        Vec2 location;
+        if (GetWindowRect(window, &rect)) {
+            location.X = rect.left;
+            location.Y = rect.top;
+        }
+
+        return location;
     }
 
     ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)

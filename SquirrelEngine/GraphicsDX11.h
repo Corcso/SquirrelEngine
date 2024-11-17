@@ -35,6 +35,9 @@ namespace SQ {
         virtual void Render(MeshNut* toRender) final;
         virtual void EndRender() final;
 
+        virtual Vec2 GetRenderWindowSize() final;
+        virtual Vec2 GetWindowLocation() final;
+
         ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size);
     private:
         // Windows Window Handle

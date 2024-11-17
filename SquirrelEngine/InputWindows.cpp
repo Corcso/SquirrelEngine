@@ -8,8 +8,12 @@
 #include <iostream>
 namespace SQ {
 
-    Input::Key virtualKeyCodeLookupTable[256] = {
-       Input::Key::INVALID_KEY,
+    // Setup the virtual key code lookup table
+    // This array converts windows virtual key codes to Squirrel Engine Key Enums
+    // https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+    Input::Key InputWindows::virtualKeyCodeLookupTable[256] = {
+Input::Key::INVALID_KEY,
+Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
@@ -29,8 +33,6 @@ Input::Key::CONTROL,
 Input::Key::ALT,
 Input::Key::PAUSE,
 Input::Key::CAPSLOCK,
-Input::Key::INVALID_KEY,
-Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
@@ -264,32 +266,20 @@ Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY,
+Input::Key::INVALID_KEY,
 Input::Key::INVALID_KEY
+
 
     };
 
-    //InputWindows::InputWindows()
-    //{
-    //    // Setup Virtual Key Code lookup to Input::Key
-    //    // Clear all values
-    //    for (int c = 0; c < 256; ++c) {
-    //        virtualKeyCodeLookupTable[c] = Key::INVALID_KEY;
-    //    }
-    //    // 0x08 is Backspace
-    //    virtualKeyCodeLookupTable[0x08] = Key::BACKSPACE;
-    //    // 0x09 is Tab
-    //    virtualKeyCodeLookupTable[0x08] = Key::TAB;
-    //    // TODO add L and R support
-    //    virtualKeyCodeLookupTable[0x10] = Key::SHIFT;   // 0x10 is Shift
-    //    virtualKeyCodeLookupTable[0x11] = Key::CONTROL; // 0x11 is Control
-    //    virtualKeyCodeLookupTable[0x12] = Key::ALT;     // 0x12 is Alt
-    //    virtualKeyCodeLookupTable[0x13] = Key::PAUSE;   // 0x13 is Pause
-    //    virtualKeyCodeLookupTable[0x14] = Key::CAPSLOCK;// 0x14 is Capslock
-    //    virtualKeyCodeLookupTable[0x1B] = Key::ESCAPE;  // 0x1B is Escape
-    //    virtualKeyCodeLookupTable[0x20] = Key::SPACE;  // 0x20 is Escape
-
-
-    //}
+    InputWindows::InputWindows()
+    {
+        // Set mouse position to where it is, to prevent mouse jolting in the first frame
+        LPPOINT mousePos = new POINT;
+        GetCursorPos(mousePos);
+        mousePositionThisFrame = V2(mousePos->x, mousePos->y);
+        delete mousePos;
+    }
 
     LRESULT InputWindows::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
@@ -297,21 +287,69 @@ Input::Key::INVALID_KEY
         HDC hDC;
         switch (message)
         {
+        // Process key up and down events
         case WM_KEYUP:
         {
-            //int scanCode = (lParam & 0x00FF0000) >> 16;
-            //std::cout << "UP: " << scanCode << "\n";
             Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::UP);
             
         }
         break;
         case WM_KEYDOWN:
         {
-            //int scanCode = (lParam & 0x00FF0000) >> 16;
-            //std::cout << "DOWN: " << scanCode << "\n";
             Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::DOWN);
         }
         break;
+        // Process mouse button events
+        case WM_LBUTTONDOWN:
+        {
+            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::DOWN);
+        }
+        break;
+        case WM_LBUTTONUP:
+        {
+            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::UP);
+        }
+        case WM_RBUTTONDOWN:
+        {
+            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::DOWN);
+        }
+        break;
+        case WM_RBUTTONUP:
+        {
+            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::UP);
+        }
+        break;
+
+        // Use the mouse move event if the mouse isnt locked otherwise use the WM_INPUT raw input event (Microsoft, 2023)
+        // https://learn.microsoft.com/en-us/windows/win32/dxtecharts/taking-advantage-of-high-dpi-mouse-movement
+        case WM_MOUSEMOVE:
+        {
+            if (Services::GetInput()->IsMouseLocked()) break;
+            int xCoord =  0x0000FFFF & lParam;
+            int yCoord = (0xFFFF0000 & lParam) >> 16;
+            Services::GetInput()->SetMousePosition(V2(xCoord, yCoord));
+            Services::GetInput()->SetMouseMovement(V2(xCoord, yCoord) - Services::GetInput()->GetMousePositionLastFrame());
+
+        }
+        break;
+        case WM_INPUT:
+        {
+            if (!Services::GetInput()->IsMouseLocked()) break;
+            UINT dwSize = sizeof(RAWINPUT);
+            static BYTE lpb[sizeof(RAWINPUT)];
+
+            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+
+            RAWINPUT* raw = (RAWINPUT*)lpb;
+
+            if (raw->header.dwType == RIM_TYPEMOUSE)
+            {
+                int xPosRelative = raw->data.mouse.lLastX;
+                int yPosRelative = raw->data.mouse.lLastY;
+                Services::GetInput()->SetMouseMovement(V2(xPosRelative, yPosRelative));
+            }
+            break;
+        }
         case WM_PAINT:
         {
             hDC = BeginPaint(hwnd, &paintStruct);
@@ -331,6 +369,36 @@ Input::Key::INVALID_KEY
 
     void InputWindows::Update()
     {
+        Input::Update();
+
+        // If we are locked, set mouse movement to 0 at end of the frame
+        if (isMouseLocked) mouseMovement = V2(0, 0);
+    }
+
+    void InputWindows::ProcessInput()
+    {
+        MSG msg = { 0 };
+        while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        if (isMouseLocked) {
+            SetCursorPos((Services::GetGraphics()->GetWindowLocation() + (Services::GetGraphics()->GetRenderWindowSize() / 2.0f)).X, (Services::GetGraphics()->GetWindowLocation() + (Services::GetGraphics()->GetRenderWindowSize() / 2.0f)).Y);
+        }
+    }
+
+    void InputWindows::LockMouse()
+    {
+        ShowCursor(false);
+        isMouseLocked = true;
+    }
+
+    void InputWindows::UnlockMouse()
+    {
+        ShowCursor(true);
+        isMouseLocked = false;
     }
 }
 #endif //WINDOWS

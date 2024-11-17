@@ -10,11 +10,16 @@ namespace SQ {
         public Input
     {
     public:
-        //InputWindows();
-        // Windows event callback function (here for now should be moved over to input class
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+        InputWindows();
 
-        virtual void Update() final;
+        // Windows event callback function
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+        virtual void Update();
+
+        virtual void ProcessInput() final;
+
+        virtual void LockMouse() final;
+        virtual void UnlockMouse() final;
     private:
         static Key virtualKeyCodeLookupTable[256];
     };

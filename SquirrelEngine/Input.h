@@ -1,10 +1,11 @@
 #pragma once
+#include "Math.h"
+
 namespace SQ {
 	class Input
 	{
 	public:
 		Input();
-		virtual void Update() = 0;
 
 		enum class InputState {
 			INVALID = 0x0,
@@ -55,6 +56,9 @@ namespace SQ {
 
 		Key characterLookupTable[123];
 
+		virtual void ProcessInput() = 0;
+		virtual void Update();
+
 		bool IsKeyUp(Key key);
 		bool IsKeyReleased(Key key);
 		bool IsKeyDown(Key key);
@@ -72,9 +76,26 @@ namespace SQ {
 		bool IsMouseDown(MouseButton button);
 		bool IsMousePressed(MouseButton button);
 
+		Vec2 GetMousePosition();
+		Vec2 GetMousePositionLastFrame();
+		Vec2 GetMouseMovement();
+
+		virtual void LockMouse() = 0;
+		virtual void UnlockMouse() = 0;
+		bool IsMouseLocked();
+
 		void SetKeyState(Key key, InputState state);
 		void SetMouseState(MouseButton button, InputState state);
+		void SetMousePosition(Vec2 newMousePosition);
+		void SetMouseMovement(Vec2 mouseMovement);
+
 	protected:
+		bool isMouseLocked;
+
+		Vec2 mousePositionLastFrame;
+		Vec2 mousePositionThisFrame;
+		Vec2 mouseMovement;
+
 		InputState keys[static_cast<int>(Key::TOTAL_SUPPORTED_KEYS)];
 		InputState mouseButtons[static_cast<int>(MouseButton::TOTAL_SUPPORTED_BUTTONS)];
 	};

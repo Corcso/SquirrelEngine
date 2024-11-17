@@ -1,6 +1,10 @@
 #include "PCH.h"
 #include "Input.h"
 namespace SQ {
+	bool Input::IsMouseLocked()
+	{
+		return isMouseLocked;
+	}
 	void Input::SetKeyState(Key key, InputState state)
 	{
 		keys[static_cast<int>(key)] = state;
@@ -9,6 +13,16 @@ namespace SQ {
 	void Input::SetMouseState(MouseButton button, InputState state)
 	{
 		mouseButtons[static_cast<int>(button)] = state;
+	}
+
+	void Input::SetMousePosition(Vec2 newMousePosition)
+	{
+		mousePositionThisFrame = newMousePosition;
+	}
+
+	void Input::SetMouseMovement(Vec2 mouseMovement)
+	{
+		this->mouseMovement = mouseMovement;
 	}
 
 	Input::Input()
@@ -37,6 +51,33 @@ namespace SQ {
 			characterLookupTable[c] = static_cast<Key>(static_cast<int>(Key::A) + (c - 97));
 		}
 		// Any values after are not used 
+
+		// Set all keys to start up
+		for (int k = 0; k < static_cast<int>(Key::TOTAL_SUPPORTED_KEYS); ++k) {
+			keys[k] = InputState::UP;
+		}
+	}
+
+	void Input::Update()
+	{
+		// Set all pressed keys to down, all released keys to up and all invalid keys to up
+		for (int k = 0; k < static_cast<int>(Key::TOTAL_SUPPORTED_KEYS); ++k) {
+			if (keys[k] == InputState::PRESSED) keys[k] = InputState::DOWN;
+			else if (keys[k] == InputState::RELEASED) keys[k] = InputState::UP;
+			else if (keys[k] == InputState::INVALID) keys[k] = InputState::UP;
+		}
+
+		// Set all pressed buttons to down, all released buttons to up and all invalid buttons to up
+		for (int b = 0; b < static_cast<int>(MouseButton::TOTAL_SUPPORTED_BUTTONS); ++b) {
+			if (mouseButtons[b] == InputState::PRESSED) mouseButtons[b] = InputState::DOWN;
+			else if (mouseButtons[b] == InputState::RELEASED) mouseButtons[b] = InputState::UP;
+			else if (mouseButtons[b] == InputState::INVALID) mouseButtons[b] = InputState::UP;
+		}
+
+		// Set mouse position this frame to mouse position last frame
+		mousePositionLastFrame = mousePositionThisFrame;
+
+		return;
 	}
 
 	bool Input::IsKeyUp(Key key)
@@ -71,5 +112,33 @@ namespace SQ {
 	bool Input::IsKeyPressed(char key)
 	{
 		return IsKeyPressed(characterLookupTable[key]);
+	}
+	bool Input::IsMouseUp(MouseButton button)
+	{
+		return (static_cast<int>(mouseButtons[static_cast<int>(button)]) & (static_cast<int>(InputState::UP) | static_cast<int>(InputState::RELEASED)));
+	}
+	bool Input::IsMouseReleased(MouseButton button)
+	{
+		return (static_cast<int>(mouseButtons[static_cast<int>(button)]) & static_cast<int>(InputState::RELEASED));
+	}
+	bool Input::IsMouseDown(MouseButton button)
+	{
+		return (static_cast<int>(mouseButtons[static_cast<int>(button)]) & (static_cast<int>(InputState::DOWN) | static_cast<int>(InputState::PRESSED)));
+	}
+	bool Input::IsMousePressed(MouseButton button)
+	{
+		return (static_cast<int>(mouseButtons[static_cast<int>(button)]) & static_cast<int>(InputState::PRESSED));
+	}
+	Vec2 Input::GetMousePosition()
+	{
+		return mousePositionThisFrame;
+	}
+	Vec2 Input::GetMousePositionLastFrame()
+	{
+		return mousePositionLastFrame;
+	}
+	Vec2 Input::GetMouseMovement()
+	{
+		return mouseMovement;
 	}
 }

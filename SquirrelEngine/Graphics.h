@@ -17,5 +17,8 @@ namespace SQ {
 		virtual void Render(MeshNut* toRender) = 0;
 
 		virtual void EndRender() = 0;
+
+		virtual Vec2 GetRenderWindowSize() = 0;
+		virtual Vec2 GetWindowLocation() = 0;
 	};
 }

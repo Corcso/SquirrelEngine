@@ -55,7 +55,7 @@ int main() {
 
 	std::cout << "Count of meshes " << myMesh.use_count();
 	std::cout << GetLastError();
-    MSG msg = { 0 };
+    /*MSG msg = { 0 };
 
     while (msg.message != WM_QUIT)
     {
@@ -73,6 +73,8 @@ int main() {
 			if (SQ::Services::GetInput()->IsKeyDown('W')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z + 0.0005f));
 			if (SQ::Services::GetInput()->IsKeyDown('S')) myCam.SetPosition(SQ::V3(myCam.GetPosition().X, myCam.GetPosition().Y, myCam.GetPosition().Z - 0.0005f));
 
+			std::cout << SQ::Services::GetInput()->GetMousePosition().X << ", " << SQ::Services::GetInput()->GetMousePosition().Y << "\n";
+
 			SQ::Services::GetGraphics()->BeginRender();
 			SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);
 			SQ::Services::GetGraphics()->SetupCameraForFrame(&myCam);
@@ -81,8 +83,41 @@ int main() {
             SQ::Services::GetGraphics()->EndRender();
             
         }
-    }
-    return static_cast<int>(msg.wParam);
+    }*/
+	SQ::Services::GetInput()->UnlockMouse();
+	while (true) {
+		
+		SQ::Services::GetInput()->ProcessInput();
+
+
+		if (SQ::Services::GetInput()->IsKeyDown('q')) SQ::Services::GetInput()->LockMouse();
+		else if (SQ::Services::GetInput()->IsKeyDown('e')) SQ::Services::GetInput()->UnlockMouse();
+
+		mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
+		if (SQ::Services::GetInput()->IsKeyDown('A')) myCam.SetPosition(myCam.GetPosition() - myCam.GetRight() * 0.0005f);
+		if (SQ::Services::GetInput()->IsKeyDown('D')) myCam.SetPosition(myCam.GetPosition() + myCam.GetRight() * 0.0005f);
+		if (SQ::Services::GetInput()->IsKeyDown('W')) myCam.SetPosition(myCam.GetPosition() + myCam.GetForward() * 0.0005f);
+		if (SQ::Services::GetInput()->IsKeyDown('S')) myCam.SetPosition(myCam.GetPosition() - myCam.GetForward() * 0.0005f);
+
+		float sens = -0.005f;
+
+		if(SQ::Services::GetInput()->IsMouseLocked()) myCam.SetEulerAngles(SQ::V3(myCam.GetEulerAngles().X + (SQ::Services::GetInput()->GetMouseMovement().Y * sens), myCam.GetEulerAngles().Y + (SQ::Services::GetInput()->GetMouseMovement().X * sens), myCam.GetEulerAngles().Z));
+
+		//std::cout << SQ::Services::GetInput()->GetMousePosition().X << ", " << SQ::Services::GetInput()->GetMousePosition().Y << "\n";
+
+		SQ::Services::GetGraphics()->BeginRender();
+		SQ::Services::GetGraphics()->UpdateProjectionMatrix(&myCam);
+		SQ::Services::GetGraphics()->SetupCameraForFrame(&myCam);
+		SQ::Services::GetGraphics()->Render(&mynut);
+
+		SQ::Services::GetGraphics()->EndRender();
+
+		SQ::Services::GetInput()->Update();
+
+		
+	}
+
+    /*return static_cast<int>(msg.wParam);*/
 
 
 	return 0;
