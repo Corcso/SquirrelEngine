@@ -4,6 +4,9 @@
 #include "GraphicsDX11.h"
 #include "InputWindows.h"
 
+// For HD mouse movement (Microsoft, 2023)
+#include <hidusage.h>
+
 // Include the compiled base shaders
 #include "DX11BaseVertex_CompiledShader.h"
 #include "DX11BasePixel_CompiledShader.h"
@@ -60,13 +63,14 @@ namespace SQ {
         UpdateWindow(window);
 
         //---------------------
-        // // you can #include <hidusage.h> for these defines
-#ifndef HID_USAGE_PAGE_GENERIC
-#define HID_USAGE_PAGE_GENERIC         ((USHORT) 0x01)
-#endif
-#ifndef HID_USAGE_GENERIC_MOUSE
-#define HID_USAGE_GENERIC_MOUSE        ((USHORT) 0x02)
-#endif
+        // Setup raw input for HD mouse movement (Microsoft, 2023)
+        // https://learn.microsoft.com/en-us/windows/win32/dxtecharts/taking-advantage-of-high-dpi-mouse-movement
+        #ifndef HID_USAGE_PAGE_GENERIC
+        #define HID_USAGE_PAGE_GENERIC         ((USHORT) 0x01)
+        #endif
+        #ifndef HID_USAGE_GENERIC_MOUSE
+        #define HID_USAGE_GENERIC_MOUSE        ((USHORT) 0x02)
+        #endif
 
         RAWINPUTDEVICE Rid[1];
         Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
