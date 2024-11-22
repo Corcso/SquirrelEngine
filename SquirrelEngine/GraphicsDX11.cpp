@@ -250,12 +250,12 @@ namespace SQ {
         deviceContext->UpdateSubresource(cameraBuffer.Get(), 0, NULL, &thisFramesData, 0, 0);
     }
 
-    void GraphicsDX11::Render(MeshNut* toRender)
+    void GraphicsDX11::Render(MeshNut* toRender, Mat4 worldMatrix)
     {
 
         WorldBufferData thisNutsWorldBufferData{
-            toRender->GetSRTWorldMatrix(),
-            toRender->GetSRTWorldMatrix()
+            worldMatrix,
+            worldMatrix
         };
 
         deviceContext->UpdateSubresource(worldBuffer.Get(), 0, NULL, &thisNutsWorldBufferData, 0, 0);

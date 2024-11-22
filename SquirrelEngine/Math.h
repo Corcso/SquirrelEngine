@@ -200,6 +200,7 @@ extern "C"
 # define AngleTurn(a) (a)
 #endif
 
+//#define HANDMADE_MATH_PROVIDE_MATH_FUNCTIONS
 #if !defined(HANDMADE_MATH_PROVIDE_MATH_FUNCTIONS)
 # include <math.h>
 # define SINF sinf
@@ -544,28 +545,28 @@ COVERAGE(SinF, 1)
 static inline float SinF(float Angle)
 {
     ASSERT_COVERED(SinF);
-    return SINF(ANGLE_USER_TO_INTERNAL(Angle));
+    return sin(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(CosF, 1)
 static inline float CosF(float Angle)
 {
     ASSERT_COVERED(CosF);
-    return COSF(ANGLE_USER_TO_INTERNAL(Angle));
+    return cos(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(TanF, 1)
 static inline float TanF(float Angle)
 {
     ASSERT_COVERED(TanF);
-    return TANF(ANGLE_USER_TO_INTERNAL(Angle));
+    return tan(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(ACosF, 1)
 static inline float ACosF(float Arg)
 {
     ASSERT_COVERED(ACosF);
-    return ANGLE_INTERNAL_TO_USER(ACOSF(Arg));
+    return ANGLE_INTERNAL_TO_USER(acos(Arg));
 }
 
 COVERAGE(SqrtF, 1)

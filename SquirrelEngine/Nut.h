@@ -33,7 +33,7 @@ namespace SQ {
 		template <typename T = Nut>
 		inline T* GetNthChild(unsigned int index) {
 			// Check we have a child at that index
-			if (children.size() <= index) return dynamic_cast<T*>(children[index].get());
+			if (index < children.size()) return dynamic_cast<T*>(children[index].get());
 			// If not return null pointer
 			else return nullptr;
 		}
@@ -65,10 +65,32 @@ namespace SQ {
 			return nullptr;
 		}
 
+		void SetParent(Nut* newParent);
+		void AddChild(std::unique_ptr<Nut> newChild);
+
+		unsigned int GetChildCount();
+
+		virtual void Ready() {}
+		virtual void Update() {}
+		virtual void LateUpdate() {}
+
+		/// <summary>
+		/// Queues this for destruction at the end of the current frame. 
+		/// </summary>
+		void QueueDestroy();
+
+		/// <summary>
+		/// Returns true if this nut will be deleted at the end of this frame.
+		/// </summary>
+		/// <returns>If the nut is queued for end of frame deletion.</returns>
+		bool IsQueuedForDestruction();
+
 		virtual ~Nut() {}
 	private:
 		Nut* parent;
 		std::vector<std::unique_ptr<Nut>> children;
+
+		bool isQueuedToDestroy;
 	};
 }
 

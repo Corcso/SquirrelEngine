@@ -39,10 +39,10 @@ namespace SQ {
         return position;
     }
 
-    Vec3 WorldNut::GetEulerAngles()
+  /*  Vec3 WorldNut::GetEulerAngles()
     {
         return eulerRotation;
-    }
+    }*/
 
     Vec3 WorldNut::GetScale()
     {
