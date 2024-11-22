@@ -93,6 +93,9 @@
     <ClInclude Include="SquirrelEnginePI.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">

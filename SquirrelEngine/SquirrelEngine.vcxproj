@@ -138,6 +138,7 @@
     <ClInclude Include="GraphicsDX11.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputWindows.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="SQMath.h" />
     <ClInclude Include="Mesh.h" />
