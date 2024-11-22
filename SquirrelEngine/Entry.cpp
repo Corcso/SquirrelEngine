@@ -1,22 +1,19 @@
 #include "PCH.h"
 #include "SquirrelEngine.h"
 
+
 #ifdef WINDOWS
-#include <Windows.h>
+#include "InputWindows.h"
 #endif // WINDOWS
 
 #ifdef DX11
 #include "GraphicsDX11.h"
 #endif // DX11
-#ifdef WINDOWS
-#include "InputWindows.h"
-#endif // WINDOWS
 
-
-// For testing
-#include <iostream>
-
-
+/// <summary>
+/// Entry point.
+/// </summary>
+/// <returns></returns>
 int main() {
 
 #ifdef WINDOWS

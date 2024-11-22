@@ -1,8 +1,7 @@
 #pragma once
 #include "Mesh.h"
 
-// This is tempoary before I get a global DX11 API header
-#include "GraphicsDX11.h"
+#include "SquirrelEnginePI.h"
 
 namespace SQ {
     class MeshDX11 :

@@ -1,6 +1,7 @@
 #include "PCH.h"
 #ifdef DX11
 #include "MeshDX11.h"
+#include "GraphicsDX11.h"
 #include "Services.h"
 
 namespace SQ {

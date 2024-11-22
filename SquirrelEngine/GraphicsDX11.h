@@ -2,22 +2,7 @@
 
 #ifdef DX11
 
-// DirectX includes
-#include <d3d11.h>
-//#include <d3dcompiler.h>
-#include <DirectXMath.h>
-//#include <DirectXColors.h>
-#include <wrl.h>
-
-// Link library dependencies
-#pragma comment(lib, "d3d11.lib")
-//#pragma comment(lib, "dxgi.lib") I've commented these out only going to comment them in when I think I need them, same above
-//#pragma comment(lib, "d3dcompiler.lib")
-//#pragma comment(lib, "winmm.lib")
-
-// Define ComPtr as Microsoft::WRL::ComPtr for ease of use.
-template <typename T>
-using ComPtr = Microsoft::WRL::ComPtr<T>;
+#include "SquirrelEnginePI.h"
 
 #include "Graphics.h"
 namespace SQ {
