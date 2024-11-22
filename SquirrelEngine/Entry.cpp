@@ -93,7 +93,8 @@ int main() {
 		if (SQ::Services::GetInput()->IsKeyDown('q')) SQ::Services::GetInput()->LockMouse();
 		else if (SQ::Services::GetInput()->IsKeyDown('e')) SQ::Services::GetInput()->UnlockMouse();
 
-		mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
+		//mynut.SetEulerAngles(SQ::V3(0, mynut.GetEulerAngles().Y + 0.001f, 0));
+		mynut.RotateGlobalY(0.001f);
 		if (SQ::Services::GetInput()->IsKeyDown('A')) myCam.SetPosition(myCam.GetPosition() - myCam.GetRight() * 0.0005f);
 		if (SQ::Services::GetInput()->IsKeyDown('D')) myCam.SetPosition(myCam.GetPosition() + myCam.GetRight() * 0.0005f);
 		if (SQ::Services::GetInput()->IsKeyDown('W')) myCam.SetPosition(myCam.GetPosition() + myCam.GetForward() * 0.0005f);
@@ -101,7 +102,13 @@ int main() {
 
 		float sens = -0.005f;
 
-		if(SQ::Services::GetInput()->IsMouseLocked()) myCam.SetEulerAngles(SQ::V3(myCam.GetEulerAngles().X + (SQ::Services::GetInput()->GetMouseMovement().Y * sens), myCam.GetEulerAngles().Y + (SQ::Services::GetInput()->GetMouseMovement().X * sens), myCam.GetEulerAngles().Z));
+		if (SQ::Services::GetInput()->IsMouseLocked()) { 
+			//myCam.SetEulerAngles(SQ::V3(myCam.GetEulerAngles().X + (SQ::Services::GetInput()->GetMouseMovement().Y * sens), myCam.GetEulerAngles().Y + (SQ::Services::GetInput()->GetMouseMovement().X * sens), myCam.GetEulerAngles().Z)); 
+			myCam.RotateGlobalY(SQ::Services::GetInput()->GetMouseMovement().X * sens);
+			myCam.RotateLocalX(SQ::Services::GetInput()->GetMouseMovement().Y * sens);	
+			//std::cout << "Ri: " << myCam.GetRight().X << " " << myCam.GetRight().Y << " " << myCam.GetRight().Z << "\n";
+		}
+
 
 		//std::cout << SQ::Services::GetInput()->GetMousePosition().X << ", " << SQ::Services::GetInput()->GetMousePosition().Y << "\n";
 
