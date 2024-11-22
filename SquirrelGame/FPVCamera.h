@@ -1,5 +1,5 @@
 #pragma once
-#include "CameraNut.h"
+#include "SquirrelEngine.h"
 
 using namespace SQ;
 class FPVCamera :
