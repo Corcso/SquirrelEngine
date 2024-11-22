@@ -1,6 +1,6 @@
 #pragma once
 #include "Nut.h"
-#include "Math.h"
+#include "SQMath.h"
 namespace SQ {
     class WorldNut :
         public Nut

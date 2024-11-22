@@ -19,7 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FPVCamera.cpp" />
     <ClCompile Include="HERE_SO_LIB_COMPILES.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FPVCamera.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

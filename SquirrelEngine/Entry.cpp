@@ -13,7 +13,7 @@
 #endif // WINDOWS
 
 
-#include "Math.h"
+#include "SQMath.h"
 
 #include "Tree.h"
 

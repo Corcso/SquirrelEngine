@@ -18,5 +18,13 @@
     <ClCompile Include="HERE_SO_LIB_COMPILES.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FPVCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FPVCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

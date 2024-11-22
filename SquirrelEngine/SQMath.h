@@ -96,6 +96,14 @@
 Removal of from Variable names and addition to SQ namespace. For Squirrel Engine.
 */
 
+//#define HANDMADE_MATH_PROVIDE_MATH_FUNCTIONS
+//# include <cmath>
+//# define SINF sinf
+//# define COSF cosf
+//# define TANF tanf
+//# define SQRTF sqrtf
+//# define ACOSF acosf
+
 // Include DX Math if using direct X for implicit conversion definitions
 #ifdef DX11
 #include <DirectXMath.h>
@@ -545,28 +553,28 @@ COVERAGE(SinF, 1)
 static inline float SinF(float Angle)
 {
     ASSERT_COVERED(SinF);
-    return sin(ANGLE_USER_TO_INTERNAL(Angle));
+    return SINF(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(CosF, 1)
 static inline float CosF(float Angle)
 {
     ASSERT_COVERED(CosF);
-    return cos(ANGLE_USER_TO_INTERNAL(Angle));
+    return COSF(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(TanF, 1)
 static inline float TanF(float Angle)
 {
     ASSERT_COVERED(TanF);
-    return tan(ANGLE_USER_TO_INTERNAL(Angle));
+    return TANF(ANGLE_USER_TO_INTERNAL(Angle));
 }
 
 COVERAGE(ACosF, 1)
 static inline float ACosF(float Arg)
 {
     ASSERT_COVERED(ACosF);
-    return ANGLE_INTERNAL_TO_USER(acos(Arg));
+    return ANGLE_INTERNAL_TO_USER(ACOSF(Arg));
 }
 
 COVERAGE(SqrtF, 1)

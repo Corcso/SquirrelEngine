@@ -1,7 +1,7 @@
 #pragma once
 #include "PCH.h"
 #include "Resource.h"
-#include "Math.h"
+#include "SQMath.h"
 
 namespace SQ {
 

@@ -4,6 +4,7 @@
 
 // TEMP
 #include "ResourceManager.h"
+#include "FPVCamera.h"
 namespace SQ {
 	Tree::Tree()
 	{
@@ -20,7 +21,7 @@ namespace SQ {
 		MeshNut* mynut = new MeshNut();
 		mynut->SetMesh(myMesh);
 
-		CameraNut* myCam = new CameraNut();
+		FPVCamera* myCam = new FPVCamera();
 		myCam->SetPosition(SQ::V3(0, -0, -10));
 		myCam->SetFov(70);
 		myCam->SetActiveCamera();

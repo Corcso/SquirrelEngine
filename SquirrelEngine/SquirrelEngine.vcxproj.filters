@@ -42,7 +42,7 @@
     <ClInclude Include="Graphics.h">
       <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="Math.h">
+    <ClInclude Include="SQMath.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">

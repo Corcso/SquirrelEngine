@@ -1,7 +1,7 @@
 #pragma once
 #include "Nut.h"
 #include "CameraNut.h"
-#include "Math.h"
+#include "SQMath.h"
 namespace SQ {
 	class Tree
 	{
