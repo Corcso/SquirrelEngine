@@ -13,9 +13,9 @@ namespace SQ {
 		GraphicsDX11* graphicsService = dynamic_cast<GraphicsDX11*>(Services::GetGraphics());
 
 		// Create the vertex buffer
-		vertexBuffer = graphicsService->CreateBuffer(vertices.data(), sizeof(Vertex) * vertices.size());
+		vertexBuffer = graphicsService->CreateBuffer(vertices.data(), sizeof(Vertex) * vertices.size(), D3D11_BIND_VERTEX_BUFFER);
 		// Create the index buffer
-		indexBuffer = graphicsService->CreateBuffer(indicies.data(), sizeof(unsigned int) * indicies.size());
+		indexBuffer = graphicsService->CreateBuffer(indicies.data(), sizeof(unsigned int) * indicies.size(), D3D11_BIND_INDEX_BUFFER);
 	}
 
 	ComPtr<ID3D11Buffer> MeshDX11::GetVertexBuffer()

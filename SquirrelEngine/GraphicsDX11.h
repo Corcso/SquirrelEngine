@@ -38,7 +38,7 @@ namespace SQ {
         virtual Vec2 GetRenderWindowSize() final;
         virtual Vec2 GetWindowLocation() final;
 
-        ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size);
+        ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size, D3D11_BIND_FLAG bindFlag);
     private:
         // Windows Window Handle
         HWND window;

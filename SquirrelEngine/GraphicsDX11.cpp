@@ -291,14 +291,14 @@ namespace SQ {
         return location;
     }
 
-    ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size)
+    ComPtr<ID3D11Buffer> GraphicsDX11::CreateBuffer(void* data, unsigned int size, D3D11_BIND_FLAG bindFlag)
     {
         ComPtr<ID3D11Buffer> toReturn;
 
         D3D11_BUFFER_DESC bufferDescription;
         ZeroMemory(&bufferDescription, sizeof(D3D11_BUFFER_DESC));
 
-        bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDescription.BindFlags = bindFlag;
         bufferDescription.ByteWidth = size;
         bufferDescription.CPUAccessFlags = 0;
         bufferDescription.Usage = D3D11_USAGE_DEFAULT;
@@ -321,25 +321,25 @@ namespace SQ {
 
         // Set up projection buffer
         DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
-        projectionBuffer = CreateBuffer(&identity, sizeof(DirectX::XMMATRIX));
+        projectionBuffer = CreateBuffer(&identity, sizeof(DirectX::XMMATRIX), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->VSSetConstantBuffers(0, 1, projectionBuffer.GetAddressOf());
        
         // Set up camera buffer
         CameraBufferData emptyCameraBuffer;
         ZeroMemory(&emptyCameraBuffer, sizeof(CameraBufferData));
-        cameraBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(CameraBufferData));
+        cameraBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(CameraBufferData), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->VSSetConstantBuffers(1, 1, cameraBuffer.GetAddressOf());
 
         // Set up world buffer
         WorldBufferData emptyWorldBuffer;
         ZeroMemory(&emptyWorldBuffer, sizeof(WorldBufferData));
-        worldBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(WorldBufferData));
+        worldBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(WorldBufferData), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->VSSetConstantBuffers(2, 1, worldBuffer.GetAddressOf());
 
         // Setup material buffer (The struct exists in mesh)
         Material::MaterialDX11Data emptyMaterialData;
         ZeroMemory(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
-        materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
+        materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(Material::MaterialDX11Data), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->PSSetConstantBuffers(0, 1, materialBuffer.GetAddressOf());
 
         // Light buffer setup later
