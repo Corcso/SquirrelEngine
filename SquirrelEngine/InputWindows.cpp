@@ -285,6 +285,7 @@ Input::Key::INVALID_KEY
     {
         PAINTSTRUCT paintStruct;
         HDC hDC;
+        // Switch case over different message types we care about
         switch (message)
         {
         // Process key up and down events
@@ -369,6 +370,7 @@ Input::Key::INVALID_KEY
 
     void InputWindows::Update()
     {
+        // Call base input update
         Input::Update();
 
         // If we are locked, set mouse movement to 0 at end of the frame
@@ -378,12 +380,14 @@ Input::Key::INVALID_KEY
     void InputWindows::ProcessInput()
     {
         MSG msg = { 0 };
+        // Loop over all messages which are pending, remove them from the windows message stack
         while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
 
+        // If the mouse is locked, set it to the center of the window.
         if (isMouseLocked) {
             SetCursorPos((Services::GetGraphics()->GetWindowLocation() + (Services::GetGraphics()->GetRenderWindowSize() / 2.0f)).X, (Services::GetGraphics()->GetWindowLocation() + (Services::GetGraphics()->GetRenderWindowSize() / 2.0f)).Y);
         }
@@ -391,13 +395,15 @@ Input::Key::INVALID_KEY
 
     void InputWindows::LockMouse()
     {
-        ShowCursor(false);
+        // Hide cursor and set mouse locked to true
+        ShowCursor(false); // TODO fix this as show cursor is like a stack of numbers rather than bool?!
         isMouseLocked = true;
     }
 
     void InputWindows::UnlockMouse()
     {
-        ShowCursor(true);
+        // Show cursor and set mouse locked to false
+        ShowCursor(true);// TODO fix this as show cursor is like a stack of numbers rather than bool?!
         isMouseLocked = false;
     }
 }
