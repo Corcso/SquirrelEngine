@@ -85,6 +85,18 @@ namespace SQ {
 		/// <returns>If the nut is queued for end of frame deletion.</returns>
 		bool IsQueuedForDestruction();
 
+		/// <summary>
+		/// <para>Deserialize function for a Nut</para>
+		/// <para>Used by ShelledNut Resource to instantiate nuts</para>
+		/// <para>If deserizliseInto is nullptr, Deserialize will create a new Nut</para>
+		/// <para>If deserizliseInto is not nullptr, Deserialize will not create a new Nut</para>
+		/// <para>serializedData, is parsed into the new/passed in Nut</para>
+		/// </summary>
+		/// <param name="deserializeInto">Nut pointer to deserialise into, can be nullptr.</param>
+		/// <param name="serilizedData">JSON data to be parsed into nut</param>
+		/// <returns>Pointer to nut which was deserialized.</returns>
+		static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+
 		virtual ~Nut() {}
 	private:
 		Nut* parent;

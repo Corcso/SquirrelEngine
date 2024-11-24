@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HERE_SO_LIB_COMPILES.cpp">
+    <ClCompile Include="FPVCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FPVCamera.cpp">
+    <ClCompile Include="SerializationTypeDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,6 +5,7 @@
 // TEMP
 #include "ResourceManager.h"
 #include "FPVCamera.h"
+#include "ShelledNut.h"
 namespace SQ {
 	Tree::Tree()
 	{
@@ -14,20 +15,26 @@ namespace SQ {
 
 	void Tree::Init()
 	{
-		ResourceManager rm;
-		std::shared_ptr<SQ::Mesh> myMesh = rm.Retrieve<Mesh>("./Resources/handbag.obj");
-		std::shared_ptr<SQ::Mesh> myMesh2 = rm.Retrieve<Mesh>("./Resources/TestQuad.obj");
+		//std::shared_ptr<SQ::Mesh> myMesh = Services::GetResourceManager()->Retrieve<Mesh>("./Resources/handbag.obj");
+		//std::shared_ptr<SQ::Mesh> myMesh2 = Services::GetResourceManager()->Retrieve<Mesh>("./Resources/TestQuad.obj");
+		
+		
+		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>("./Resources/testShell.nut");
+		std::unique_ptr<Nut> sceneReady = myLittleScene->Instantiate();
+		sceneReady->SetParent(&rootNut);
+		sceneReady.release();
 
-		MeshNut* mynut = new MeshNut();
-		mynut->SetMesh(myMesh);
 
-		FPVCamera* myCam = new FPVCamera();
+		/*MeshNut* mynut = new MeshNut();
+		mynut->SetMesh(myMesh);*/
+
+		/*FPVCamera* myCam = new FPVCamera();
 		myCam->SetPosition(SQ::V3(0, -0, -10));
 		myCam->SetFov(70);
-		myCam->SetActiveCamera();
+		myCam->SetActiveCamera();*/
 
-		mynut->SetParent(&rootNut);
-		myCam->SetParent(&rootNut);
+		/*mynut->SetParent(&rootNut);*/
+		//myCam->SetParent(&rootNut);
 	}
 
 	void Tree::RunLoop()

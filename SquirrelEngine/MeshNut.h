@@ -6,6 +6,7 @@ namespace SQ {
         public WorldNut
     {
     public:
+        static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
         void SetMesh(std::shared_ptr<Mesh> mesh);
         std::shared_ptr<Mesh> GetMesh();

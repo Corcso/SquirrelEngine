@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FPVCamera.cpp" />
-    <ClCompile Include="HERE_SO_LIB_COMPILES.cpp" />
+    <ClCompile Include="SerializationTypeDictionary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPVCamera.h" />

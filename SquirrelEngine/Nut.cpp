@@ -1,38 +1,48 @@
 #include "PCH.h"
 #include "Nut.h"
-
-void SQ::Nut::SetParent(Nut* newParent)
-{
-	if (parent != nullptr) {
-		for (std::vector<std::unique_ptr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
-			if (it->get() == this) {
-				newParent->AddChild(std::move(*it));
-				children.erase(it);
+namespace SQ {
+	void Nut::SetParent(Nut* newParent)
+	{
+		if (parent != nullptr) {
+			for (std::vector<std::unique_ptr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
+				if (it->get() == this) {
+					newParent->AddChild(std::move(*it));
+					children.erase(it);
+				}
 			}
 		}
+		else {
+			newParent->AddChild(std::move(std::unique_ptr<Nut>(this)));
+		}
+		parent = newParent;
 	}
-	else {
-		newParent->AddChild(std::move(std::unique_ptr<Nut>(this)));
+
+	void Nut::AddChild(std::unique_ptr<Nut> newChild)
+	{
+		children.push_back(std::move(newChild));
 	}
-	parent = newParent;
-}
 
-void SQ::Nut::AddChild(std::unique_ptr<Nut> newChild)
-{
-	children.push_back(std::move(newChild));
-}
+	unsigned int Nut::GetChildCount()
+	{
+		return children.size();
+	}
 
-unsigned int SQ::Nut::GetChildCount()
-{
-	return children.size();
-}
+	void Nut::QueueDestroy()
+	{
+		isQueuedToDestroy = true;
+	}
 
-void SQ::Nut::QueueDestroy()
-{
-	isQueuedToDestroy = true;
-}
+	bool Nut::IsQueuedForDestruction()
+	{
+		return isQueuedToDestroy;
+	}
 
-bool SQ::Nut::IsQueuedForDestruction()
-{
-	return isQueuedToDestroy;
+	Nut* Nut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+	{
+		if (deserializeInto == nullptr) deserializeInto = new Nut();
+
+		deserializeInto->name = serializedData["name"];
+
+		return deserializeInto;
+	}
 }

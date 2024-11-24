@@ -1,6 +1,23 @@
 #include "PCH.h"
 #include "CameraNut.h"
 namespace SQ {
+    Nut* CameraNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+    {
+        // Cast deserializeInto to our type, call it toWorkOn
+        CameraNut* toWorkOn = dynamic_cast<CameraNut*>(deserializeInto);
+        // If toWorkOn is nullptr, make a new nut of our type. 
+        if (toWorkOn == nullptr) toWorkOn = new CameraNut();
+        // Call parent deserialise, passing in our toWorkOn.
+        WorldNut::Deserialize(toWorkOn, serializedData);
+
+        // Perform deserialization on our data. 
+        toWorkOn->SetFov(serializedData["fov"]);
+        if (serializedData["isActive"]) toWorkOn->SetActiveCamera();
+        else toWorkOn->SetDeactivatedCamera();
+
+        // Return toWorkOn
+        return toWorkOn;
+    }
     Mat4 SQ::CameraNut::GetViewMatrix()
     {
         return LookAt_LH(GetPosition(), GetPosition() + GetForward(), GetUp());

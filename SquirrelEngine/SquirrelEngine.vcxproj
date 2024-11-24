@@ -140,6 +140,8 @@
     <ClInclude Include="InputWindows.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="SerializationTypeDictionary.h" />
+    <ClInclude Include="ShelledNut.h" />
     <ClInclude Include="SQMath.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshDX11.h" />
@@ -174,6 +176,7 @@
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Services.cpp" />
+    <ClCompile Include="ShelledNut.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="WorldNut.cpp" />

@@ -5,6 +5,8 @@ namespace SQ {
         public WorldNut
     {
     public:
+        static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+
         /// <summary>
         /// <para>Returns the View Matrix of this camera.</para>
         /// <para>Left Handed</para>

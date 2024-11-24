@@ -9,6 +9,8 @@ namespace SQ {
 
         WorldNut();
 
+        static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+
         /// <summary>
         /// Sets the Local Position of the WorldNut
         /// </summary>

@@ -6,6 +6,8 @@ class FPVCamera :
     public CameraNut
 {
 public:
+    static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+
     void Update() override;
 };
 

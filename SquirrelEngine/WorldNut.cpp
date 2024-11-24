@@ -12,6 +12,24 @@ namespace SQ {
         
     }
 
+    Nut* WorldNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+    {
+        // Cast deserializeInto to our type, call it toWorkOn
+        WorldNut* toWorkOn = dynamic_cast<WorldNut*>(deserializeInto);
+        // If toWorkOn is nullptr, make a new nut of our type. 
+        if (toWorkOn == nullptr) toWorkOn = new WorldNut();
+        // Call parent deserialise, passing in our toWorkOn.
+        Nut::Deserialize(toWorkOn, serializedData);
+
+        // Perform deserialization on our data. 
+        toWorkOn->SetPosition(V3(serializedData["position"][0], serializedData["position"][1], serializedData["position"][2]));
+        toWorkOn->SetEulerAngles(V3(serializedData["eulerAngles"][0], serializedData["eulerAngles"][1], serializedData["eulerAngles"][2]));
+        toWorkOn->SetScale(V3(serializedData["scale"][0], serializedData["scale"][1], serializedData["scale"][2]));
+
+        // Return toWorkOn
+        return toWorkOn;
+    }
+
     void WorldNut::SetPosition(Vec3 position)
     {
         this->position = position;

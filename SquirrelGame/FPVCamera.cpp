@@ -1,6 +1,21 @@
 #include "FPVCamera.h"
 #include "Services.h"
 
+Nut* FPVCamera::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+{
+	// Cast deserializeInto to our type, call it toWorkOn
+	FPVCamera* toWorkOn = dynamic_cast<FPVCamera*>(deserializeInto);
+	// If toWorkOn is nullptr, make a new nut of our type. 
+	if (toWorkOn == nullptr) toWorkOn = new FPVCamera();
+	// Call parent deserialise, passing in our toWorkOn.
+	CameraNut::Deserialize(toWorkOn, serializedData);
+
+	// Perform deserialization on our data. 
+
+	// Return toWorkOn
+	return toWorkOn;
+}
+
 void FPVCamera::Update()
 {
 	if (SQ::Services::GetInput()->IsKeyDown('q')) SQ::Services::GetInput()->LockMouse();
