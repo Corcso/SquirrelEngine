@@ -139,7 +139,9 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputWindows.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="LightNut.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialDX11.h" />
     <ClInclude Include="SerializationTypeDictionary.h" />
     <ClInclude Include="ShelledNut.h" />
     <ClInclude Include="SQMath.h" />
@@ -164,7 +166,9 @@
     <ClCompile Include="GraphicsDX11.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputWindows.cpp" />
+    <ClCompile Include="LightNut.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialDX11.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshDX11.cpp" />
     <ClCompile Include="MeshNut.cpp" />

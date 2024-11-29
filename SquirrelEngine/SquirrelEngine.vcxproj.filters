@@ -102,6 +102,12 @@
     <ClInclude Include="CameraNut.h">
       <Filter>Nuts</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialDX11.h">
+      <Filter>Resources\API Specific Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="LightNut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH.cpp">
@@ -160,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="CameraNut.cpp">
       <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialDX11.cpp">
+      <Filter>Resources\API Specific Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="LightNut.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
