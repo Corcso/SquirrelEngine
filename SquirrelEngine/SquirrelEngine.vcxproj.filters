@@ -75,9 +75,6 @@
     <ClInclude Include="MeshDX11.h">
       <Filter>Resources\API Specific Resources</Filter>
     </ClInclude>
-    <ClInclude Include="CameraNut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -101,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="SerializationTypeDictionary.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraNut.h">
+      <Filter>Nuts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +146,6 @@
     <ClCompile Include="MeshDX11.cpp">
       <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
-    <ClCompile Include="CameraNut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -160,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="ShelledNut.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraNut.cpp">
+      <Filter>Nuts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

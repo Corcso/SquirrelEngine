@@ -34,13 +34,15 @@ namespace SQ {
 		std::unique_ptr<Nut> newNut(SerializationTypeDictionary[nutType](nullptr, data));
 
 		// Create and reparent all the children recursivly. 
-		for (int i = 0; i < data["children"].size(); ++i) {
-			// Create the child, ownership is ours
-			std::unique_ptr<Nut> child = Instantiate(data["children"][i]);
-			// Reparent the child, ownership is transfered to the parent
-			child->SetParent(newNut.get());
-			// We need to release our ownership.
-			child.release();
+		if (!data["children"].is_null()) {
+			for (int i = 0; i < data["children"].size(); ++i) {
+				// Create the child, ownership is ours
+				std::unique_ptr<Nut> child = Instantiate(data["children"][i]);
+				// Reparent the child, ownership is transfered to the parent
+				child->SetParent(newNut.get());
+				// We need to release our ownership.
+				child.release();
+			}
 		}
 
 		// Return, moving ownership to the callee.

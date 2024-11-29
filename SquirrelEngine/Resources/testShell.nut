@@ -17,7 +17,7 @@
 		"position": [0, 0, -10],
 		"eulerAngles": [0, 0, 0],
 		"scale": [1, 1, 1],
-		"fov": 100,
+		
 		"isActive": true,
 		"children": []
 	}

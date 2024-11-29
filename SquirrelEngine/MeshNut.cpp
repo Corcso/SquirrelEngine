@@ -12,7 +12,7 @@ namespace SQ {
 		WorldNut::Deserialize(toWorkOn, serializedData);
 
 		// Perform deserialization on our data. 
-		toWorkOn->SetMesh(Services::GetResourceManager()->Retrieve<Mesh>(serializedData["mesh"]));
+		if (!serializedData["mesh"].is_null()) toWorkOn->SetMesh(Services::GetResourceManager()->Retrieve<Mesh>(serializedData["mesh"]));
 
 		// Return toWorkOn
 		return toWorkOn;

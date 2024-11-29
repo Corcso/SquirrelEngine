@@ -1,6 +1,12 @@
 #include "PCH.h"
 #include "CameraNut.h"
 namespace SQ {
+    CameraNut::CameraNut()
+    {
+        FOV = 70;
+        isActiveCamera = false;
+    }
+
     Nut* CameraNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
     {
         // Cast deserializeInto to our type, call it toWorkOn
@@ -11,9 +17,11 @@ namespace SQ {
         WorldNut::Deserialize(toWorkOn, serializedData);
 
         // Perform deserialization on our data. 
-        toWorkOn->SetFov(serializedData["fov"]);
-        if (serializedData["isActive"]) toWorkOn->SetActiveCamera();
-        else toWorkOn->SetDeactivatedCamera();
+        if(!serializedData["fov"].is_null()) toWorkOn->SetFov(serializedData["fov"]);
+        if (!serializedData["isActive"].is_null()) {
+            if (serializedData["isActive"]) toWorkOn->SetActiveCamera();
+            else toWorkOn->SetDeactivatedCamera();
+        }
 
         // Return toWorkOn
         return toWorkOn;
