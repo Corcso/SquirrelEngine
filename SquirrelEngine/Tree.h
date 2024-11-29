@@ -9,7 +9,7 @@ namespace SQ {
 
 		Tree();
 
-		void Init();
+		void Init(std::string initialNutPath);
 
 		/// <summary>
 		/// <para>Runs the game loop</para>

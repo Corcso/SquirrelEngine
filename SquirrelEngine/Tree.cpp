@@ -13,28 +13,13 @@ namespace SQ {
 		rootNut.name = "ROOT";
 	}
 
-	void Tree::Init()
+	void Tree::Init(std::string initialNutPath)
 	{
-		//std::shared_ptr<SQ::Mesh> myMesh = Services::GetResourceManager()->Retrieve<Mesh>("./Resources/handbag.obj");
-		//std::shared_ptr<SQ::Mesh> myMesh2 = Services::GetResourceManager()->Retrieve<Mesh>("./Resources/TestQuad.obj");
-		
-		
-		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>("./Resources/testShell.nut");
+		// Load the initial nut
+		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>(initialNutPath);
 		std::unique_ptr<Nut> sceneReady = myLittleScene->Instantiate();
 		sceneReady->SetParent(&rootNut);
 		sceneReady.release();
-
-
-		/*MeshNut* mynut = new MeshNut();
-		mynut->SetMesh(myMesh);*/
-
-		/*FPVCamera* myCam = new FPVCamera();
-		myCam->SetPosition(SQ::V3(0, -0, -10));
-		myCam->SetFov(70);
-		myCam->SetActiveCamera();*/
-
-		/*mynut->SetParent(&rootNut);*/
-		//myCam->SetParent(&rootNut);
 	}
 
 	void Tree::RunLoop()

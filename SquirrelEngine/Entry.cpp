@@ -29,23 +29,25 @@ int main() {
 	if (!options["Window Size"].is_array()) return 0;
 	if (options["On Load Nut"].is_null()) return 0;
 
+	// REGISTER SERVICES
 #ifdef WINDOWS
 	SQ::Services::RegisterInput(new SQ::InputWindows());
 #endif // WINDOWS
 #ifdef DX11
 	SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
+
+	SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
+	
+	SQ::Services::RegisterTree(new SQ::Tree());
+
+	// Init Graphics
 	SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1]);
 
-	// Setup resource manager
-	SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
-	SQ::Services::GetResourceManager();
+	// Init Tree 	
+	SQ::Services::GetTree()->Init(options["On Load Nut"]);
 
-	// Setup tree 
-	SQ::Services::RegisterTree(new SQ::Tree());
-	SQ::Services::GetTree()->Init();
-
-	// Unlock mouse temp
+	// Unlock mouse TEMP
 	SQ::Services::GetInput()->UnlockMouse();
 
 	// Begin game loop
