@@ -235,7 +235,7 @@ namespace SQ {
 
     void GraphicsDX11::UpdateProjectionMatrix(CameraNut* camera)
     {
-        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(camera->GetFov(), 16.0f / 9.0f, 0.001, 100);
+        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(camera->GetFov()), 16.0f / 9.0f, 0.001, 100);
 
         deviceContext->UpdateSubresource(projectionBuffer.Get(), 0, NULL, &projectionMatrix, 0, 0);
     }
