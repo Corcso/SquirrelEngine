@@ -13,12 +13,13 @@ namespace SQ {
 		/// <para>If PRESSED is true, If DOWN should also be true.</para>
 		/// <para>If RELEASED is true, If UP should also be true.</para>
 		/// </summary>
-		enum class InputState {
+		enum class InputState : unsigned char {
 			INVALID = 0x0,
 			UP = 0x1,
 			RELEASED = 0x2,
 			DOWN = 0x4,
-			PRESSED = 0x8
+			PRESSED = 0x8,
+			SAME_FRAME_PRESS_RELEASE = 0xA // 0x2 | 0x8 (Pressed and released)
 		};
 
 		/// <summary>

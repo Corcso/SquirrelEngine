@@ -291,33 +291,36 @@ Input::Key::INVALID_KEY
         // Process key up and down events
         case WM_KEYUP:
         {
-            Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::UP);
-            
+            if(Services::GetInput()->IsKeyPressed(virtualKeyCodeLookupTable[wParam])) Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::SAME_FRAME_PRESS_RELEASE);
+            else Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::RELEASED);
         }
         break;
         case WM_KEYDOWN:
         {
-            Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::DOWN);
+            // Windows sends repeat messages (Microsoft, 2019) so use the lParam to check the last state and break early if it was down
+            if (lParam & 0x40000000) break;
+            if (Services::GetInput()->IsKeyReleased(virtualKeyCodeLookupTable[wParam])) Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::SAME_FRAME_PRESS_RELEASE);
+            else Services::GetInput()->SetKeyState(virtualKeyCodeLookupTable[wParam], InputState::PRESSED);
         }
         break;
         // Process mouse button events
         case WM_LBUTTONDOWN:
         {
-            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::DOWN);
+            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::PRESSED);
         }
         break;
         case WM_LBUTTONUP:
         {
-            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::UP);
+            Services::GetInput()->SetMouseState(Input::MouseButton::LEFT, InputState::RELEASED);
         }
         case WM_RBUTTONDOWN:
         {
-            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::DOWN);
+            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::PRESSED);
         }
         break;
         case WM_RBUTTONUP:
         {
-            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::UP);
+            Services::GetInput()->SetMouseState(Input::MouseButton::RIGHT, InputState::RELEASED);
         }
         break;
 

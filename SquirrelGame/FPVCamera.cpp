@@ -18,8 +18,8 @@ Nut* FPVCamera::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 
 void FPVCamera::Update()
 {
-	if (SQ::Services::GetInput()->IsKeyDown('q')) SQ::Services::GetInput()->LockMouse();
-	else if (SQ::Services::GetInput()->IsKeyDown('e')) SQ::Services::GetInput()->UnlockMouse();
+	if (SQ::Services::GetInput()->IsKeyPressed('q')) SQ::Services::GetInput()->LockMouse();
+	else if (SQ::Services::GetInput()->IsKeyReleased('e')) SQ::Services::GetInput()->UnlockMouse();
 
 	if (Services::GetInput()->IsKeyDown('A')) SetPosition(GetPosition() - GetRight() * 0.0005f);
 	if (Services::GetInput()->IsKeyDown('D')) SetPosition(GetPosition() + GetRight() * 0.0005f);
