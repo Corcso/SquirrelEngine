@@ -17,43 +17,49 @@
 /// </summary>
 /// <returns></returns>
 int main() {
-	// Load the options file
-	std::ifstream file("options.json", std::istream::in);
-	if (!file.is_open()) return 0;
-	nlohmann::json options = nlohmann::json::parse(file);
-	file.close();
+	// Entire program wrapped in a try catch 
+	try {
+		// Load the options file
+		std::ifstream file("options.json", std::istream::in);
+		if (!file.is_open()) throw 11;
+		nlohmann::json options = nlohmann::json::parse(file);
+		file.close();
 
-	// Check all required options parameters are set
-	if (options["Window Name"].is_null()) return 0;
-	if (options["Window Size"].is_null()) return 0;
-	if (!options["Window Size"].is_array()) return 0;
-	if (options["On Load Nut"].is_null()) return 0;
+		// Check all required options parameters are set
+		if (options["Window Name"].is_null()) return 12;
+		if (options["Window Size"].is_null()) return 13;
+		if (!options["Window Size"].is_array()) return 14;
+		if (options["On Load Nut"].is_null()) return 15;
 
-	// REGISTER SERVICES
+		// REGISTER SERVICES
 #ifdef WINDOWS
-	SQ::Services::RegisterInput(new SQ::InputWindows());
+		SQ::Services::RegisterInput(new SQ::InputWindows());
 #endif // WINDOWS
 #ifdef DX11
-	SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
+		SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
 
-	SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
-	
-	SQ::Services::RegisterTree(new SQ::Tree());
+		SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
 
-	// Init Graphics
-	SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1]);
+		SQ::Services::RegisterTree(new SQ::Tree());
 
-	// Init Tree 	
-	SQ::Services::GetTree()->Init(options["On Load Nut"]);
+		// Init Graphics
+		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1]);
 
-	// Unlock mouse TEMP
-	SQ::Services::GetInput()->UnlockMouse();
+		// Init Tree 	
+		SQ::Services::GetTree()->Init(options["On Load Nut"]);
 
-	// Begin game loop
-	SQ::Services::GetTree()->RunLoop();
+		// Unlock mouse TEMP
+		SQ::Services::GetInput()->UnlockMouse();
 
-	return 0;
+		// Begin game loop
+		SQ::Services::GetTree()->RunLoop();
+
+		return 0;
+	}
+	catch (int error) {
+		return error;
+	}
 }
 
 #ifdef WINDOWS

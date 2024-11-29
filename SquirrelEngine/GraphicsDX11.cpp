@@ -23,7 +23,7 @@ namespace SQ {
         // Check for DirectX Math library support.
         if (!DirectX::XMVerifyCPUSupport())
         {
-            return 1;
+            throw 1;
         }
 
         // Begin Windows Window Setup
@@ -40,7 +40,7 @@ namespace SQ {
         windowClass.lpszClassName = WINDOW_CLASS_NAME;
 
         if (!RegisterClassEx(&windowClass)) {
-            return 2;
+            throw 2;
         }
 
         // Setup window
@@ -58,7 +58,7 @@ namespace SQ {
             nullptr, nullptr, GetModuleHandle(NULL), nullptr);
 
         if (!window) {
-            return 3;
+            throw 3;
         }
 
         ShowWindow(window, SW_NORMAL);
@@ -129,7 +129,7 @@ namespace SQ {
         // Fail and return error code if any creation fails
         if (FAILED(hr))
         {
-            return 4;
+            throw 4;
         }
 
         // Get the back buffer (from swap chain) and use that to create the render target view (which will render to that)
@@ -137,13 +137,13 @@ namespace SQ {
         hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
         if (FAILED(hr))
         {
-            return 5;
+            throw 5;
         }
 
         hr = device->CreateRenderTargetView(backBuffer, nullptr, renderTargetView.GetAddressOf());
         if (FAILED(hr))
         {
-            return 6;
+            throw 6;
         }
 
         // Create the depth buffer for use with the depth/stencil view.
@@ -164,14 +164,14 @@ namespace SQ {
         hr = device->CreateTexture2D(&depthStencilBufferDescription, nullptr, depthStencilBuffer.GetAddressOf());
         if (FAILED(hr))
         {
-            return 7;
+            throw 7;
         }
 
         // Create depth stencil view
         hr = device->CreateDepthStencilView(depthStencilBuffer.Get(), nullptr, depthStencilView.GetAddressOf());
         if (FAILED(hr))
         {
-            return 8;
+            throw 8;
         }
 
         // Setup depth/stencil state, this is the rules for the depth/stencil tests.
@@ -186,7 +186,7 @@ namespace SQ {
         hr = device->CreateDepthStencilState(&depthStencilStateDescription, &depthStencilState);
         if (FAILED(hr))
         {
-            return 9;
+            throw 9;
         }
 
         // Setup rasterizer state, this is the rules for the rasterizer
@@ -208,7 +208,7 @@ namespace SQ {
         hr = device->CreateRasterizerState(&rasterizerDescription, &rasterizerState);
         if (FAILED(hr))
         {
-            return 10;
+            throw 10;
         }
 
         // Set viewport information

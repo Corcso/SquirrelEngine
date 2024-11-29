@@ -42,6 +42,7 @@ namespace SQ {
 		if (deserializeInto == nullptr) deserializeInto = new Nut();
 
 		if (!serializedData["name"].is_null()) deserializeInto->name = serializedData["name"];
+		else throw 17;
 
 		return deserializeInto;
 	}

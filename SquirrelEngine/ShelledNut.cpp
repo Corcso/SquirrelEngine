@@ -28,6 +28,7 @@ namespace SQ {
 	std::unique_ptr<Nut> ShelledNut::Instantiate(nlohmann::json data)
 	{
 		// Get Type
+		if (data["type"].is_null()) throw 16;
 		std::string nutType = data["type"];
 
 		// Create and deserialise this nut, we currently own this. 
