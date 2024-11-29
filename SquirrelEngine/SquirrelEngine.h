@@ -8,7 +8,7 @@
 #include "PCH.h"
 #include "SQMath.h"
 #include "Services.h"
-#include "Utility.h"
+#include "SQUtility.h"
 
 // Include base nut types
 #include "Nut.h"

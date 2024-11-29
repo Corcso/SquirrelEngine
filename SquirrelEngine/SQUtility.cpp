@@ -1,5 +1,5 @@
 #include "PCH.h"
-#include "Utility.h"
+#include "SQUtility.h"
 
 namespace SQ {
 	std::vector<std::string> SplitString(std::string string, char delimiter) {
@@ -23,6 +23,20 @@ namespace SQ {
 		for (int s = 0; s < stringsToJoin.size(); ++s) {
 			toReturn += stringsToJoin[s];
 			if (s < stringsToJoin.size() - 1)toReturn += delimiter;
+		}
+
+		return toReturn;
+	}
+
+	std::wstring NStringToWString(const std::string& stringIn)
+	{
+
+		std::wstring toReturn = L"";
+
+		// Loop over string
+		for (int c = 0; c < stringIn.length(); ++c) {
+			wchar_t wc = stringIn[c];
+			toReturn += wc;
 		}
 
 		return toReturn;

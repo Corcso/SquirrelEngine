@@ -51,7 +51,7 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
+    <ClInclude Include="SQUtility.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
@@ -122,7 +122,7 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Utility.cpp">
+    <ClCompile Include="SQUtility.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">

@@ -17,5 +17,13 @@ namespace SQ {
 	/// <param name="delimiter">Delimiter to put between them</param>
 	/// <returns>The joined string</returns>
 	std::string JoinString(const std::vector<std::string>& stringsToJoin, char delimiter);
+
+
+	/// <summary>
+	/// Narrow to Wide string conversion
+	/// </summary>
+	/// <param name="stringIn">Narrow string</param>
+	/// <returns>Wide string of input</returns>
+	std::wstring NStringToWString(const std::string& stringIn);
 }
 

@@ -15,8 +15,10 @@
 #include "Material.h"
 #include "MeshDX11.h"
 
+#include "SQUtility.h"
+
 namespace SQ {
-    int GraphicsDX11::Init(int width, int height)
+    int GraphicsDX11::Init(std::string title, int width, int height)
     {
         // Check for DirectX Math library support.
         if (!DirectX::XMVerifyCPUSupport())
@@ -49,7 +51,7 @@ namespace SQ {
         RECT windowRect = clientRect;
         AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-        window = CreateWindowW(WINDOW_CLASS_NAME, L"Game",
+        window = CreateWindowW(WINDOW_CLASS_NAME, NStringToWString(title).c_str(),
             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
             windowRect.right - windowRect.left,
             windowRect.bottom - windowRect.top,
@@ -235,7 +237,7 @@ namespace SQ {
 
     void GraphicsDX11::UpdateProjectionMatrix(CameraNut* camera)
     {
-        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(camera->GetFov()), 16.0f / 9.0f, 0.001, 100);
+        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(camera->GetFov()), GetRenderWindowSize().Width / GetRenderWindowSize().Height, 0.001, 100);
 
         deviceContext->UpdateSubresource(projectionBuffer.Get(), 0, NULL, &projectionMatrix, 0, 0);
     }

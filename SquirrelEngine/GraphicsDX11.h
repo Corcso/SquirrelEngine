@@ -10,7 +10,7 @@ namespace SQ {
         public Graphics
     {
     public:
-        virtual int Init(int width, int height) final;
+        virtual int Init(std::string title, int width, int height) final;
 
 
         virtual void BeginRender() final;

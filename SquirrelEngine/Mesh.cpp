@@ -2,7 +2,7 @@
 #include "Mesh.h"
 
 #include <fstream>
-#include "Utility.h"
+#include "SQUtility.h"
 
 #ifdef DX11
 #include "MeshDX11.h"
