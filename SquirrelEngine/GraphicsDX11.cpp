@@ -12,7 +12,7 @@
 #include "DX11BasePixel_CompiledShader.h"
 
 // Include required resources
-#include "Material.h"
+#include "MaterialDX11.h"
 #include "MeshDX11.h"
 
 #include "SQUtility.h"
@@ -276,6 +276,25 @@ namespace SQ {
         swapChain->Present(0, 0);
     }
 
+    void GraphicsDX11::RegisterLightForFrame(LightNut* light)
+    {
+        lightsData.lights[lightsData.lightCount].lightPosition = light->GetPosition(); // TODO SET TO GLOBAL POSITION
+        lightsData.lights[lightsData.lightCount].diffuseColor = light->GetDiffuseColor();
+        lightsData.lights[lightsData.lightCount].ambientColor = light->GetAmbientColor();
+        lightsData.lights[lightsData.lightCount].intensity = light->GetIntensity();
+        lightsData.lights[lightsData.lightCount].ambientIntensity = light->GetAmbientIntensity();
+
+        lightsData.lightCount++;
+
+        deviceContext->UpdateSubresource(lightBuffer.Get(), 0, nullptr, &lightsData, 0, 0);
+    }
+
+    void GraphicsDX11::ClearFrameLights()
+    {
+        lightsData.lightCount = 0;
+        deviceContext->UpdateSubresource(lightBuffer.Get(), 0, nullptr, &lightsData, 0, 0);
+    }
+
     Vec2 GraphicsDX11::GetRenderWindowSize()
     {
         return V2(viewport.Width, viewport.Height);
@@ -339,12 +358,17 @@ namespace SQ {
         deviceContext->VSSetConstantBuffers(2, 1, worldBuffer.GetAddressOf());
 
         // Setup material buffer (The struct exists in mesh)
-        Material::MaterialDX11Data emptyMaterialData;
-        ZeroMemory(&emptyMaterialData, sizeof(Material::MaterialDX11Data));
-        materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(Material::MaterialDX11Data), D3D11_BIND_CONSTANT_BUFFER);
+        MaterialDX11::MaterialDX11Data emptyMaterialData;
+        ZeroMemory(&emptyMaterialData, sizeof(MaterialDX11::MaterialDX11Data));
+        materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(MaterialDX11::MaterialDX11Data), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->PSSetConstantBuffers(0, 1, materialBuffer.GetAddressOf());
 
         // Light buffer setup later
+        LightsBufferData emptyLightData;
+        ZeroMemory(&emptyLightData, sizeof(LightsBufferData));
+        lightBuffer = CreateBuffer(&emptyLightData, sizeof(LightsBufferData), D3D11_BIND_CONSTANT_BUFFER);
+        deviceContext->PSSetConstantBuffers(1, 1, lightBuffer.GetAddressOf());
+
 
         return;
     }

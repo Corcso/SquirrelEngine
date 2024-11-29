@@ -20,6 +20,9 @@ namespace SQ {
         virtual void Render(MeshNut* toRender, Mat4 worldMatrix) final;
         virtual void EndRender() final;
 
+        virtual void RegisterLightForFrame(LightNut* light) final;
+        virtual void ClearFrameLights() final;
+
         virtual Vec2 GetRenderWindowSize() final;
         virtual Vec2 GetWindowLocation() final;
 
@@ -90,6 +93,28 @@ namespace SQ {
         /// Initialises base shaders.
         /// </summary>
         void initialiseShaders();
+
+        // Lighting
+        // p_X is padding for GPU
+        struct LightBufferData {
+            DirectX::XMFLOAT3 lightPosition; float p_0;
+            DirectX::XMFLOAT3 diffuseColor; float p_1;
+            DirectX::XMFLOAT3 ambientColor; float p_2;
+            float intensity;
+            float ambientIntensity;
+            float p_3;
+            float p_4;
+        };
+
+        struct LightsBufferData {
+            LightBufferData lights[8];
+            unsigned int lightCount;
+
+            float p_0;
+            float p_1;
+        };
+
+        LightsBufferData lightsData;
     };
 }
 #endif
