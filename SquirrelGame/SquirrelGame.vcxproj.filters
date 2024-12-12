@@ -21,9 +21,15 @@
     <ClCompile Include="SerializationTypeDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Spinner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPVCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spinner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

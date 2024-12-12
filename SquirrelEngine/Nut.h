@@ -98,9 +98,19 @@ namespace SQ {
 		static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
 		virtual ~Nut() {}
+	protected:
+		/// <summary>
+		/// Signal for when new children are added. 
+		/// Calls the parent and lets them know. 
+		/// Protected so child classes can call it when overriding it. 
+		/// </summary>
+		/// <param name="myChild">If the new child is this nodes direct child.</param>
+		virtual void NewChildAdded(bool myChild);
 	private:
 		Nut* parent;
 		std::vector<std::unique_ptr<Nut>> children;
+
+		
 
 		bool isQueuedToDestroy;
 	};

@@ -47,8 +47,7 @@ namespace SQ {
 		/// <para>Recursive function. </para>
 		/// </summary>
 		/// <param name="nut">Nut to call on</param>
-		/// <param name="worldMatrixSoFar">The world matrix so far.</param>
-		void Render(Nut* nut, Mat4 worldMatrixSoFar);
+		void Render(Nut* nut);
 
 		/// <summary>
 		/// The root nut

@@ -28,7 +28,7 @@ namespace SQ {
     }
     Mat4 SQ::CameraNut::GetViewMatrix()
     {
-        return LookAt_LH(GetPosition(), GetPosition() + GetForward(), GetUp());
+        return LookAt_LH(GetGlobalPosition(), GetGlobalPosition() + GetForward(), GetUp());
     }
 
     void CameraNut::SetFov(float FOV)

@@ -7,6 +7,9 @@ namespace SQ {
         eulerRotation = V3(0, 0, 0);
         scale = V3(1, 1, 1);
         rotation = QFromAxisAngle_LH(V3(1, 0, 0), 0);
+
+        SRTWorldMatrixGlobal = SRTWorldMatrixLocal = SRTWorldMatrixParent = Scale(V3(1, 1, 1));
+
         RecalculateWorldMatrices();
         RecalculateLocalDirections();
         
@@ -33,7 +36,8 @@ namespace SQ {
     void WorldNut::SetPosition(Vec3 position)
     {
         this->position = position;
-        RecalculateWorldMatrices();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::SetEulerAngles(Vec3 eulerRotation)
@@ -42,14 +46,16 @@ namespace SQ {
 
         rotation = MulQ(MulQ(QFromAxisAngle_LH(V3(1, 0, 0), eulerRotation.X), QFromAxisAngle_LH(V3(0, 1, 0), eulerRotation.Y)), QFromAxisAngle_LH(V3(0, 0, 1), eulerRotation.Z));
 
-        RecalculateWorldMatrices();
-        RecalculateLocalDirections();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::SetScale(Vec3 scale)
     {
         this->scale = scale;
-        RecalculateWorldMatrices();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     Vec3 WorldNut::GetPosition()
@@ -61,6 +67,11 @@ namespace SQ {
     {
         return eulerRotation;
     }*/
+
+    Vec3 WorldNut::GetGlobalPosition()
+    {
+        return (SRTWorldMatrixGlobal * V4(0, 0, 0, 1)).XYZ;
+    }
 
     Vec3 WorldNut::GetScale()
     {
@@ -82,51 +93,125 @@ namespace SQ {
         return up;
     }
 
+    Vec3 WorldNut::GetLocalForward()
+    {
+        return localForward;
+    }
+
+    Vec3 WorldNut::GetLocalRight()
+    {
+        return localRight;
+    }
+
+    Vec3 WorldNut::GetLocalUp()
+    {
+        return localUp;
+    }
+
     void WorldNut::RotateGlobalX(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(1, 0, 0), rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateGlobalY(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(0, 1, 0), rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateGlobalZ(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(0, 0, 1), rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalX(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(right, rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalY(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(up, rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalZ(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(forward, rad), rotation);
-        RecalculateLocalDirections();
-        RecalculateWorldMatrices();
+        //RecalculateLocalDirections();
+        //RecalculateWorldMatrices();
+        UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
-    Mat4 SQ::WorldNut::GetSRTWorldMatrix()
+    void WorldNut::RotateSuperLocalX(float rad)
     {
-        return SRTWorldMatrix;
+        rotation = MulQ(QFromAxisAngle_LH(localRight, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::RotateSuperLocalY(float rad)
+    {
+        rotation = MulQ(QFromAxisAngle_LH(localUp, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::RotateSuperLocalZ(float rad)
+    {
+        rotation = MulQ(QFromAxisAngle_LH(localForward, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    /*void WorldNut::RotateRelativeGlobalX(float rad)
+    {
+        rotation = MulQ(QFromAxisAngle_LH(relativeGlobalRight, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::RotateRelativeGlobalY(float rad)
+    {
+        rotation = MulQ(QFromAxisAngle_LH(relativeGlobalUp, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::RotateRelativeGlobalZ(float rad)
+    {
+        rotation = MulQ(QFromAxisAngle_LH(relativeGlobalRight, rad), rotation);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }*/
+
+    Mat4 SQ::WorldNut::GetLocalSRTWorldMatrix()
+    {
+        return SRTWorldMatrixLocal;
+    }
+
+    Mat4 WorldNut::GetGlobalSRTWorldMatrix()
+    {
+        return SRTWorldMatrixGlobal;
+    }
+
+    Mat4 WorldNut::GetParentGlobalSRTWorldMatrix()
+    {
+        return SRTWorldMatrixParent;
+    }
+
+    void WorldNut::NewChildAdded(bool myChild)
+    {
+        UpdateTransforms(this, SRTWorldMatrixParent);
+
+        Nut::NewChildAdded(myChild);
     }
 
     void WorldNut::RecalculateLocalDirections()
@@ -134,9 +219,17 @@ namespace SQ {
         //Mat4 rotationMatrix = Rotate_LH(eulerRotation.X, V3(1, 0, 0)) * Rotate_LH(eulerRotation.Y, V3(0, 1, 0)) * Rotate_LH(eulerRotation.Z, V3(0, 0, 1));
         Mat4 rotationMatrix = QToM4(rotation);
         
-        forward = (rotationMatrix * V4(0, 0, 1, 1)).XYZ;
-        right = (rotationMatrix * V4(1, 0, 0, 1)).XYZ;
-        up = (rotationMatrix * V4(0, 1, 0, 1)).XYZ;
+        forward = NormV3((SRTWorldMatrixGlobal * V4(0, 0, 1, 0)).XYZ);
+        right = NormV3((SRTWorldMatrixGlobal * V4(1, 0, 0, 0)).XYZ);
+        up = NormV3((SRTWorldMatrixGlobal * V4(0, 1, 0, 0)).XYZ);
+
+        localForward = (rotationMatrix * V4(0, 0, 1, 1)).XYZ;
+        localRight = (rotationMatrix * V4(1, 0, 0, 1)).XYZ;
+        localUp = (rotationMatrix * V4(0, 1, 0, 1)).XYZ;
+
+        /*relativeGlobalForward = NormV3((SRTWorldMatrixParent * V4(0, 0, 1, 0)).XYZ);
+        relativeGlobalRight = NormV3((SRTWorldMatrixParent * V4(1, 0, 0, 0)).XYZ);
+        relativeGlobalUp = NormV3((SRTWorldMatrixParent * V4(0, 1, 0, 0)).XYZ);*/
     }
 
     void WorldNut::RecalculateWorldMatrices()
@@ -146,6 +239,28 @@ namespace SQ {
         //Mat4 rotationMatrix = Rotate_LH(eulerRotation.X, V3(1, 0, 0)) * Rotate_LH(eulerRotation.Y, V3(0, 1, 0)) * Rotate_LH(eulerRotation.Z, V3(0, 0, 1));
         Mat4 rotationMatrix = QToM4(rotation);
 
-        SRTWorldMatrix = translateMatrix * rotationMatrix * scaleMatrix;
+        SRTWorldMatrixLocal = translateMatrix * rotationMatrix * scaleMatrix;
+        SRTWorldMatrixGlobal = SRTWorldMatrixParent * SRTWorldMatrixLocal;
+    }
+    void WorldNut::UpdateTransforms(Nut* nut, Mat4 WorldMatrixSoFar)
+    {
+        // Check if this nut is a world nut
+        WorldNut* worldCast = dynamic_cast<WorldNut*>(nut);
+        
+        // If so, update the parent matrix
+        // Recalculate world matrices and local directions
+        // And set the parent matrix to be for the child nodes to the global world matrix of this node. 
+        if (worldCast != nullptr) {
+            worldCast->SRTWorldMatrixParent = WorldMatrixSoFar;
+            worldCast->RecalculateWorldMatrices();
+            worldCast->RecalculateLocalDirections();
+            WorldMatrixSoFar = worldCast->GetGlobalSRTWorldMatrix();
+        }
+
+        // Call this for all children too
+        unsigned int childCount = nut->GetChildCount();
+        for (unsigned int c = 0; c < childCount; ++c) {
+            UpdateTransforms(nut->GetNthChild(c), WorldMatrixSoFar);
+        }
     }
 }

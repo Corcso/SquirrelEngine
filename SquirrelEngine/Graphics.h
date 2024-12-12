@@ -15,7 +15,7 @@ namespace SQ {
 
 		virtual void SetupCameraForFrame(CameraNut* camera) = 0;
 
-		virtual void Render(MeshNut* toRender, Mat4 worldMatrix) = 0;
+		virtual void Render(MeshNut* toRender) = 0;
 
 		virtual void RegisterLightForFrame(LightNut* light) = 0;
 		virtual void ClearFrameLights() = 0;

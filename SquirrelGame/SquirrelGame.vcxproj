@@ -21,9 +21,11 @@
   <ItemGroup>
     <ClCompile Include="FPVCamera.cpp" />
     <ClCompile Include="SerializationTypeDictionary.cpp" />
+    <ClCompile Include="Spinner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPVCamera.h" />
+    <ClInclude Include="Spinner.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

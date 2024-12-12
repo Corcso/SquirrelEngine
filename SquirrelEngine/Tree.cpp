@@ -39,7 +39,7 @@ namespace SQ {
 			if (usingTempCamera) delete activeCamera;
 
 			RegisterLights(&rootNut);
-			Render(&rootNut, Scale(V3(1, 1, 1)));
+			Render(&rootNut);
 
 			Services::GetGraphics()->EndRender();
 			Services::GetGraphics()->ClearFrameLights();
@@ -97,19 +97,17 @@ namespace SQ {
 		}
 	}
 
-	void Tree::Render(Nut* nut, Mat4 worldMatrixSoFar)
+	void Tree::Render(Nut* nut)
 	{
 		MeshNut* meshCast = dynamic_cast<MeshNut*>(nut);
-		Mat4 worldMatrix = worldMatrixSoFar;
 
 		if (meshCast != nullptr) {
-			worldMatrix = worldMatrix * meshCast->GetSRTWorldMatrix();
-			Services::GetGraphics()->Render(meshCast, worldMatrix);
+			Services::GetGraphics()->Render(meshCast);
 		}
 
 		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
-			Render(nut->GetNthChild(c), worldMatrix);
+			Render(nut->GetNthChild(c));
 		}
 	}
 }

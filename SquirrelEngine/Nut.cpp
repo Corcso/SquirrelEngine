@@ -20,6 +20,7 @@ namespace SQ {
 	void Nut::AddChild(std::unique_ptr<Nut> newChild)
 	{
 		children.push_back(std::move(newChild));
+		NewChildAdded(true);
 	}
 
 	unsigned int Nut::GetChildCount()
@@ -45,5 +46,9 @@ namespace SQ {
 		else throw 17;
 
 		return deserializeInto;
+	}
+	void Nut::NewChildAdded(bool myChild)
+	{
+		if(parent != nullptr) parent->NewChildAdded(false);
 	}
 }

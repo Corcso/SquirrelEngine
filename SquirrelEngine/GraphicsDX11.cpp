@@ -246,18 +246,18 @@ namespace SQ {
     {
         CameraBufferData thisFramesData{
             camera->GetViewMatrix(),
-            camera->GetPosition()
+            camera->GetGlobalPosition()
         };
 
         deviceContext->UpdateSubresource(cameraBuffer.Get(), 0, NULL, &thisFramesData, 0, 0);
     }
 
-    void GraphicsDX11::Render(MeshNut* toRender, Mat4 worldMatrix)
+    void GraphicsDX11::Render(MeshNut* toRender)
     {
 
         WorldBufferData thisNutsWorldBufferData{
-            worldMatrix,
-            worldMatrix
+            toRender->GetGlobalSRTWorldMatrix(),
+            toRender->GetGlobalSRTWorldMatrix()
         };
 
         deviceContext->UpdateSubresource(worldBuffer.Get(), 0, NULL, &thisNutsWorldBufferData, 0, 0);

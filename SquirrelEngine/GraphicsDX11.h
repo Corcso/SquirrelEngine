@@ -17,7 +17,7 @@ namespace SQ {
         virtual void UpdateProjectionMatrix(CameraNut* camera) final;
 
         virtual void SetupCameraForFrame(CameraNut* camera) final;
-        virtual void Render(MeshNut* toRender, Mat4 worldMatrix) final;
+        virtual void Render(MeshNut* toRender) final;
         virtual void EndRender() final;
 
         virtual void RegisterLightForFrame(LightNut* light) final;
