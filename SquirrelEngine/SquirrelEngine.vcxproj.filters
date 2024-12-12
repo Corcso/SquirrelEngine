@@ -175,10 +175,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="DX11BaseVertex.hlsl">
+    <FxCompile Include="DX11BasePixel.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="DX11BasePixel.hlsl">
+    <FxCompile Include="DX11BaseVertex.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

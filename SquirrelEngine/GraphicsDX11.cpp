@@ -199,7 +199,7 @@ namespace SQ {
         rasterizerDescription.DepthBiasClamp = 0.0f;
         rasterizerDescription.DepthClipEnable = TRUE;
         rasterizerDescription.FillMode = D3D11_FILL_SOLID;
-        rasterizerDescription.FrontCounterClockwise = TRUE;
+        rasterizerDescription.FrontCounterClockwise = FALSE; // TODO, when model loading library imported, change this to TRUE
         rasterizerDescription.MultisampleEnable = FALSE;
         rasterizerDescription.ScissorEnable = FALSE;
         rasterizerDescription.SlopeScaledDepthBias = 0.0f;
@@ -268,6 +268,13 @@ namespace SQ {
         const UINT vertexOffset = 0;
         deviceContext->IASetVertexBuffers(0, 1, meshToRender->GetVertexBuffer().GetAddressOf(), &vertexStride, &vertexOffset);
         deviceContext->IASetIndexBuffer(meshToRender->GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+
+        // Grab material data
+        std::shared_ptr<MaterialDX11> materialOnMesh = std::dynamic_pointer_cast<MaterialDX11>(toRender->GetMaterial());
+        if (materialOnMesh.get() != nullptr) {
+            deviceContext->UpdateSubresource(materialBuffer.Get(), 0, NULL, materialOnMesh->GetBufferData(), 0, 0);
+        }
+
         deviceContext->DrawIndexed(meshToRender->GetIndexCount(), 0, 0);
     }
 
@@ -350,6 +357,7 @@ namespace SQ {
         ZeroMemory(&emptyCameraBuffer, sizeof(CameraBufferData));
         cameraBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(CameraBufferData), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->VSSetConstantBuffers(1, 1, cameraBuffer.GetAddressOf());
+        deviceContext->PSSetConstantBuffers(0, 1, cameraBuffer.GetAddressOf());
 
         // Set up world buffer
         WorldBufferData emptyWorldBuffer;
@@ -357,17 +365,17 @@ namespace SQ {
         worldBuffer = CreateBuffer(&emptyCameraBuffer, sizeof(WorldBufferData), D3D11_BIND_CONSTANT_BUFFER);
         deviceContext->VSSetConstantBuffers(2, 1, worldBuffer.GetAddressOf());
 
-        // Setup material buffer (The struct exists in mesh)
+        // Setup material buffer (The struct exists in MaterialDX11)
         MaterialDX11::MaterialDX11Data emptyMaterialData;
         ZeroMemory(&emptyMaterialData, sizeof(MaterialDX11::MaterialDX11Data));
         materialBuffer = CreateBuffer(&emptyMaterialData, sizeof(MaterialDX11::MaterialDX11Data), D3D11_BIND_CONSTANT_BUFFER);
-        deviceContext->PSSetConstantBuffers(0, 1, materialBuffer.GetAddressOf());
+        deviceContext->PSSetConstantBuffers(1, 1, materialBuffer.GetAddressOf());
 
         // Light buffer setup later
         LightsBufferData emptyLightData;
         ZeroMemory(&emptyLightData, sizeof(LightsBufferData));
         lightBuffer = CreateBuffer(&emptyLightData, sizeof(LightsBufferData), D3D11_BIND_CONSTANT_BUFFER);
-        deviceContext->PSSetConstantBuffers(1, 1, lightBuffer.GetAddressOf());
+        deviceContext->PSSetConstantBuffers(2, 1, lightBuffer.GetAddressOf());
 
 
         return;

@@ -146,6 +146,6 @@ namespace SQ {
         //Mat4 rotationMatrix = Rotate_LH(eulerRotation.X, V3(1, 0, 0)) * Rotate_LH(eulerRotation.Y, V3(0, 1, 0)) * Rotate_LH(eulerRotation.Z, V3(0, 0, 1));
         Mat4 rotationMatrix = QToM4(rotation);
 
-        SRTWorldMatrix = scaleMatrix * rotationMatrix * translateMatrix;
+        SRTWorldMatrix = translateMatrix * rotationMatrix * scaleMatrix;
     }
 }

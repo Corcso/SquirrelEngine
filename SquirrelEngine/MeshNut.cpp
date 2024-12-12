@@ -13,6 +13,7 @@ namespace SQ {
 
 		// Perform deserialization on our data. 
 		if (!serializedData["mesh"].is_null()) toWorkOn->SetMesh(Services::GetResourceManager()->Retrieve<Mesh>(serializedData["mesh"]));
+		if (!serializedData["material"].is_null()) toWorkOn->SetMaterial(Services::GetResourceManager()->Retrieve<Material>(serializedData["material"]));
 
 		// Return toWorkOn
 		return toWorkOn;
@@ -26,5 +27,13 @@ namespace SQ {
 	std::shared_ptr<Mesh> MeshNut::GetMesh()
 	{
 		return mesh;
+	}
+	void MeshNut::SetMaterial(std::shared_ptr<Material> material)
+	{
+		this->material = material;
+	}
+	std::shared_ptr<Material> MeshNut::GetMaterial()
+	{
+		return material;
 	}
 }

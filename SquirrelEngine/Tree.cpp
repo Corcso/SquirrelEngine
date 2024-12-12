@@ -38,9 +38,11 @@ namespace SQ {
 			Services::GetGraphics()->SetupCameraForFrame(activeCamera);
 			if (usingTempCamera) delete activeCamera;
 
+			RegisterLights(&rootNut);
 			Render(&rootNut, Scale(V3(1, 1, 1)));
 
 			Services::GetGraphics()->EndRender();
+			Services::GetGraphics()->ClearFrameLights();
 
 			SQ::Services::GetInput()->Update();
 		}
@@ -78,6 +80,20 @@ namespace SQ {
 
 		for (unsigned int c = 0; c < childCount; ++c) {
 			Update(nut->GetNthChild(c));
+		}
+	}
+
+	void Tree::RegisterLights(Nut* nut)
+	{
+		LightNut* lightCast = dynamic_cast<LightNut*>(nut);
+
+		if (lightCast != nullptr) {
+			Services::GetGraphics()->RegisterLightForFrame(lightCast);
+		}
+
+		unsigned int childCount = nut->GetChildCount();
+		for (unsigned int c = 0; c < childCount; ++c) {
+			RegisterLights(nut->GetNthChild(c));
 		}
 	}
 

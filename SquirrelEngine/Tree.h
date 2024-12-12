@@ -38,6 +38,9 @@ namespace SQ {
 		/// <param name="nut">Nut to call on</param>
 		void Update(Nut* nut);
 
+
+		void RegisterLights(Nut* nut);
+
 		/// <summary>
 		/// <para>Renders nut provided and all descendants.</para>
 		/// <para>Render calls only happen for descendant classes of MeshNut.</para>

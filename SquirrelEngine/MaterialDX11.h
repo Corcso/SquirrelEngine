@@ -8,6 +8,13 @@ namespace SQ {
         public Material
     {
     public:
+        /// <summary>
+        /// Loads a material and returns a pointer to it. 
+        /// </summary>
+        /// <param name="path">Path of the material .mat file</param>
+        /// <returns>A pointer to the new material</returns>
+        static Material* Load(std::string path);
+
         virtual void SetDiffuseColor(Vec3 diffuseColor) final;
         virtual void SetSpecularColor(Vec3 specularColor) final;
         virtual void SetSpecularity(unsigned int specularity) final;
@@ -20,19 +27,22 @@ namespace SQ {
 
         struct MaterialDX11Data {
             DirectX::XMFLOAT3 diffuseColor;
-            DirectX::XMFLOAT3 specularColor;
 
-            // Padding required to prevent wrapping
+            // Padding required
             uint32_t padding_0;
 
+            DirectX::XMFLOAT3 specularColor;
             unsigned int specularity;
+
             float smoothness;
 
             // Padding requried for 16 byte alignment.
-            uint64_t padding_1;
+            uint32_t padding_1;
+            uint32_t padding_2;
+            uint32_t padding_3;
         };
 
-        MaterialDX11Data GetBufferData();
+        MaterialDX11Data* GetBufferData();
 
     private:
         MaterialDX11Data bufferData;

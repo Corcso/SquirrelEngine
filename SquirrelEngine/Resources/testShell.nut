@@ -5,10 +5,11 @@
 	{
 		"type": "MeshNut",
 		"name": "Handbag",
-		"position": [0, 4, 0],
-		"eulerAngles": [0.4, 0, 0],
+		"position": [0, 0, 0],
+		"eulerAngles": [0, 0, 0.8],
 		"scale": [1, 1, 1],
-		"mesh": "./Resources/handbag.obj",
+		"mesh": "./Resources/cube.obj",
+		"material": "./Resources/test.mat",
 		"children": []
 	},
 	{
@@ -19,6 +20,25 @@
 		"scale": [1, 1, 1],
 		
 		"isActive": true,
+		"children": []
+	},
+	{
+		"type": "LightNut",
+		"name": "WorldLight",
+		"position": [5, 5, 0],
+		"eulerAngles": [0, 0, 0],
+		"scale": [1, 1, 1],
+		"diffuseColor": [1, 1, 1],
+		"children": []
+	},
+	{
+		"type": "MeshNut",
+		"name": "lightShower",
+		"position": [5, 5, 0],
+		"eulerAngles": [0, 0, 0],
+		"scale": [0.2, 0.2, 0.2],
+		"mesh": "./Resources/cube.obj",
+		"material": "./Resources/test.mat",
 		"children": []
 	}
 	]

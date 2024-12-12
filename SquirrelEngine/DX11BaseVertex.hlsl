@@ -29,13 +29,13 @@ struct Output {
 Output main(Input input) {
 	Output output;
 
-    output.position = mul(worldMatrix, float4(input.position, 1));
-    output.position = mul(viewMatrix, output.position);
+    output.worldPosition = mul(worldMatrix, float4(input.position, 1));
+    output.position = mul(viewMatrix, float4(output.worldPosition, 1));
     output.position = mul(projectionMatrix, output.position);
 
 	output.texCoord = input.texCoord;
 
-	output.normal = mul(input.normal, (float3x3)worldMatrix);
+    output.normal = mul((float3x3) worldMatrix, input.normal);
 	output.normal = normalize(output.normal);
 
 	return output;

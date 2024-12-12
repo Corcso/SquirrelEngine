@@ -26,10 +26,10 @@ namespace SQ {
         virtual float GetSmoothness() = 0;
 
     protected:
-        Vec3 diffuseColor;
-        Vec3 specularColor;
-        unsigned int specularity;
-        float smoothness;
+        //Vec3 diffuseColor;
+        //Vec3 specularColor;
+        //unsigned int specularity;
+        //float smoothness;
     };
     
 }

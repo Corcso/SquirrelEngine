@@ -14,6 +14,7 @@ std::unordered_map<std::string, std::function<SQ::Nut*(SQ::Nut*, nlohmann::json)
 	{"WorldNut", SQ::WorldNut::Deserialize},
 	{"MeshNut", SQ::MeshNut::Deserialize},
 	{"CameraNut", SQ::CameraNut::Deserialize},
+	{"LightNut", SQ::LightNut::Deserialize},
 
 // ====================================
 // PLACE YOUR NUT DESERIALIZE FUNCTIONS HERE!

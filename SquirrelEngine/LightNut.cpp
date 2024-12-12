@@ -11,7 +11,7 @@ namespace SQ {
 		WorldNut::Deserialize(toWorkOn, serializedData);
 
 		// Perform deserialization on our data. 
-		if (!serializedData["diffuseColor"].is_null());
+		if (!serializedData["diffuseColor"].is_null()) toWorkOn->SetDiffuseColor(V3(serializedData["diffuseColor"][0], serializedData["diffuseColor"][1], serializedData["diffuseColor"][2]));
 
 		// Return toWorkOn
 		return toWorkOn;

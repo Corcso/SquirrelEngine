@@ -99,9 +99,10 @@ namespace SQ {
         struct LightBufferData {
             DirectX::XMFLOAT3 lightPosition; float p_0;
             DirectX::XMFLOAT3 diffuseColor; float p_1;
-            DirectX::XMFLOAT3 ambientColor; float p_2;
+            DirectX::XMFLOAT3 ambientColor;
             float intensity;
             float ambientIntensity;
+            float p_2;
             float p_3;
             float p_4;
         };
@@ -112,6 +113,7 @@ namespace SQ {
 
             float p_0;
             float p_1;
+            float p_2;
         };
 
         LightsBufferData lightsData;
