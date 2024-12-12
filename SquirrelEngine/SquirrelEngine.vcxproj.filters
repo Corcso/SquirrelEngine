@@ -33,9 +33,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsDX11.h">
       <Filter>Services</Filter>
     </ClInclude>
@@ -57,9 +54,6 @@
     <ClInclude Include="Mesh.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Services.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Nut.h">
       <Filter>Nuts</Filter>
     </ClInclude>
@@ -75,15 +69,6 @@
     <ClInclude Include="MeshDX11.h">
       <Filter>Resources\API Specific Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InputWindows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SquirrelEngine.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -92,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ShelledNut.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SerializationTypeDictionary.h">
       <Filter>Core</Filter>
@@ -105,14 +87,29 @@
     <ClInclude Include="MaterialDX11.h">
       <Filter>Resources\API Specific Resources</Filter>
     </ClInclude>
+    <ClInclude Include="ShelledNut.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="InputWindows.h">
+      <Filter>Services</Filter>
+    </ClInclude>
     <ClInclude Include="LightNut.h">
-      <Filter>Header Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClInclude>
+    <ClInclude Include="Services.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree.h">
+      <Filter>Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -134,9 +131,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Services.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Nut.cpp">
       <Filter>Nuts</Filter>
     </ClCompile>
@@ -152,26 +146,32 @@
     <ClCompile Include="MeshDX11.cpp">
       <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputWindows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShelledNut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CameraNut.cpp">
       <Filter>Nuts</Filter>
     </ClCompile>
     <ClCompile Include="MaterialDX11.cpp">
       <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
+    <ClCompile Include="ShelledNut.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="PCH.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="InputWindows.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
     <ClCompile Include="LightNut.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="Services.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
