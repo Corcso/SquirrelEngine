@@ -108,6 +108,9 @@
     <ClInclude Include="Tree.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="PoolAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="Tree.cpp">
       <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolAllocator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
