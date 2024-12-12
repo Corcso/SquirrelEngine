@@ -285,6 +285,10 @@ namespace SQ {
 
     void GraphicsDX11::RegisterLightForFrame(LightNut* light)
     {
+        // If light count is at its max (8) do nothing
+        if (lightsData.lightCount >= 8) return;
+
+        // Set all the lights attributes
         lightsData.lights[lightsData.lightCount].lightPosition = light->GetPosition(); // TODO SET TO GLOBAL POSITION
         lightsData.lights[lightsData.lightCount].lightDirection = light->GetForward();
         lightsData.lights[lightsData.lightCount].diffuseColor = light->GetDiffuseColor();
@@ -295,6 +299,7 @@ namespace SQ {
         lightsData.lights[lightsData.lightCount].innerCutoffAngle = light->GetSpotlightInnerAngle();
         lightsData.lights[lightsData.lightCount].outerCutoffAngle = light->GetSpotlightOuterAngle();
 
+        // Increase the light count
         lightsData.lightCount++;
 
         deviceContext->UpdateSubresource(lightBuffer.Get(), 0, nullptr, &lightsData, 0, 0);

@@ -1,10 +1,11 @@
-
+// Camera data, for specular highlights
 cbuffer CameraBuffer : register(b0)
 {
     matrix viewMatrix;
     float3 cameraPosition;
 };
 
+// Material buffer, for material properties
 cbuffer MaterialBuffer : register(b1)
 {
     float3 diffuseColor;
@@ -13,6 +14,7 @@ cbuffer MaterialBuffer : register(b1)
     float smoothness;
 };
 
+// Light struct for light data, needs to match the one in GraphicsDX11.h
 struct Light
 {
     float3 lightPosition;
@@ -26,6 +28,7 @@ struct Light
     float outerCutoffAngle;
 };
 
+// Light buffer data. 
 cbuffer LightsBuffer : register(b2)
 {
     Light lights[8];
@@ -48,7 +51,7 @@ float CalculateDiffusePower(float3 pixelNormal, float3 pixelToLight)
 // Spotlight multiplication factor (De Vries, 2014)
 float4 CalculateSpotlightPower(float3 pixelToLight, float3 spotlightDirection, float innerCutoff, float outerCutoff)
 {
-    float angleThisPixel = acos(max(dot(pixelToLight, spotlightDirection), 0));
+    float angleThisPixel = acos(max(dot(pixelToLight, -spotlightDirection), 0));
     if (angleThisPixel > outerCutoff)
         return 0;
     if (angleThisPixel < innerCutoff)
@@ -56,27 +59,51 @@ float4 CalculateSpotlightPower(float3 pixelToLight, float3 spotlightDirection, f
     return (angleThisPixel - outerCutoff) / (innerCutoff - outerCutoff);
 }
 
+// Blinn-phong specular
+float CalculateSpecularPower(float3 pixelNormal, float3 pixelToLight, float3 pixelPosition)
+{
+    // Get pixel to camera
+    float3 viewVector = normalize(cameraPosition - pixelPosition);
+    // Get halfway vector
+    float3 halfway = normalize(pixelToLight + viewVector);
+    // Dot product and put to the power of specularity. 
+    return pow(max(dot(pixelNormal, halfway), 0), specularity);
+}
+
 float4 main(Input input) : SV_TARGET{
     
+    // Totals for ambient, diffuse and specular light
     float3 ambientTotal = float3(0, 0, 0);
     float3 diffuseTotal = float3(0, 0, 0);
     float3 specularTotal = float3(0, 0, 0);
     
+    // Loop over every light
     for (unsigned int i = 0; i < lightCount; i++)
     {
         float3 lightRayDirection = float3(0, 0, 0);
         float spotlightMultFactor = 1;
+        // The light ray direction is the direction from the pixel to the incoming light ray
+        // For orthographic directional lights this is the light direction
+        // For perspective point and spot lights this is the pixel position to light position. 
         if (lights[i].lightType == 0)
             lightRayDirection = -normalize(lights[i].lightDirection);
         else
             lightRayDirection = normalize(lights[i].lightPosition - input.worldPosition);
         
+        // If we are a spotlight replace the 1 spotlight mult factor with the actual spotlight multiplier
         if (lights[i].lightType == 2)
             spotlightMultFactor = CalculateSpotlightPower(lightRayDirection, lights[i].lightDirection, lights[i].innerCutoffAngle, lights[i].outerCutoffAngle);
         
+        // Add ambient light to total 
         ambientTotal += lights[i].ambientColor * lights[i].ambientIntensity * diffuseColor;
-        diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor * spotlightMultFactor;
+        // Add diffuse light to total
+        diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor * lights[i].diffuseColor * spotlightMultFactor * lights[i].intensity;
+        // Add specular light to total
+        specularTotal += CalculateSpecularPower(input.normal, lightRayDirection, input.worldPosition) * 
+                                specularColor * lights[i].diffuseColor * spotlightMultFactor * smoothness * lights[i].intensity;
+
     }
-    //return float4(input.normal / 2.0f + 0.5f, 1);
-    return float4(ambientTotal + diffuseTotal, 1);
+    
+    // Return ambient + diffuse + specular
+    return float4(ambientTotal + diffuseTotal + specularTotal, 1);
 }
