@@ -12,12 +12,19 @@ namespace SQ {
 
 		// Perform deserialization on our data. 
 		if (!serializedData["diffuseColor"].is_null()) toWorkOn->SetDiffuseColor(V3(serializedData["diffuseColor"][0], serializedData["diffuseColor"][1], serializedData["diffuseColor"][2]));
+		if (!serializedData["ambientColor"].is_null()) toWorkOn->SetAmbientColor(V3(serializedData["ambientColor"][0], serializedData["ambientColor"][1], serializedData["ambientColor"][2]));
+		if (!serializedData["intensity"].is_null()) toWorkOn->SetIntensity(serializedData["intensity"]);
+		if (!serializedData["ambientIntensity"].is_null()) toWorkOn->SetAmbientIntensity(serializedData["ambientIntensity"]);
+		
 		if (!serializedData["lightType"].is_null()) {
 			if(serializedData["lightType"] == "directional") toWorkOn->SetLightType(LightType::DIRECTIONAL);
 			else if(serializedData["lightType"] == "point") toWorkOn->SetLightType(LightType::POINT);
 			else if (serializedData["lightType"] == "spot") toWorkOn->SetLightType(LightType::SPOT);
 			else toWorkOn->SetLightType(LightType::POINT);
 		}
+
+		if (!serializedData["spotlightInnerAngle"].is_null()) toWorkOn->SetSpotlightInnerAngle(serializedData["spotlightInnerAngle"]);
+		if (!serializedData["spotlightOuterAngle"].is_null()) toWorkOn->SetSpotlightOuterAngle(serializedData["spotlightOuterAngle"]);
 
 		// Return toWorkOn
 		return toWorkOn;
