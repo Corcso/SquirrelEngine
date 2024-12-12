@@ -286,10 +286,14 @@ namespace SQ {
     void GraphicsDX11::RegisterLightForFrame(LightNut* light)
     {
         lightsData.lights[lightsData.lightCount].lightPosition = light->GetPosition(); // TODO SET TO GLOBAL POSITION
+        lightsData.lights[lightsData.lightCount].lightDirection = light->GetForward();
         lightsData.lights[lightsData.lightCount].diffuseColor = light->GetDiffuseColor();
         lightsData.lights[lightsData.lightCount].ambientColor = light->GetAmbientColor();
         lightsData.lights[lightsData.lightCount].intensity = light->GetIntensity();
         lightsData.lights[lightsData.lightCount].ambientIntensity = light->GetAmbientIntensity();
+        lightsData.lights[lightsData.lightCount].lightType = (unsigned int)light->GetLightType();
+        lightsData.lights[lightsData.lightCount].innerCutoffAngle = light->GetSpotlightInnerAngle();
+        lightsData.lights[lightsData.lightCount].outerCutoffAngle = light->GetSpotlightOuterAngle();
 
         lightsData.lightCount++;
 

@@ -98,13 +98,18 @@ namespace SQ {
         // p_X is padding for GPU
         struct LightBufferData {
             DirectX::XMFLOAT3 lightPosition; float p_0;
-            DirectX::XMFLOAT3 diffuseColor; float p_1;
+
+            DirectX::XMFLOAT3 lightDirection; float p_1;
+
+            DirectX::XMFLOAT3 diffuseColor; float p_2;
+
             DirectX::XMFLOAT3 ambientColor;
             float intensity;
+
             float ambientIntensity;
-            float p_2;
-            float p_3;
-            float p_4;
+            unsigned int lightType;
+            float innerCutoffAngle;
+            float outerCutoffAngle;
         };
 
         struct LightsBufferData {

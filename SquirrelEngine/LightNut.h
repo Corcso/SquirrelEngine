@@ -18,6 +18,19 @@ namespace SQ {
         float GetIntensity();
         float GetAmbientIntensity();
 
+        enum class LightType
+        {
+            DIRECTIONAL, POINT, SPOT
+        };
+
+        void SetLightType(LightType newType);
+        LightType GetLightType();
+
+        void SetSpotlightInnerAngle(float angle);
+        void SetSpotlightOuterAngle(float angle);
+        float GetSpotlightInnerAngle();
+        float GetSpotlightOuterAngle();
+
         virtual ~LightNut() {}
 
     private:
@@ -26,5 +39,10 @@ namespace SQ {
 
         float intensity;
         float ambientIntensity;
+
+        LightType type;
+
+        float spotInnerAngle; 
+        float spotOuterAngle;
     };
 }

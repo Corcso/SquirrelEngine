@@ -26,9 +26,10 @@
 		"type": "LightNut",
 		"name": "WorldLight",
 		"position": [5, 5, 0],
-		"eulerAngles": [0, 0, 0],
+		"eulerAngles": [-1.6, 0, 0],
 		"scale": [1, 1, 1],
 		"diffuseColor": [1, 1, 1],
+		"lightType": "point",
 		"children": []
 	},
 	{

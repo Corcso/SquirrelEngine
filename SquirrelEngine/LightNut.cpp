@@ -12,6 +12,12 @@ namespace SQ {
 
 		// Perform deserialization on our data. 
 		if (!serializedData["diffuseColor"].is_null()) toWorkOn->SetDiffuseColor(V3(serializedData["diffuseColor"][0], serializedData["diffuseColor"][1], serializedData["diffuseColor"][2]));
+		if (!serializedData["lightType"].is_null()) {
+			if(serializedData["lightType"] == "directional") toWorkOn->SetLightType(LightType::DIRECTIONAL);
+			else if(serializedData["lightType"] == "point") toWorkOn->SetLightType(LightType::POINT);
+			else if (serializedData["lightType"] == "spot") toWorkOn->SetLightType(LightType::SPOT);
+			else toWorkOn->SetLightType(LightType::POINT);
+		}
 
 		// Return toWorkOn
 		return toWorkOn;
@@ -47,5 +53,30 @@ namespace SQ {
 	float LightNut::GetAmbientIntensity()
 	{
 		return ambientIntensity;
+	}
+	void LightNut::SetLightType(LightType newType)
+	{
+		type = newType;
+	}
+
+	LightNut::LightType LightNut::GetLightType()
+	{
+		return type;
+	}
+	void LightNut::SetSpotlightInnerAngle(float angle)
+	{
+		spotInnerAngle = angle;
+	}
+	void LightNut::SetSpotlightOuterAngle(float angle)
+	{
+		spotOuterAngle = angle;
+	}
+	float LightNut::GetSpotlightInnerAngle()
+	{
+		return spotInnerAngle;
+	}
+	float LightNut::GetSpotlightOuterAngle()
+	{
+		return spotOuterAngle;
 	}
 }

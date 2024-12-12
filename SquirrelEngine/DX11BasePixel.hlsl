@@ -16,12 +16,14 @@ cbuffer MaterialBuffer : register(b1)
 struct Light
 {
     float3 lightPosition;
+    float3 lightDirection;
     float3 diffuseColor;
     float3 ambientColor;
     float intensity;
     float ambientIntensity;
-    
-    float3 p_0; // Used so struct aligns with 16 bytes.
+    unsigned int lightType;
+    float innerCutoffAngle;
+    float outerCutoffAngle;
 };
 
 cbuffer LightsBuffer : register(b2)
@@ -38,10 +40,9 @@ struct Input {
 };
 
 // Lambert Diffuse Calculation 
-float CalculateDiffusePower(float3 pixelNormal, float3 lightPosition, float3 pixelPosition)
+float CalculateDiffusePower(float3 pixelNormal, float3 pixelToLight)
 {
-    float3 lightDirection = normalize(lightPosition - pixelPosition);
-    return max(dot(lightDirection, pixelNormal), 0);
+    return max(dot(pixelToLight, pixelNormal), 0);
 }
 
 float4 main(Input input) : SV_TARGET{
@@ -52,8 +53,15 @@ float4 main(Input input) : SV_TARGET{
     
     for (unsigned int i = 0; i < lightCount; i++)
     {
+        float3 lightRayDirection = float3(0, 0, 0);
+        if (lights[i].lightType == 0)
+            lightRayDirection = -normalize(lights[i].lightDirection);
+        else
+            lightRayDirection = normalize(lights[i].lightPosition - input.worldPosition);
+        
+        
         ambientTotal += lights[i].ambientColor * lights[i].ambientIntensity * diffuseColor;
-        diffuseTotal += CalculateDiffusePower(input.normal, lights[i].lightPosition, input.worldPosition) * diffuseColor;
+        diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor;
     }
     //return float4(input.normal / 2.0f + 0.5f, 1);
     return float4(ambientTotal + diffuseTotal, 1);
