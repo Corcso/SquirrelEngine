@@ -3,6 +3,8 @@
 #include "SerializationTypeDictionary.h"
 #include <fstream>
 
+#include <thread>
+
 namespace SQ {
 	ShelledNut* SQ::ShelledNut::Load(std::string path)
 	{
@@ -23,6 +25,26 @@ namespace SQ {
 	std::unique_ptr<Nut> ShelledNut::Instantiate()
 	{
 		return Instantiate(jsonData);
+	}
+
+	std::unique_ptr<ShelledNut::InstantiatePromise> ShelledNut::InstantiateMultithread()
+	{
+		InstantiatePromise* myRecordOfPromise = new InstantiatePromise();
+		myRecordOfPromise->complete = false;
+
+		std::thread worker(ShelledNut::InstantiateMultithreadWorkFunction, jsonData, myRecordOfPromise);
+		worker.detach();
+
+		return std::move(std::unique_ptr<InstantiatePromise>(myRecordOfPromise));
+	}
+
+	void ShelledNut::InstantiateMultithreadWorkFunction(nlohmann::json data, InstantiatePromise* promiseToActOn)
+	{
+
+		promiseToActOn->result = Instantiate(data);
+		promiseToActOn->complete = true;
+
+		return;
 	}
 
 	std::unique_ptr<Nut> ShelledNut::Instantiate(nlohmann::json data)

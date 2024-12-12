@@ -13,9 +13,15 @@ namespace SQ {
 
         std::unique_ptr<Nut> Instantiate();
         
+        struct InstantiatePromise {
+            bool complete;
+            std::unique_ptr<Nut> result;
+        };
 
+        std::unique_ptr<InstantiatePromise> InstantiateMultithread();
+        static void InstantiateMultithreadWorkFunction(nlohmann::json data, InstantiatePromise* promiseToActOn);
     private:
-        std::unique_ptr<Nut> Instantiate(nlohmann::json data);
+        static std::unique_ptr<Nut> Instantiate(nlohmann::json data);
         nlohmann::json jsonData;
     };
 }

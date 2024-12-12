@@ -20,3 +20,4 @@
 #include "Resource.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "ShelledNut.h"

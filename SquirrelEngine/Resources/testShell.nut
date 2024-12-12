@@ -44,54 +44,9 @@
 		  "mesh": "./Resources/sphere.obj",
 		  "material": "./Resources/test.mat",
 		  "children": []
-		},
-		{
-      "type": "FPVCamera",
-      "name": "Cam",
-      "position": [
-        0,
-        0,
-        -10
-      ],
-      "eulerAngles": [
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ],
-      "isActive": true,
-      "children": [
-        {
-          "type": "MeshNut",
-          "name": "campoint",
-          "position": [
-            0,
-            0,
-            5
-          ],
-          "eulerAngles": [
-            -1.6,
-            0,
-            0
-          ],
-          "scale": [
-            0.2,
-            0.2,
-            0.2
-          ],
-          "mesh": "./Resources/arrow.obj",
-          "material": "./Resources/test.mat",
-          "children": []
-        }
-      ]
-    }
+		}
 	  ]
     },
-    
     {
       "type": "LightNut",
       "name": "WorldLight",
@@ -157,6 +112,50 @@
       "linearAttenuation": 0,
       "quadraticAttenuation": 0,
       "children": []
+    },
+	{
+      "type": "FPVCamera",
+      "name": "Cam",
+      "position": [
+        0,
+        0,
+        -10
+      ],
+      "eulerAngles": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "isActive": true,
+      "children": [
+        {
+          "type": "MeshNut",
+          "name": "campoint",
+          "position": [
+            0,
+            0,
+            5
+          ],
+          "eulerAngles": [
+            -1.6,
+            0,
+            0
+          ],
+          "scale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "mesh": "./Resources/arrow.obj",
+          "material": "./Resources/test.mat",
+          "children": []
+        }
+      ]
     }
   ]
 }
