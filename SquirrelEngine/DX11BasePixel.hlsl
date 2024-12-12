@@ -26,6 +26,11 @@ struct Light
     unsigned int lightType;
     float innerCutoffAngle;
     float outerCutoffAngle;
+    
+    float linearAttenuation;
+    float quadraticAttenuation;
+    
+    float2 p_0;
 };
 
 // Light buffer data. 
@@ -82,6 +87,10 @@ float4 main(Input input) : SV_TARGET{
     {
         float3 lightRayDirection = float3(0, 0, 0);
         float spotlightMultFactor = 1;
+        
+        // Get light distance for attenuation
+        float distance = length(lights[i].lightPosition - input.worldPosition);
+        
         // The light ray direction is the direction from the pixel to the incoming light ray
         // For orthographic directional lights this is the light direction
         // For perspective point and spot lights this is the pixel position to light position. 
@@ -94,13 +103,17 @@ float4 main(Input input) : SV_TARGET{
         if (lights[i].lightType == 2)
             spotlightMultFactor = CalculateSpotlightPower(lightRayDirection, lights[i].lightDirection, lights[i].innerCutoffAngle, lights[i].outerCutoffAngle);
         
+        // Get attenuation factor, this is what all light should be divided by before it is added to totals
+        // Constant attenuation = 1, this can be controlled via intensity
+        float attenuation = 1 + (distance * lights[i].linearAttenuation + distance * distance * lights[i].quadraticAttenuation);
+        
         // Add ambient light to total 
-        ambientTotal += lights[i].ambientColor * lights[i].ambientIntensity * diffuseColor;
+        ambientTotal += lights[i].ambientColor * lights[i].ambientIntensity * diffuseColor / attenuation;
         // Add diffuse light to total
-        diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor * lights[i].diffuseColor * spotlightMultFactor * lights[i].intensity;
+        diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor * lights[i].diffuseColor * spotlightMultFactor * lights[i].intensity / attenuation;
         // Add specular light to total
         specularTotal += CalculateSpecularPower(input.normal, lightRayDirection, input.worldPosition) * 
-                                specularColor * lights[i].diffuseColor * spotlightMultFactor * smoothness * lights[i].intensity;
+                                specularColor * lights[i].diffuseColor * spotlightMultFactor * smoothness * lights[i].intensity / attenuation;
 
     }
     

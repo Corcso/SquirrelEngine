@@ -25,6 +25,8 @@ namespace SQ {
 
 		if (!serializedData["spotlightInnerAngle"].is_null()) toWorkOn->SetSpotlightInnerAngle(serializedData["spotlightInnerAngle"]);
 		if (!serializedData["spotlightOuterAngle"].is_null()) toWorkOn->SetSpotlightOuterAngle(serializedData["spotlightOuterAngle"]);
+		if (!serializedData["linearAttenuation"].is_null()) toWorkOn->SetLinearAttenuation(serializedData["linearAttenuation"]);
+		if (!serializedData["quadraticAttenuation"].is_null()) toWorkOn->SetQuadraticAttenuation(serializedData["quadraticAttenuation"]);
 
 		// Return toWorkOn
 		return toWorkOn;
@@ -85,5 +87,21 @@ namespace SQ {
 	float LightNut::GetSpotlightOuterAngle()
 	{
 		return spotOuterAngle;
+	}
+	void LightNut::SetLinearAttenuation(float linearAttenuation)
+	{
+		this->linearAttenuation = linearAttenuation;
+	}
+	void LightNut::SetQuadraticAttenuation(float quadraticAttenuation)
+	{
+		this->quadraticAttenuation = quadraticAttenuation;
+	}
+	float LightNut::GetLinearAttenuation()
+	{
+		return linearAttenuation;
+	}
+	float LightNut::GetQuadraticAttenuation()
+	{
+		return quadraticAttenuation;
 	}
 }

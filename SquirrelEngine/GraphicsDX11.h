@@ -110,6 +110,12 @@ namespace SQ {
             unsigned int lightType;
             float innerCutoffAngle;
             float outerCutoffAngle;
+
+            // No need for constant attenuation, this can be edited by changing intensity. 
+            float linearAttenuation;
+            float quadraticAttenuation;
+            float p_3;
+            float p_4;
         };
 
         struct LightsBufferData {

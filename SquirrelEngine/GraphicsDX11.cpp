@@ -298,6 +298,8 @@ namespace SQ {
         lightsData.lights[lightsData.lightCount].lightType = (unsigned int)light->GetLightType();
         lightsData.lights[lightsData.lightCount].innerCutoffAngle = light->GetSpotlightInnerAngle();
         lightsData.lights[lightsData.lightCount].outerCutoffAngle = light->GetSpotlightOuterAngle();
+        lightsData.lights[lightsData.lightCount].linearAttenuation = light->GetLinearAttenuation();
+        lightsData.lights[lightsData.lightCount].quadraticAttenuation = light->GetQuadraticAttenuation();
 
         // Increase the light count
         lightsData.lightCount++;

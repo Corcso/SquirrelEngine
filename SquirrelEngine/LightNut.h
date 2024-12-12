@@ -44,6 +44,12 @@ namespace SQ {
         float GetSpotlightInnerAngle();
         float GetSpotlightOuterAngle();
 
+        void SetLinearAttenuation(float linearAttenuation);
+        void SetQuadraticAttenuation(float quadraticAttenuation);
+
+        float GetLinearAttenuation();
+        float GetQuadraticAttenuation();
+
         virtual ~LightNut() {}
 
     private:
@@ -57,5 +63,8 @@ namespace SQ {
 
         float spotInnerAngle; 
         float spotOuterAngle;
+        // No need for constant attenuation, this can be edited by changing intensity. 
+        float linearAttenuation;
+        float quadraticAttenuation;
     };
 }

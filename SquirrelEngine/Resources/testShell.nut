@@ -52,10 +52,14 @@
 		"eulerAngles": [-1.6, 0, 0],
 		"scale": [1, 1, 1],
 		"diffuseColor": [0.2, 0.2, 1],
+		"ambientColor": [0.2, 0.2, 1],
 		"lightType": "point",
 		"spotlightInnerAngle": 0.1,
 		"spotlightOuterAngle": 0.1,
 		"intensity": 1,
+		"ambientIntensity": 0.1,
+		"linearAttenuation": 0, 
+		"quadraticAttenuation": 0,
 		"children": []
 	}
 	]
