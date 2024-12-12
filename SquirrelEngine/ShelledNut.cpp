@@ -27,18 +27,18 @@ namespace SQ {
 		return Instantiate(jsonData);
 	}
 
-	std::unique_ptr<ShelledNut::InstantiatePromise> ShelledNut::InstantiateMultithread()
+	std::shared_ptr<ShelledNut::InstantiatePromise> ShelledNut::InstantiateMultithread()
 	{
-		InstantiatePromise* myRecordOfPromise = new InstantiatePromise();
+		std::shared_ptr<InstantiatePromise> myRecordOfPromise(new InstantiatePromise());
 		myRecordOfPromise->complete = false;
 
 		std::thread worker(ShelledNut::InstantiateMultithreadWorkFunction, jsonData, myRecordOfPromise);
 		worker.detach();
 
-		return std::move(std::unique_ptr<InstantiatePromise>(myRecordOfPromise));
+		return std::move(myRecordOfPromise);
 	}
 
-	void ShelledNut::InstantiateMultithreadWorkFunction(nlohmann::json data, InstantiatePromise* promiseToActOn)
+	void ShelledNut::InstantiateMultithreadWorkFunction(nlohmann::json data, std::shared_ptr<ShelledNut::InstantiatePromise> promiseToActOn)
 	{
 
 		promiseToActOn->result = Instantiate(data);

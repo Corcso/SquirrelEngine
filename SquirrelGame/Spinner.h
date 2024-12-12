@@ -11,7 +11,7 @@ public:
     void Update() override;
     private:
         std::shared_ptr<SQ::ShelledNut> toLoad;
-        std::unique_ptr<SQ::ShelledNut::InstantiatePromise> promise;
+        std::shared_ptr<SQ::ShelledNut::InstantiatePromise> promise;
         bool loaded = false;
         std::shared_ptr<SQ::Mesh> a;
 };
