@@ -9,3 +9,6 @@
 
 // Include JSON Library 
 #include "json.hpp"
+
+// Include pool allocator
+#include "PoolAllocator.h"

@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Tree.h"
 #include "ResourceManager.h"
+#include "PoolAllocationService.h"
 
 
 namespace SQ {
@@ -47,6 +48,14 @@ namespace SQ {
 		}
 
 		/// <summary>
+		/// Retrieves the pool allocation service. 
+		/// </summary>
+		/// <returns>A pointer to the pool allocation service.</returns>
+		static PoolAllocationService* GetPoolAllocationService() {
+			return poolAllocationService.get();
+		}
+
+		/// <summary>
 		/// Registers the graphics service with the service locator. 
 		/// Does nothing if a graphics service is already registered. 
 		/// </summary>
@@ -82,10 +91,20 @@ namespace SQ {
 			if (treeService.get() == nullptr) treeService.reset(treeServicePointer);
 		}
 
+		/// <summary>
+		/// Registers the pool allocation service with the service locator.
+		/// Does nothing if a pool allocation service is already registered.
+		/// </summary>
+		/// <param name="treeServicePointer"></param>
+		static void RegisterPoolAllocationService(PoolAllocationService* poolAllocationServicePointer) {
+			if (poolAllocationService.get() == nullptr) poolAllocationService.reset(poolAllocationServicePointer);
+		}
+
 	private:
 		static std::unique_ptr<Graphics> graphicsService;
 		static std::unique_ptr<Input> inputService;
 		static std::unique_ptr<ResourceManager> resourceManagerService;
 		static std::unique_ptr<Tree> treeService;
+		static std::unique_ptr<PoolAllocationService> poolAllocationService;
 	};
 }

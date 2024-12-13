@@ -42,12 +42,17 @@ int main() {
 		SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
 
 		SQ::Services::RegisterTree(new SQ::Tree());
+		SQ::Services::RegisterPoolAllocationService(new SQ::PoolAllocationService());
 
 		// Init Graphics
 		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1]);
 
+		SQ::Services::GetPoolAllocationService()->Init();
+
 		// Init Tree 	
 		SQ::Services::GetTree()->Init(options["On Load Nut"]);
+
+		
 
 		// Unlock mouse TEMP
 		SQ::Services::GetInput()->UnlockMouse();

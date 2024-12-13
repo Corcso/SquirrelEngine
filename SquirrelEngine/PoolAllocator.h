@@ -175,7 +175,24 @@ namespace SQ {
 			return *this;
 		};
 
+		/*template <typename TO>
+		inline UniquePoolPtr<TO>& DynamicUniquePoolPtrCast(UniquePoolPtr<T>&& toCast) {
+			UniquePoolPtr<TO> result();
+			if (dynamic_cast<TO*>(toCast.rawPointer) != nullptr) {
+				result.rawPointer = toCast.rawPointer;
+				result.pool = toCast.poolAllocator;
+				toCast.rawPointer = nullptr;
+				toCast.poolAllocator = nullptr;
+			}
+			return result;
+		}*/
+
 		// Data operations
+		inline void release() {
+			rawPointer = nullptr;
+			poolAllocator = nullptr;
+		}
+
 		inline T* get() {
 			return rawPointer;
 		}
