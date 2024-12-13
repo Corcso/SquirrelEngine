@@ -52,7 +52,7 @@ namespace SQ {
 			std::vector<std::string> splitPath = SplitString(path, '/');
 
 			// If path given to us was "" then we are the desired Nut
-			if(splitPath.size() == 0) return dynamic_cast<T*>(this);
+			if(splitPath.size() == 1 && splitPath[0] == "") return dynamic_cast<T*>(this);
 
 			// Else loop over our children, and return GetNut ran on the child without their name
 			for (UniquePoolPtr<Nut>& child : children) {
@@ -67,6 +67,7 @@ namespace SQ {
 		}
 
 		void SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership = UniquePoolPtr<Nut>());
+		UniquePoolPtr<Nut> TakeOwnership();
 		void AddChild(UniquePoolPtr<Nut> newChild);
 
 		unsigned int GetChildCount();

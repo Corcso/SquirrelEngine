@@ -138,6 +138,8 @@ namespace SQ {
 			return UniquePoolPtr<T>();
 		}
 
+		std::string GetDebugPoolUsageStatement();
+
 	private:
 		const size_t POOL_BLOCK_SIZES[8] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
 		const size_t POOL_BLOCK_COUNTS[8] = { 64, 64, 64, 32, 32, 16, 16, 16 };

@@ -1,5 +1,5 @@
 #include "Spinner.h"
-
+#include <iostream>
 Spinner::Spinner()
 {
 	toLoad = SQ::Services::GetResourceManager()->Retrieve<SQ::ShelledNut>("./Resources/largeModel.nut");
@@ -34,6 +34,15 @@ void Spinner::Update()
 		promise = toLoad->InstantiateMultithread(); 
 		//promise = std::shared_ptr<SQ::ShelledNut::InstantiatePromise>(nullptr);
 		//a = SQ::Services::GetResourceManager()->Retrieve<SQ::Mesh>("./Resources/HQsphere.obj");
+	}
+
+	if (SQ::Services::GetInput()->IsKeyPressed('G')) {
+		std::cout << SQ::Services::GetPoolAllocationService()->GetDebugPoolUsageStatement();
+	}
+
+	if (SQ::Services::GetInput()->IsKeyPressed('H')) {
+		
+		GetNut("LARGEMODEL")->QueueDestroy();
 	}
 	
 	if (promise.get() != nullptr && promise->complete && !loaded) {

@@ -13,6 +13,6 @@ public:
         std::shared_ptr<SQ::ShelledNut> toLoad;
         std::shared_ptr<SQ::ShelledNut::InstantiatePromise> promise;
         bool loaded = false;
-        std::shared_ptr<SQ::Mesh> a;
+        //std::shared_ptr<SQ::Mesh> a;
 };
 

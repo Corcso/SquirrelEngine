@@ -8,7 +8,8 @@ namespace SQ {
 			for (std::vector<UniquePoolPtr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
 				if (it->get() == this) {
 					newParent->AddChild(std::move(*it));
-					children.erase(it);
+					parent->children.erase(it);
+					break;
 				}
 			}
 		}
@@ -18,8 +19,24 @@ namespace SQ {
 		parent = newParent;
 	}
 
+	UniquePoolPtr<Nut> Nut::TakeOwnership()
+	{
+		UniquePoolPtr<Nut> tempOwner;
+		if (parent != nullptr) {
+			for (std::vector<UniquePoolPtr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
+				if (it->get() == this) {
+					tempOwner = std::move(*it);
+					parent->children.erase(it);
+					break;
+				}
+			}
+		}
+		return std::move(tempOwner);
+	}
+
 	void Nut::AddChild(UniquePoolPtr<Nut> newChild)
 	{
+		newChild->parent = this;
 		children.push_back(std::move(newChild));
 		NewChildAdded(true);
 	}

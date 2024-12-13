@@ -46,6 +46,8 @@ namespace SQ {
 			Services::GetGraphics()->ClearFrameLights();
 
 			SQ::Services::GetInput()->Update();
+
+			DestroyQueued(&rootNut);
 		}
 	}
 
@@ -109,6 +111,19 @@ namespace SQ {
 		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
 			Render(nut->GetNthChild(c));
+		}
+	}
+	void Tree::DestroyQueued(Nut* nut)
+	{
+		// Loop first, then act on delete from the children up
+		unsigned int childCount = nut->GetChildCount();
+		for (unsigned int c = 0; c < childCount; ++c) {
+			DestroyQueued(nut->GetNthChild(c));
+		}
+
+		// If queued to go, gain ownership, and then let it fall out of scope
+		if (nut->IsQueuedForDestruction()) {
+			UniquePoolPtr<Nut> finalOwner = nut->TakeOwnership();
 		}
 	}
 }

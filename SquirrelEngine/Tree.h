@@ -49,6 +49,8 @@ namespace SQ {
 		/// <param name="nut">Nut to call on</param>
 		void Render(Nut* nut);
 
+		void DestroyQueued(Nut* nut);
+
 		/// <summary>
 		/// The root nut
 		/// </summary>
