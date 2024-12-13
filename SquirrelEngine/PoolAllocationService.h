@@ -2,6 +2,9 @@
 #include "PCH.h"
 #include "PoolAllocator.h"
 #include <unordered_map>
+
+// TEMP
+#include <iostream>
 namespace SQ {
 	class PoolAllocationService
 	{
@@ -122,7 +125,10 @@ namespace SQ {
 			
 			// If there isnt a fit
 			// TODO POOL NOT BIG ENOUGH
-			if (roundedSize == 0) throw 99;
+			if (roundedSize == 0) {
+				std::cout << "WARN : " << "Pool for size " << std::to_string(sizeof(T)) << " not available, new called.\n";
+				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
+			}
 
 			// Check we have a pool which fits the size
 			if (pools.find(roundedSize) != pools.end()) {
@@ -131,8 +137,14 @@ namespace SQ {
 					poolToAllocInto = pools[roundedSize].get();
 				}
 				if (poolToAllocInto != nullptr) return UniquePoolPtr<T>(poolToAllocInto->New<T>(std::forward<A>(args)...), poolToAllocInto);
+				else {
+					//std::cout << "WARN : " << "Pool for size " << std::to_string(roundedSize) << " full, new called.\n";
+					return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
+				}
 			}
-			else throw 100; //TODO THROW ERROR
+			else {
+				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
+			}
 
 			throw 101;
 			return UniquePoolPtr<T>();
@@ -142,7 +154,7 @@ namespace SQ {
 
 	private:
 		const size_t POOL_BLOCK_SIZES[8] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
-		const size_t POOL_BLOCK_COUNTS[8] = { 64, 64, 64, 32, 32, 16, 16, 16 };
+		const size_t POOL_BLOCK_COUNTS[8] = { 64, 64, 64, 16, 32, 16, 16, 16 };
 
 		std::unordered_map<size_t, std::unique_ptr<PoolAllocator>> pools;
 	};

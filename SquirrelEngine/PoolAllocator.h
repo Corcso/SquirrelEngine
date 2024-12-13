@@ -154,6 +154,12 @@ namespace SQ {
 			poolAllocator = pp;
 		}
 
+		inline UniquePoolPtr<T>(T* p) {
+			//By default, our underlying pointer should be empty
+			rawPointer = p;
+			poolAllocator = nullptr;
+		}
+
 		// No Copy Allowed
 		inline UniquePoolPtr<T>(const UniquePoolPtr<T>&) = delete;
 		UniquePoolPtr<T>& operator=(const UniquePoolPtr<T>&) = delete;
@@ -217,6 +223,7 @@ namespace SQ {
 
 		~UniquePoolPtr<T>() {
 			if (poolAllocator && rawPointer) poolAllocator->Delete<T>(rawPointer);
+			if (!poolAllocator && rawPointer) delete rawPointer;
 		}
 
 	private:
