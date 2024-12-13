@@ -20,7 +20,7 @@
         1,
         1
       ],
-      "mesh": "./Resources/cube.obj",
+      "mesh": "./Resources/testJeep27k.obj",
       "material": "./Resources/test.mat",
       "children": [
 		{
