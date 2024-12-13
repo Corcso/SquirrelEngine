@@ -6,7 +6,7 @@ class Spinner :
 public:
     Spinner();
 
-    static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+    static SQ::UniquePoolPtr<SQ::Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
     void Update() override;
     private:

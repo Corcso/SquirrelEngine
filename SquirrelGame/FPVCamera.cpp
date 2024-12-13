@@ -3,19 +3,25 @@
 
 #include <iostream>
 
-Nut* FPVCamera::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+UniquePoolPtr<Nut> FPVCamera::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 {
 	// Cast deserializeInto to our type, call it toWorkOn
 	FPVCamera* toWorkOn = dynamic_cast<FPVCamera*>(deserializeInto);
 	// If toWorkOn is nullptr, make a new nut of our type. 
-	if (toWorkOn == nullptr) toWorkOn = new FPVCamera();
+	UniquePoolPtr<Nut> owner;
+	if (deserializeInto == nullptr) {
+		UniquePoolPtr<FPVCamera> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<FPVCamera>();
+		toWorkOn = instance.get();
+		owner = instance.StaticUniquePoolPtrCast<Nut>();
+		deserializeInto = owner.get();
+	}
 	// Call parent deserialise, passing in our toWorkOn.
 	CameraNut::Deserialize(toWorkOn, serializedData);
 
 	// Perform deserialization on our data. 
 
 	// Return toWorkOn
-	return toWorkOn;
+	return owner;
 }
 
 void FPVCamera::Update()

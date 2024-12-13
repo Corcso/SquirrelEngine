@@ -5,7 +5,7 @@ namespace SQ {
         public WorldNut
     {
     public:
-        static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+        static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
         void SetDiffuseColor(Vec3 diffuseColor);
         void SetAmbientColor(Vec3 ambientColor);

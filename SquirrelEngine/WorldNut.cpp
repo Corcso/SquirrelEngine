@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "WorldNut.h"
+#include "Services.h"
 namespace SQ {
     WorldNut::WorldNut()
     {
@@ -15,12 +16,18 @@ namespace SQ {
         
     }
 
-    Nut* WorldNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+    UniquePoolPtr<Nut> WorldNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
     {
         // Cast deserializeInto to our type, call it toWorkOn
         WorldNut* toWorkOn = dynamic_cast<WorldNut*>(deserializeInto);
         // If toWorkOn is nullptr, make a new nut of our type. 
-        if (toWorkOn == nullptr) toWorkOn = new WorldNut();
+        UniquePoolPtr<Nut> owner;
+        if (deserializeInto == nullptr) {
+            UniquePoolPtr<WorldNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<WorldNut>();
+            toWorkOn = instance.get();
+            owner = instance.StaticUniquePoolPtrCast<Nut>();
+            deserializeInto = owner.get();
+        }
         // Call parent deserialise, passing in our toWorkOn.
         Nut::Deserialize(toWorkOn, serializedData);
 
@@ -30,7 +37,7 @@ namespace SQ {
         if (!serializedData["scale"].is_null()) toWorkOn->SetScale(V3(serializedData["scale"][0], serializedData["scale"][1], serializedData["scale"][2]));
 
         // Return toWorkOn
-        return toWorkOn;
+        return owner;
     }
 
     void WorldNut::SetPosition(Vec3 position)

@@ -2,22 +2,28 @@
 
 Spinner::Spinner()
 {
-	toLoad = SQ::Services::GetResourceManager()->Retrieve<SQ::ShelledNut>("./Resources/crazyNumber.nut");
+	toLoad = SQ::Services::GetResourceManager()->Retrieve<SQ::ShelledNut>("./Resources/largeModel.nut");
 }
 
-SQ::Nut* Spinner::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+SQ::UniquePoolPtr<SQ::Nut> Spinner::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 {
 	// Cast deserializeInto to our type, call it toWorkOn
 	Spinner* toWorkOn = dynamic_cast<Spinner*>(deserializeInto);
 	// If toWorkOn is nullptr, make a new nut of our type. 
-	if (toWorkOn == nullptr) toWorkOn = new Spinner();
+	SQ::UniquePoolPtr<Nut> owner;
+	if (deserializeInto == nullptr) {
+		SQ::UniquePoolPtr<Spinner> instance = SQ::Services::GetPoolAllocationService()->MakeUniquePoolPtr<Spinner>();
+		toWorkOn = instance.get();
+		owner = instance.StaticUniquePoolPtrCast<Nut>();
+		deserializeInto = owner.get();
+	}
 	// Call parent deserialise, passing in our toWorkOn.
 	SQ::MeshNut::Deserialize(toWorkOn, serializedData);
 
 	// Perform deserialization on our data. 
 
 	// Return toWorkOn
-	return toWorkOn;
+	return owner;
 }
 
 void Spinner::Update()

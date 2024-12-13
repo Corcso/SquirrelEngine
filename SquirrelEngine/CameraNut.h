@@ -7,7 +7,7 @@ namespace SQ {
     public:
         CameraNut();
 
-        static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+        static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
         /// <summary>
         /// <para>Returns the View Matrix of this camera.</para>

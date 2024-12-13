@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "CameraNut.h"
+#include "Services.h"
 namespace SQ {
     CameraNut::CameraNut()
     {
@@ -7,14 +8,16 @@ namespace SQ {
         isActiveCamera = false;
     }
 
-    Nut* CameraNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+    UniquePoolPtr<Nut> CameraNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
     {
         // Cast deserializeInto to our type, call it toWorkOn
         CameraNut* toWorkOn = dynamic_cast<CameraNut*>(deserializeInto);
         // If toWorkOn is nullptr, make a new nut of our type. 
         UniquePoolPtr<Nut> owner;
         if (deserializeInto == nullptr) {
-            //owner = DynamicUniquePoolPtrCast<Nut, CameraNut>(Services::GetPoolAllocationService()->MakeUniquePoolPtr<CameraNut>());
+            UniquePoolPtr<CameraNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<CameraNut>();
+            toWorkOn = instance.get();
+            owner = instance.StaticUniquePoolPtrCast<Nut>();
             deserializeInto = owner.get();
         }
         // Call parent deserialise, passing in our toWorkOn.
@@ -28,7 +31,7 @@ namespace SQ {
         }
 
         // Return owner
-        return owner.get();
+        return owner;
     }
     Mat4 SQ::CameraNut::GetViewMatrix()
     {

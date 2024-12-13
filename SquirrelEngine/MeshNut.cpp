@@ -2,12 +2,18 @@
 #include "MeshNut.h"
 #include "Services.h"
 namespace SQ {
-	Nut* MeshNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+	UniquePoolPtr<Nut> MeshNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 	{
 		// Cast deserializeInto to our type, call it toWorkOn
 		MeshNut* toWorkOn = dynamic_cast<MeshNut*>(deserializeInto);
 		// If toWorkOn is nullptr, make a new nut of our type. 
-		if (toWorkOn == nullptr) toWorkOn = new MeshNut();
+		UniquePoolPtr<Nut> owner;
+		if (deserializeInto == nullptr) {
+			UniquePoolPtr<MeshNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<MeshNut>();
+			toWorkOn = instance.get();
+			owner = instance.StaticUniquePoolPtrCast<Nut>();
+			deserializeInto = owner.get();
+		}
 		// Call parent deserialise, passing in our toWorkOn.
 		WorldNut::Deserialize(toWorkOn, serializedData);
 
@@ -16,7 +22,7 @@ namespace SQ {
 		if (!serializedData["material"].is_null()) toWorkOn->SetMaterial(Services::GetResourceManager()->Retrieve<Material>(serializedData["material"]));
 
 		// Return toWorkOn
-		return toWorkOn;
+		return owner;
 	}
 
 	void SQ::MeshNut::SetMesh(std::shared_ptr<Mesh> mesh)

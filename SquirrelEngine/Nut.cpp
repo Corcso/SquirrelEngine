@@ -42,8 +42,9 @@ namespace SQ {
 	UniquePoolPtr<Nut> Nut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 	{
 		UniquePoolPtr<Nut> owner;
-		if (deserializeInto == nullptr) { owner = Services::GetPoolAllocationService()->MakeUniquePoolPtr<Nut>(); 
-		deserializeInto	= owner.get();
+		if (deserializeInto == nullptr) { 
+			owner = Services::GetPoolAllocationService()->MakeUniquePoolPtr<Nut>(); 
+			deserializeInto	= owner.get();
 		}
 
 		if (!serializedData["name"].is_null()) deserializeInto->name = serializedData["name"];

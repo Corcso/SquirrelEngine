@@ -21,7 +21,7 @@ namespace SQ {
 			this->blockCount = blockCount;
 			blocksInUse = 0;
 
-			base = malloc(blockSize * blockCount);
+			base = calloc(blockCount, blockSize);
 			char* forAddition = reinterpret_cast<char*>(base);
 			nextFreeLocation = base;
 			// Push locations onto free locations available in reverse order. 
@@ -176,16 +176,26 @@ namespace SQ {
 		};
 
 		/*template <typename TO>
-		inline UniquePoolPtr<TO>& DynamicUniquePoolPtrCast(UniquePoolPtr<T>&& toCast) {
-			UniquePoolPtr<TO> result();
-			if (dynamic_cast<TO*>(toCast.rawPointer) != nullptr) {
-				result.rawPointer = toCast.rawPointer;
-				result.pool = toCast.poolAllocator;
-				toCast.rawPointer = nullptr;
-				toCast.poolAllocator = nullptr;
+		inline UniquePoolPtr<TO> DynamicUniquePoolPtrCast() {
+			UniquePoolPtr<TO> result;
+			if (dynamic_cast<TO*>(rawPointer) != nullptr) {
+				result.rawPointer = rawPointer;
+				result.poolAllocator = poolAllocator;
+				rawPointer = nullptr;
+				poolAllocator = nullptr;
 			}
-			return result;
+			return std::move(result);
 		}*/
+
+		template <typename TO>
+		inline UniquePoolPtr<TO> StaticUniquePoolPtrCast() {
+			UniquePoolPtr<TO> result(static_cast<TO*>(rawPointer), poolAllocator);
+			if (static_cast<TO*>(rawPointer) != nullptr) {
+				rawPointer = nullptr;
+				poolAllocator = nullptr;
+			}
+			return std::move(result);
+		}
 
 		// Data operations
 		inline void release() {

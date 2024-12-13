@@ -36,7 +36,7 @@ namespace SQ {
 		std::thread worker(ShelledNut::InstantiateMultithreadWorkFunction, jsonData, myRecordOfPromise);
 		worker.detach();
 
-		return std::move(myRecordOfPromise);
+		return myRecordOfPromise;
 	}
 
 	void ShelledNut::InstantiateMultithreadWorkFunction(nlohmann::json data, std::shared_ptr<ShelledNut::InstantiatePromise> promiseToActOn)

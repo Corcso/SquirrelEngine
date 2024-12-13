@@ -1,12 +1,19 @@
 #include "PCH.h"
 #include "LightNut.h"
+#include "Services.h"
 namespace SQ {
-	Nut* SQ::LightNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+	UniquePoolPtr<Nut> SQ::LightNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 	{
 		// Cast deserializeInto to our type, call it toWorkOn
 		LightNut* toWorkOn = dynamic_cast<LightNut*>(deserializeInto);
 		// If toWorkOn is nullptr, make a new nut of our type. 
-		if (toWorkOn == nullptr) toWorkOn = new LightNut();
+		UniquePoolPtr<Nut> owner;
+		if (deserializeInto == nullptr) {
+			UniquePoolPtr<LightNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<LightNut>();
+			toWorkOn = instance.get();
+			owner = instance.StaticUniquePoolPtrCast<Nut>();
+			deserializeInto = owner.get();
+		}
 		// Call parent deserialise, passing in our toWorkOn.
 		WorldNut::Deserialize(toWorkOn, serializedData);
 
@@ -29,7 +36,7 @@ namespace SQ {
 		if (!serializedData["quadraticAttenuation"].is_null()) toWorkOn->SetQuadraticAttenuation(serializedData["quadraticAttenuation"]);
 
 		// Return toWorkOn
-		return toWorkOn;
+		return owner;
 	}
 	void LightNut::SetDiffuseColor(Vec3 diffuseColor)
 	{
