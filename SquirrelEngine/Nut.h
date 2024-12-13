@@ -1,6 +1,7 @@
 #pragma once
 #include "PCH.h"
 #include "SQUtility.h"
+#include "Services.h"
 namespace SQ {
 	class Nut
 	{
@@ -54,7 +55,7 @@ namespace SQ {
 			if(splitPath.size() == 0) return dynamic_cast<T*>(this);
 
 			// Else loop over our children, and return GetNut ran on the child without their name
-			for (std::unique_ptr<Nut>& child : children) {
+			for (UniquePoolPtr<Nut>& child : children) {
 				if (child->name == splitPath[0]) {
 					splitPath.erase(splitPath.begin());
 					return child->GetNut<T>(JoinString(splitPath, '/'));
@@ -65,8 +66,8 @@ namespace SQ {
 			return nullptr;
 		}
 
-		void SetParent(Nut* newParent);
-		void AddChild(std::unique_ptr<Nut> newChild);
+		void SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership = UniquePoolPtr<Nut>());
+		void AddChild(UniquePoolPtr<Nut> newChild);
 
 		unsigned int GetChildCount();
 
@@ -95,7 +96,7 @@ namespace SQ {
 		/// <param name="deserializeInto">Nut pointer to deserialise into, can be nullptr.</param>
 		/// <param name="serilizedData">JSON data to be parsed into nut</param>
 		/// <returns>Pointer to nut which was deserialized.</returns>
-		static Nut* Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+		static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
 		virtual ~Nut() {}
 	protected:
@@ -108,7 +109,7 @@ namespace SQ {
 		virtual void NewChildAdded(bool myChild);
 	private:
 		Nut* parent;
-		std::vector<std::unique_ptr<Nut>> children;
+		std::vector<UniquePoolPtr<Nut>> children;
 
 		
 

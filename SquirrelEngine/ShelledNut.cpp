@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "ShelledNut.h"
 #include "SerializationTypeDictionary.h"
+#include "Services.h"
 #include <fstream>
 
 #include <thread>
@@ -22,7 +23,7 @@ namespace SQ {
 		// Instantiation (The long part) Happens on developer demand, so end here. 
 		return newShelledNut;
 	}
-	std::unique_ptr<Nut> ShelledNut::Instantiate()
+	UniquePoolPtr<Nut> ShelledNut::Instantiate()
 	{
 		return Instantiate(jsonData);
 	}
@@ -47,24 +48,25 @@ namespace SQ {
 		return;
 	}
 
-	std::unique_ptr<Nut> ShelledNut::Instantiate(nlohmann::json data)
+	UniquePoolPtr<Nut> ShelledNut::Instantiate(nlohmann::json data)
 	{
 		// Get Type
 		if (data["type"].is_null()) throw 16;
 		std::string nutType = data["type"];
 
 		// Create and deserialise this nut, we currently own this. 
-		std::unique_ptr<Nut> newNut(SerializationTypeDictionary[nutType](nullptr, data));
+		UniquePoolPtr<Nut> newNut = SerializationTypeDictionary[nutType](nullptr, data);
 
 		// Create and reparent all the children recursivly. 
 		if (!data["children"].is_null()) {
 			for (int i = 0; i < data["children"].size(); ++i) {
 				// Create the child, ownership is ours
-				std::unique_ptr<Nut> child = Instantiate(data["children"][i]);
+				UniquePoolPtr<Nut> child = Instantiate(data["children"][i]);
+				Nut* temp = child.get();
 				// Reparent the child, ownership is transfered to the parent
-				child->SetParent(newNut.get());
+				temp->SetParent(newNut.get(), std::move(child));
 				// We need to release our ownership.
-				child.release();
+				//child.release();
 			}
 		}
 

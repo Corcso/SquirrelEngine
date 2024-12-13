@@ -16,10 +16,11 @@ namespace SQ {
 	void Tree::Init(std::string initialNutPath)
 	{
 		// Load the initial nut
-		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>(initialNutPath);
-		std::unique_ptr<Nut> sceneReady = myLittleScene->Instantiate();
-		sceneReady->SetParent(&rootNut);
-		sceneReady.release();
+ 		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>(initialNutPath);
+		UniquePoolPtr<Nut> sceneReady = myLittleScene->Instantiate();
+		Nut* temp = sceneReady.get();
+		temp->SetParent(&rootNut, std::move(sceneReady));
+		//sceneReady.release();
 	}
 
 	void Tree::RunLoop()

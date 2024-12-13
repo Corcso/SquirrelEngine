@@ -12,7 +12,11 @@ namespace SQ {
         // Cast deserializeInto to our type, call it toWorkOn
         CameraNut* toWorkOn = dynamic_cast<CameraNut*>(deserializeInto);
         // If toWorkOn is nullptr, make a new nut of our type. 
-        if (toWorkOn == nullptr) toWorkOn = new CameraNut();
+        UniquePoolPtr<Nut> owner;
+        if (deserializeInto == nullptr) {
+            //owner = DynamicUniquePoolPtrCast<Nut, CameraNut>(Services::GetPoolAllocationService()->MakeUniquePoolPtr<CameraNut>());
+            deserializeInto = owner.get();
+        }
         // Call parent deserialise, passing in our toWorkOn.
         WorldNut::Deserialize(toWorkOn, serializedData);
 
@@ -23,8 +27,8 @@ namespace SQ {
             else toWorkOn->SetDeactivatedCamera();
         }
 
-        // Return toWorkOn
-        return toWorkOn;
+        // Return owner
+        return owner.get();
     }
     Mat4 SQ::CameraNut::GetViewMatrix()
     {

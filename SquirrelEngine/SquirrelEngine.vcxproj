@@ -143,6 +143,7 @@
     <ClInclude Include="LightNut.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialDX11.h" />
+    <ClInclude Include="PoolAllocationService.h" />
     <ClInclude Include="PoolAllocator.h" />
     <ClInclude Include="SerializationTypeDictionary.h" />
     <ClInclude Include="ShelledNut.h" />
@@ -179,6 +180,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PoolAllocationService.cpp" />
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />

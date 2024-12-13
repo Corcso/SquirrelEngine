@@ -11,17 +11,17 @@ namespace SQ {
     public:
         static ShelledNut* Load(std::string path);
 
-        std::unique_ptr<Nut> Instantiate();
+        UniquePoolPtr<Nut> Instantiate();
         
         struct InstantiatePromise {
             bool complete;
-            std::unique_ptr<Nut> result;
+            UniquePoolPtr<Nut> result;
         };
 
         std::shared_ptr<InstantiatePromise> InstantiateMultithread();
         static void InstantiateMultithreadWorkFunction(nlohmann::json data, std::shared_ptr<ShelledNut::InstantiatePromise> promiseToActOn);
     private:
-        static std::unique_ptr<Nut> Instantiate(nlohmann::json data);
+        static UniquePoolPtr<Nut> Instantiate(nlohmann::json data);
         nlohmann::json jsonData;
     };
 }

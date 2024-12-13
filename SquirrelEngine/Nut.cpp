@@ -1,10 +1,11 @@
 #include "PCH.h"
 #include "Nut.h"
+#include "Services.h"
 namespace SQ {
-	void Nut::SetParent(Nut* newParent)
+	void Nut::SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership)
 	{
 		if (parent != nullptr) {
-			for (std::vector<std::unique_ptr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
+			for (std::vector<UniquePoolPtr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
 				if (it->get() == this) {
 					newParent->AddChild(std::move(*it));
 					children.erase(it);
@@ -12,12 +13,12 @@ namespace SQ {
 			}
 		}
 		else {
-			newParent->AddChild(std::move(std::unique_ptr<Nut>(this)));
+			newParent->AddChild(std::move(currentOwnership));
 		}
 		parent = newParent;
 	}
 
-	void Nut::AddChild(std::unique_ptr<Nut> newChild)
+	void Nut::AddChild(UniquePoolPtr<Nut> newChild)
 	{
 		children.push_back(std::move(newChild));
 		NewChildAdded(true);
@@ -38,14 +39,17 @@ namespace SQ {
 		return isQueuedToDestroy;
 	}
 
-	Nut* Nut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
+	UniquePoolPtr<Nut> Nut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 	{
-		if (deserializeInto == nullptr) deserializeInto = new Nut();
+		UniquePoolPtr<Nut> owner;
+		if (deserializeInto == nullptr) { owner = Services::GetPoolAllocationService()->MakeUniquePoolPtr<Nut>(); 
+		deserializeInto	= owner.get();
+		}
 
 		if (!serializedData["name"].is_null()) deserializeInto->name = serializedData["name"];
 		else throw 17;
 
-		return deserializeInto;
+		return owner;
 	}
 	void Nut::NewChildAdded(bool myChild)
 	{
