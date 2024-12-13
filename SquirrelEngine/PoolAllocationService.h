@@ -138,7 +138,7 @@ namespace SQ {
 				}
 				if (poolToAllocInto != nullptr) return UniquePoolPtr<T>(poolToAllocInto->New<T>(std::forward<A>(args)...), poolToAllocInto);
 				else {
-					//std::cout << "WARN : " << "Pool for size " << std::to_string(roundedSize) << " full, new called.\n";
+					std::cout << "WARN : " << "Pool for size " << std::to_string(roundedSize) << " full, new called.\n";
 					return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
 				}
 			}
@@ -146,7 +146,7 @@ namespace SQ {
 				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
 			}
 
-			throw 101;
+			throw 19;
 			return UniquePoolPtr<T>();
 		}
 
