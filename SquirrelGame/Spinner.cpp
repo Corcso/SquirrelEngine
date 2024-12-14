@@ -2,7 +2,7 @@
 #include <iostream>
 Spinner::Spinner()
 {
-	toLoad = SQ::Services::GetResourceManager()->Retrieve<SQ::ShelledNut>("./Resources/largeModel.nut");
+	toLoad = SQ::Services::GetResourceManager()->Retrieve<SQ::ShelledNut>("./Resources/crazyNumber.nut");
 }
 
 SQ::UniquePoolPtr<SQ::Nut> Spinner::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
@@ -28,7 +28,13 @@ SQ::UniquePoolPtr<SQ::Nut> Spinner::Deserialize(Nut* deserializeInto, nlohmann::
 
 void Spinner::Update()
 {
-	RotateLocalY(0.0001f);
+	float rotate = 3.14 * SQ::GetTime()->Delta();
+
+	RotateLocalY(rotate);
+
+	float ypos = sin(SQ::GetTime()->TimeSinceStart());
+
+	SetPosition(SQ::V3(0, ypos, 0));
 
 	if (SQ::GetInput()->IsKeyPressed('F')) { 
 		promise = toLoad->InstantiateMultithread(); 

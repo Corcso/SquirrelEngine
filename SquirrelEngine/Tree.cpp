@@ -48,6 +48,8 @@ namespace SQ {
 			SQ::Services::GetInput()->Update();
 
 			DestroyQueued(&rootNut);
+
+			GetTime()->FrameEnd();
 		}
 
 		FreeAllNuts(&rootNut);

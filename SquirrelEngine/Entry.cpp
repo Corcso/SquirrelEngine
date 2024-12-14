@@ -45,6 +45,7 @@ int main() {
 		SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
 
 		SQ::Services::RegisterTree(new SQ::Tree());
+		SQ::Services::RegisterTime(new SQ::Time());
 		SQ::Services::RegisterPoolAllocationService(new SQ::PoolAllocationService());
 
 		// Init Graphics
@@ -54,6 +55,9 @@ int main() {
 
 		// Init Tree 	
 		SQ::Services::GetTree()->Init(options["On Load Nut"]);
+		
+		// Init Time
+		SQ::Services::GetTime()->Init();
 
 		
 

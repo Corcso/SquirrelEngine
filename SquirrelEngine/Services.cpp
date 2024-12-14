@@ -5,3 +5,4 @@ std::unique_ptr<SQ::Input> SQ::Services::inputService = std::unique_ptr<Input>(n
 std::unique_ptr<SQ::ResourceManager> SQ::Services::resourceManagerService = std::unique_ptr<ResourceManager>(nullptr);
 std::unique_ptr<SQ::Tree> SQ::Services::treeService = std::unique_ptr<Tree>(nullptr);
 std::unique_ptr<SQ::PoolAllocationService> SQ::Services::poolAllocationService = std::unique_ptr<PoolAllocationService>(nullptr);
+std::unique_ptr<SQ::Time> SQ::Services::timeService = std::unique_ptr<Time>(nullptr);

@@ -114,6 +114,9 @@
     <ClInclude Include="PoolAllocationService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SQTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -183,6 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PoolAllocationService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

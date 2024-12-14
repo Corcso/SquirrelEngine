@@ -5,6 +5,7 @@
 #include "Tree.h"
 #include "ResourceManager.h"
 #include "PoolAllocationService.h"
+#include "SQTime.h"
 
 
 namespace SQ {
@@ -56,6 +57,14 @@ namespace SQ {
 		}
 
 		/// <summary>
+		/// Retrieves the time service. 
+		/// </summary>
+		/// <returns>A pointer to the pool allocation service.</returns>
+		static Time* GetTime() {
+			return timeService.get();
+		}
+
+		/// <summary>
 		/// Registers the graphics service with the service locator. 
 		/// Does nothing if a graphics service is already registered. 
 		/// </summary>
@@ -100,12 +109,22 @@ namespace SQ {
 			if (poolAllocationService.get() == nullptr) poolAllocationService.reset(poolAllocationServicePointer);
 		}
 
+		/// <summary>
+		/// Registers the time service with the service locator.
+		/// Does nothing if a time service is already registered.
+		/// </summary>
+		/// <param name="treeServicePointer"></param>
+		static void RegisterTime(Time* timeServicePointer) {
+			if (timeService.get() == nullptr) timeService.reset(timeServicePointer);
+		}
+
 	private:
 		static std::unique_ptr<Graphics> graphicsService;
 		static std::unique_ptr<Input> inputService;
 		static std::unique_ptr<ResourceManager> resourceManagerService;
 		static std::unique_ptr<Tree> treeService;
 		static std::unique_ptr<PoolAllocationService> poolAllocationService;
+		static std::unique_ptr<Time> timeService;
 	};
 
 	// QUICK ACCESS GLOBAL FUNCTIONS
@@ -148,5 +167,13 @@ namespace SQ {
 	/// <returns>A pointer to the pool allocation service.</returns>
 	static PoolAllocationService* GetPoolAllocationService() {
 		return Services::GetPoolAllocationService();
+	}
+
+	/// <summary>
+	/// Retrieves the time service. 
+	/// </summary>
+	/// <returns>A pointer to the pool allocation service.</returns>
+	static Time* GetTime() {
+		return Services::GetTime();
 	}
 }

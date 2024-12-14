@@ -162,6 +162,7 @@
     <ClInclude Include="Services.h" />
     <ClInclude Include="SquirrelEngine.h" />
     <ClInclude Include="SquirrelEnginePI.h" />
+    <ClInclude Include="SQTime.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="SQUtility.h" />
     <ClInclude Include="WorldNut.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Services.cpp" />
     <ClCompile Include="ShelledNut.cpp" />
+    <ClCompile Include="SQTime.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="SQUtility.cpp" />
     <ClCompile Include="WorldNut.cpp" />
