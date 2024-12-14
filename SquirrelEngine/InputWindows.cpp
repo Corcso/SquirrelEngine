@@ -363,6 +363,7 @@ Input::Key::INVALID_KEY
         case WM_DESTROY:
         {
             PostQuitMessage(0);
+            Services::GetTree()->Quit();
         }
         break;
         default:

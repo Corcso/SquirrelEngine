@@ -49,6 +49,8 @@ namespace SQ {
 
 			DestroyQueued(&rootNut);
 		}
+
+		FreeAllNuts(&rootNut);
 	}
 
 	CameraNut* Tree::GetActiveCamera(Nut* nutToLookFrom)
@@ -113,17 +115,36 @@ namespace SQ {
 			Render(nut->GetNthChild(c));
 		}
 	}
-	void Tree::DestroyQueued(Nut* nut)
+	bool Tree::DestroyQueued(Nut* nut)
 	{
 		// Loop first, then act on delete from the children up
 		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
-			DestroyQueued(nut->GetNthChild(c));
+			if(DestroyQueued(nut->GetNthChild(c))) --c;
 		}
 
 		// If queued to go, gain ownership, and then let it fall out of scope
 		if (nut->IsQueuedForDestruction()) {
 			UniquePoolPtr<Nut> finalOwner = nut->TakeOwnership();
+			return true;
 		}
+		return false;
+	}
+	bool Tree::FreeAllNuts(Nut* nut)
+	{
+		// Loop first, then act on delete from the children up
+		
+		for (unsigned int c = 0; c < nut->GetChildCount(); ++c) {
+			if(FreeAllNuts(nut->GetNthChild(c))) --c;
+		}
+
+		// To delete, gain ownership, and then let it fall out of scope
+		// Dont delete root nut
+		if(nut != &rootNut)
+		{
+			UniquePoolPtr<Nut> finalOwner = nut->TakeOwnership();
+			return true;
+		}
+		return false;
 	}
 }
