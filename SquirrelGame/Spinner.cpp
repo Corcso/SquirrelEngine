@@ -30,17 +30,17 @@ void Spinner::Update()
 {
 	RotateLocalY(0.0001f);
 
-	if (SQ::Services::GetInput()->IsKeyPressed('F')) { 
+	if (SQ::GetInput()->IsKeyPressed('F')) { 
 		promise = toLoad->InstantiateMultithread(); 
 		//promise = std::shared_ptr<SQ::ShelledNut::InstantiatePromise>(nullptr);
 		//a = SQ::Services::GetResourceManager()->Retrieve<SQ::Mesh>("./Resources/HQsphere.obj");
 	}
 
-	if (SQ::Services::GetInput()->IsKeyPressed('G')) {
-		std::cout << SQ::Services::GetPoolAllocationService()->GetDebugPoolUsageStatement();
+	if (SQ::GetInput()->IsKeyPressed('G')) {
+		std::cout << SQ::GetPoolAllocationService()->GetDebugPoolUsageStatement();
 	}
 
-	if (SQ::Services::GetInput()->IsKeyPressed('H')) {
+	if (SQ::GetInput()->IsKeyPressed('H')) {
 		
 		GetNut("LARGEMODEL")->QueueDestroy();
 	}

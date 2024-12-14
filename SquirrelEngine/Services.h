@@ -107,4 +107,46 @@ namespace SQ {
 		static std::unique_ptr<Tree> treeService;
 		static std::unique_ptr<PoolAllocationService> poolAllocationService;
 	};
+
+	// QUICK ACCESS GLOBAL FUNCTIONS
+
+	/// <summary>
+	/// Retrieves the graphics service. 
+	/// </summary>
+	/// <returns>A pointer to the graphics service.</returns>
+	static Graphics* GetGraphics() {
+		return Services::GetGraphics();
+	}
+
+	/// <summary>
+	/// Retrieves the input service. 
+	/// </summary>
+	/// <returns>A pointer to the input service.</returns>
+	static Input* GetInput() {
+		return Services::GetInput();
+	}
+
+	/// <summary>
+	/// Retrieves the resource manager service. 
+	/// </summary>
+	/// <returns>A pointer to the resource manager service.</returns>
+	static ResourceManager* GetResourceManager() {
+		return Services::GetResourceManager();
+	}
+
+	/// <summary>
+	/// Retrieves the tree service. 
+	/// </summary>
+	/// <returns>A pointer to the tree service.</returns>
+	static Tree* GetTree() {
+		return Services::GetTree();
+	}
+
+	/// <summary>
+	/// Retrieves the pool allocation service. 
+	/// </summary>
+	/// <returns>A pointer to the pool allocation service.</returns>
+	static PoolAllocationService* GetPoolAllocationService() {
+		return Services::GetPoolAllocationService();
+	}
 }
