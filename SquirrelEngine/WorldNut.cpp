@@ -58,6 +58,12 @@ namespace SQ {
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
+    void WorldNut::SetRotation(Quat quaternionRotation)
+    {
+        rotation = quaternionRotation;
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
     void WorldNut::SetScale(Vec3 scale)
     {
         this->scale = scale;

@@ -156,6 +156,50 @@
           "children": []
         }
       ]
+    },
+	{
+      "type": "PhysicsNut",
+      "name": "physs",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "eulerAngles": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+    
+      "children": [
+		{
+		  "type": "MeshNut",
+		  "name": "Child",
+		  "position": [
+			2,
+			2,
+			0
+		  ],
+		  "eulerAngles": [
+			0,
+			0,
+			0
+		  ],
+		  "scale": [
+			1,
+			1,
+			1
+		  ],
+		  "mesh": "./Resources/sphere.obj",
+		  "material": "./Resources/test.mat",
+		  "children": []
+		}
+	  ]
     }
   ]
 }

@@ -15,6 +15,8 @@
 #include "WorldNut.h"
 #include "MeshNut.h"
 #include "CameraNut.h"
+#include "LightNut.h"
+#include "PhysicsNut.h"
 
 // Include resources
 #include "Resource.h"

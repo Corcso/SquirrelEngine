@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "PoolAllocationService.h"
 #include "SQTime.h"
+#include "Physics.h"
 
 
 namespace SQ {
@@ -59,9 +60,17 @@ namespace SQ {
 		/// <summary>
 		/// Retrieves the time service. 
 		/// </summary>
-		/// <returns>A pointer to the pool allocation service.</returns>
+		/// <returns>A pointer to the time service.</returns>
 		static Time* GetTime() {
 			return timeService.get();
+		}
+
+		/// <summary>
+		/// Retrieves the physics service. 
+		/// </summary>
+		/// <returns>A pointer to the physics service.</returns>
+		static Physics* GetPhysics() {
+			return physicsService.get();
 		}
 
 		/// <summary>
@@ -118,6 +127,15 @@ namespace SQ {
 			if (timeService.get() == nullptr) timeService.reset(timeServicePointer);
 		}
 
+		/// <summary>
+		/// Registers the physics service with the service locator.
+		/// Does nothing if a physics service is already registered.
+		/// </summary>
+		/// <param name="treeServicePointer"></param>
+		static void RegisterPhysics(Physics* physicsServicePointer) {
+			if (physicsService.get() == nullptr) physicsService.reset(physicsServicePointer);
+		}
+
 	private:
 		static std::unique_ptr<Graphics> graphicsService;
 		static std::unique_ptr<Input> inputService;
@@ -125,6 +143,7 @@ namespace SQ {
 		static std::unique_ptr<Tree> treeService;
 		static std::unique_ptr<PoolAllocationService> poolAllocationService;
 		static std::unique_ptr<Time> timeService;
+		static std::unique_ptr<Physics> physicsService;
 	};
 
 	// QUICK ACCESS GLOBAL FUNCTIONS
@@ -172,8 +191,16 @@ namespace SQ {
 	/// <summary>
 	/// Retrieves the time service. 
 	/// </summary>
-	/// <returns>A pointer to the pool allocation service.</returns>
+	/// <returns>A pointer to the time service.</returns>
 	static Time* GetTime() {
 		return Services::GetTime();
+	}
+
+	/// <summary>
+	/// Retrieves the physics service. 
+	/// </summary>
+	/// <returns>A pointer to the physics service.</returns>
+	static Physics* GetPhysics() {
+		return Services::GetPhysics();
 	}
 }

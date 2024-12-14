@@ -21,12 +21,16 @@ namespace SQ {
 		Nut* temp = sceneReady.get();
 		temp->SetParent(&rootNut, std::move(sceneReady));
 		//sceneReady.release();
+
+		GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physs"));
 	}
 
 	void Tree::RunLoop()
 	{
 		while (!toQuit) {
 			SQ::Services::GetInput()->ProcessInput();
+
+			GetPhysics()->Update();
 
 			Update(&rootNut);
 

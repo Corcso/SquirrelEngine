@@ -24,6 +24,8 @@ namespace SQ {
         /// <param name="eulerRotation">Euler Angle Rotation</param>
         void SetEulerAngles(Vec3 eulerRotation);
 
+        void SetRotation(Quat quaternionRotation);
+
         /// <summary>
         /// Sets the Local Scale of the WorldNut
         /// </summary>

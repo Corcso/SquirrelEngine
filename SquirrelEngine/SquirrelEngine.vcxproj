@@ -152,6 +152,7 @@
     <ClInclude Include="MaterialDX11.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsJolt.h" />
+    <ClInclude Include="PhysicsNut.h" />
     <ClInclude Include="PoolAllocationService.h" />
     <ClInclude Include="PoolAllocator.h" />
     <ClInclude Include="SerializationTypeDictionary.h" />
@@ -192,6 +193,7 @@
     </ClCompile>
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsJolt.cpp" />
+    <ClCompile Include="PhysicsNut.cpp" />
     <ClCompile Include="PoolAllocationService.cpp" />
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="Resource.cpp" />

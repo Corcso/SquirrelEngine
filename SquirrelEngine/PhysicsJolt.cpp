@@ -26,12 +26,12 @@ void SQ::PhysicsJolt::Init()
 	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
 	// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
 	// malloc / free.
-	JPH::TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
+	tempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
 
 	// We need a job system that will execute physics jobs on multiple threads. Typically
 	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
 	// of your own job scheduler. JobSystemThreadPool is an example implementation.
-	JPH::JobSystemThreadPool job_system(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+	jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
 	// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
 	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
@@ -54,21 +54,21 @@ void SQ::PhysicsJolt::Init()
 	// Create mapping table from object layer to broadphase layer
 	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
 	// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
-	SQ::BPLayerInterfaceImpl broad_phase_layer_interface;
+	SQJOLT::BPLayerInterfaceImpl broad_phase_layer_interface;
 
 	// Create class that filters object vs broadphase layers
 	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
 	// Also have a look at ObjectVsBroadPhaseLayerFilterTable or ObjectVsBroadPhaseLayerFilterMask for a simpler interface.
-	SQ::ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
+	SQJOLT::ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
 
 	// Create class that filters object vs object layers
 	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
 	// Also have a look at ObjectLayerPairFilterTable or ObjectLayerPairFilterMask for a simpler interface.
-	SQ::ObjectLayerPairFilterImpl object_vs_object_layer_filter;
+	SQJOLT::ObjectLayerPairFilterImpl object_vs_object_layer_filter;
 
 	// Now we can create the actual physics system.
-	JPH::PhysicsSystem physics_system;
-	physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
+	
+	physicsSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
 
 	// A body activation listener gets notified when bodies activate and go to sleep
 	// Note that this is called from a job so whatever you do here needs to be thread safe.
@@ -82,4 +82,55 @@ void SQ::PhysicsJolt::Init()
 	//MyContactListener contact_listener;
 	//physics_system.SetContactListener(&contact_listener);
 
+	// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
+	// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
+	bodyInterface = &physicsSystem.GetBodyInterface();
+
+
+	JPH::BoxShapeSettings floor_shape_settings(JPH::Vec3(100.0f, 1.0f, 100.0f));
+	floor_shape_settings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+
+	// Create the shape
+	JPH::ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
+	JPH::ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+
+
+	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
+	JPH::BodyCreationSettings floor_settings(floor_shape, JPH::RVec3(0.0, -1.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, SQJOLT::Layers::NON_MOVING);
+
+	// Create the actual rigid body
+	JPH::Body* floor = bodyInterface->CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
+
+	// Add it to the world
+	bodyInterface->AddBody(floor->GetID(), JPH::EActivation::DontActivate);
+
+}
+
+void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
+{
+	// Now create a dynamic body to bounce on the floor
+	// Note that this uses the shorthand version of creating and adding a body to the world
+	JPH::BodyCreationSettings sphere_settings(new JPH::SphereShape(0.5f), JPH::RVec3(0.0, 2.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
+	JPH::BodyID sphere_id = bodyInterface->CreateAndAddBody(sphere_settings, JPH::EActivation::Activate);
+
+	nutsInSystem.push_back(std::pair<JPH::BodyID, PhysicsNut*>(sphere_id, nut));
+}
+
+void SQ::PhysicsJolt::Update()
+{
+
+	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
+	const int cCollisionSteps = 1;
+	const float cDeltaTime = 1.0f / 60.0f;
+
+	// Step the world
+	physicsSystem.Update(cDeltaTime, cCollisionSteps, tempAllocator, jobSystem);
+
+	for (int i = 0; i < nutsInSystem.size(); ++i) {
+		JPH::RVec3 pos = bodyInterface->GetCenterOfMassPosition(nutsInSystem[i].first);
+		JPH::Quat rot = bodyInterface->GetRotation(nutsInSystem[i].first);
+
+		nutsInSystem[i].second->SetPosition(V3(pos.GetX(), pos.GetY(), pos.GetZ()));
+		nutsInSystem[i].second->SetRotation(Q(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW()));
+	}
 }

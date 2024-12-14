@@ -10,6 +10,10 @@
 #include "GraphicsDX11.h"
 #endif // DX11
 
+#ifdef JOLT
+#include "PhysicsJolt.h"
+#endif // JOLT
+
 #include <fstream>
 
 /// <summary>
@@ -41,6 +45,9 @@ int main() {
 #ifdef DX11
 		SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
+#ifdef JOLT
+		SQ::Services::RegisterPhysics(new SQ::PhysicsJolt());
+#endif // JOLT
 
 		SQ::Services::RegisterResourceManager(new SQ::ResourceManager());
 
@@ -50,7 +57,7 @@ int main() {
 
 		// Init Graphics
 		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1], SQ::V4(options["Background Color"][0], options["Background Color"][1], options["Background Color"][2], 1));
-
+		SQ::Services::GetPhysics()->Init();
 		SQ::Services::GetPoolAllocationService()->Init();
 
 		// Init Tree 	
@@ -58,6 +65,8 @@ int main() {
 		
 		// Init Time
 		SQ::Services::GetTime()->Init();
+
+		
 
 		
 

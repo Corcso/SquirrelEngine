@@ -4,13 +4,25 @@
 #include "Physics.h"
 
 namespace SQ {
-    class PhysicsJolt :
-        public Physics
-    {
-    public:
-        virtual void Init() final;
-    };
+	class PhysicsJolt :
+		public Physics
+	{
+	public:
+		virtual void Init() final;
+		virtual void RegisterBody(PhysicsNut* nut) final;
+		virtual void Update() final;
+	private:
+		// TODO make unique ptrs
+		JPH::TempAllocatorImpl* tempAllocator;
+		JPH::JobSystemThreadPool* jobSystem;
 
+		JPH::PhysicsSystem physicsSystem;
+		JPH::BodyInterface* bodyInterface;
+
+		std::vector<std::pair<JPH::BodyID, PhysicsNut*>> nutsInSystem;
+	};
+}
+namespace SQJOLT{
 	// Layer that objects can be in, determines which other objects it can collide with
 // Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
 // layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation

@@ -16,6 +16,7 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 	{"MeshNut", SQ::MeshNut::Deserialize},
 	{"CameraNut", SQ::CameraNut::Deserialize},
 	{"LightNut", SQ::LightNut::Deserialize},
+	{"PhysicsNut", SQ::PhysicsNut::Deserialize},
 
 // ====================================
 // PLACE YOUR NUT DESERIALIZE FUNCTIONS HERE!
