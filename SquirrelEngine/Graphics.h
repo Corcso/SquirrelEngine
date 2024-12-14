@@ -7,7 +7,7 @@ namespace SQ {
 	class Graphics
 	{
 	public:
-		virtual int Init(std::string title, int width, int height) = 0;
+		virtual int Init(std::string title, int width, int height, Vec4 clearColor) = 0;
 
 		virtual void BeginRender() = 0;
 

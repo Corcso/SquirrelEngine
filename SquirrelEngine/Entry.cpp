@@ -30,6 +30,9 @@ int main() {
 		if (options["Window Size"].is_null()) return 13;
 		if (!options["Window Size"].is_array()) return 14;
 		if (options["On Load Nut"].is_null()) return 15;
+		if (options["Background Color"].is_null()) return 20;
+		if (!options["Background Color"].is_array()) return 21;
+
 
 		// REGISTER SERVICES
 #ifdef WINDOWS
@@ -45,7 +48,7 @@ int main() {
 		SQ::Services::RegisterPoolAllocationService(new SQ::PoolAllocationService());
 
 		// Init Graphics
-		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1]);
+		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1], SQ::V4(options["Background Color"][0], options["Background Color"][1], options["Background Color"][2], 1));
 
 		SQ::Services::GetPoolAllocationService()->Init();
 

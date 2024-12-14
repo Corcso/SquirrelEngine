@@ -18,7 +18,7 @@
 #include "SQUtility.h"
 
 namespace SQ {
-    int GraphicsDX11::Init(std::string title, int width, int height)
+    int GraphicsDX11::Init(std::string title, int width, int height, Vec4 clearColor)
     {
         // Check for DirectX Math library support.
         if (!DirectX::XMVerifyCPUSupport())
@@ -225,13 +225,16 @@ namespace SQ {
         // TODO Add shader init
         initialiseShaders();
         // TODO Ready rasteriser and output merger
+
+        // Set clear color
+        this->clearColor = clearColor;
         return 0;
     }
 
     void GraphicsDX11::BeginRender()
     {
-        const float clearColor[]{ 0, 1, 0, 1 };
-        deviceContext->ClearRenderTargetView(renderTargetView.Get(), clearColor);
+        //const float clearColor[]{ 0, 1, 0, 1 };
+        deviceContext->ClearRenderTargetView(renderTargetView.Get(), reinterpret_cast<float*>(&clearColor));
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
     }
 

@@ -16,7 +16,7 @@
             0.2,
             0.2
           ],
-          "mesh": "./Resources/HQsphere.obj",
+          "mesh": "./Resources/testJeep27k.obj",
           "material": "./Resources/test.mat",
           "children": []
 }

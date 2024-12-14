@@ -10,7 +10,7 @@ namespace SQ {
         public Graphics
     {
     public:
-        virtual int Init(std::string title, int width, int height) final;
+        virtual int Init(std::string title, int width, int height, Vec4 clearColor) final;
 
 
         virtual void BeginRender() final;
@@ -33,6 +33,9 @@ namespace SQ {
 
         // Window class name must be unique
         const LPCWSTR WINDOW_CLASS_NAME = L"SquirrelEngineGame";
+
+        // Clear colour
+        Vec4 clearColor;
 
         // Device and device context used for GPU communication
         ComPtr<ID3D11Device> device;
