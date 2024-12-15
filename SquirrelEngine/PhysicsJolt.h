@@ -137,7 +137,12 @@ namespace SQ {
 
 		virtual void Init() final;
 		virtual void RegisterBody(PhysicsNut* nut) final;
-		virtual void Update() final;
+		virtual void Update() final; 
+		virtual void RemoveBody(PhysicsNut* nut) final;
+
+		virtual void BodyShapeUpdated(PhysicsNut* nut) final;
+
+		virtual void BodyElasticityUpdated(PhysicsNut* nut) final;
 	private:
 		// TODO make unique ptrs
 		JPH::TempAllocatorImpl* tempAllocator;
@@ -162,6 +167,7 @@ namespace SQ {
 		SQJOLT::ObjectLayerPairFilterImpl object_vs_object_layer_filter;
 
 		std::map<JPH::BodyID, PhysicsNut*> nutsInSystem;
+		std::map<PhysicsNut*, JPH::BodyID> nutsInSystemReversed;
 		std::vector<std::pair<JPH::BodyID, JPH::BodyID>> collisionsEnteredThisFrame;
 		std::vector<std::pair<JPH::BodyID, JPH::BodyID>> collisionsExitedThisFrame;
 	};

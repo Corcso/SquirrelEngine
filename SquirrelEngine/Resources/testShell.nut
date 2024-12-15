@@ -160,6 +160,9 @@
 	{
       "type": "PhysicsNut",
       "name": "physsy",
+	  "collisionShape": "./Resources/sphere.shape",
+	  "density": 1,
+	  "elasticity": 0.5,
       "position": [
         0.5,
         12,
@@ -205,6 +208,9 @@
 	{
       "type": "PhysicsNut",
       "name": "physs",
+	  "collisionShape": "./Resources/sphere.shape",
+	  "density": 1,
+	  "elasticity": 0.5,
       "position": [
         0,
         10,

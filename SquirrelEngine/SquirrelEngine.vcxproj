@@ -142,6 +142,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CameraNut.h" />
+    <ClInclude Include="CollisionShape.h" />
+    <ClInclude Include="CollisionShapeJolt.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
     <ClInclude Include="Input.h" />
@@ -175,6 +180,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraNut.cpp" />
+    <ClCompile Include="CollisionShape.cpp" />
+    <ClCompile Include="CollisionShapeJolt.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsDX11.cpp" />

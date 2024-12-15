@@ -11,5 +11,12 @@ namespace SQ {
 		virtual void RegisterBody(PhysicsNut* nut) = 0;
 
 		virtual void Update() = 0;
+
+		virtual void RemoveBody(PhysicsNut* nut) = 0;
+
+		virtual void BodyShapeUpdated(PhysicsNut* nut) = 0;
+
+		virtual void BodyElasticityUpdated(PhysicsNut* nut) = 0;
+
 	};
 }

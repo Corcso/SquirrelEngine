@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "PhysicsJolt.h"
 #include "Services.h"
+#include "CollisionShapeJolt.h"
 
 void SQ::PhysicsJolt::Init()
 {
@@ -96,13 +97,20 @@ void SQ::PhysicsJolt::Init()
 
 void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 {
-	// Now create a dynamic body to bounce on the floor
-	// Note that this uses the shorthand version of creating and adding a body to the world
-	JPH::BodyCreationSettings sphere_settings(new JPH::SphereShape(0.5f), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
-	JPH::BodyID sphere_id = bodyInterface->CreateAndAddBody(sphere_settings, JPH::EActivation::Activate);
-	bodyInterface->SetRestitution(sphere_id, 0.78);
+	// Default shape will be overwritten
+	// Set new shape settings
+	JPH::SphereShapeSettings tempShapeBeforeUpdate(1.0f);
+	tempShapeBeforeUpdate.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 
-	nutsInSystem[sphere_id] = nut;
+	// Create the body in the system setting relevant parameters.
+	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
+	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, JPH::EActivation::Activate);
+	bodyInterface->SetRestitution(newBodyID, 0.78);
+
+	nutsInSystem[newBodyID] = nut;
+	nutsInSystemReversed[nut] = newBodyID;
+
+	BodyShapeUpdated(nut);
 }
 
 void SQ::PhysicsJolt::Update()
@@ -156,6 +164,70 @@ void SQ::PhysicsJolt::Update()
 	}
 
 
+}
+
+void SQ::PhysicsJolt::RemoveBody(PhysicsNut* nut)
+{
+	// Remove and delete body
+	bodyInterface->RemoveBody(nutsInSystemReversed[nut]);
+	bodyInterface->DestroyBody(nutsInSystemReversed[nut]);
+
+	// Remove from lists of nuts in system
+	nutsInSystem.erase(nutsInSystemReversed[nut]);
+	nutsInSystemReversed.erase(nut);
+}
+
+void SQ::PhysicsJolt::BodyShapeUpdated(PhysicsNut* nut)
+{
+	// Define shape result, accross all types
+	JPH::ShapeSettings::ShapeResult newShapeResult;
+
+	switch (nut->GetShape()->GetType()) {
+	case CollisionShape::Type::BOX:
+	{
+		// Set new shape settings
+		JPH::BoxShapeSettings newBoxShapeSettings(JPH::Vec3(JPH::RVec3(nut->GetShape()->GetBoxHalfDimentions().X, nut->GetShape()->GetBoxHalfDimentions().Y, nut->GetShape()->GetBoxHalfDimentions().Z)));
+		newBoxShapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+		newBoxShapeSettings.SetDensity(nut->GetDensity());
+
+		// Create the shape
+		newShapeResult = newBoxShapeSettings.Create();
+		// Set the body's shape, recalculate mass & inertia, wake up body too. 
+		bodyInterface->SetShape(nutsInSystemReversed[nut], newShapeResult.Get(), true, JPH::EActivation::Activate);
+	}
+		break;
+	case CollisionShape::Type::SPHERE:
+	{
+		// Set new shape settings
+		JPH::SphereShapeSettings newSphereShapeSettings(nut->GetShape()->GetSphereRadius());
+		newSphereShapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+		newSphereShapeSettings.SetDensity(nut->GetDensity());
+
+		// Create the shape
+		newShapeResult = newSphereShapeSettings.Create();
+		// Set the body's shape, recalculate mass & inertia, wake up body too. 
+		bodyInterface->SetShape(nutsInSystemReversed[nut], newShapeResult.Get(), true, JPH::EActivation::Activate);
+	}
+		break;
+	case CollisionShape::Type::CAPSULE:
+	{
+		// Set new shape settings
+		JPH::CapsuleShapeSettings newCapsuleShapeSettings(nut->GetShape()->GetCapsuleHalfHeight(), nut->GetShape()->GetCapsuleRadius());
+		newCapsuleShapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+		newCapsuleShapeSettings.SetDensity(nut->GetDensity());
+
+		// Create the shape
+		newShapeResult = newCapsuleShapeSettings.Create();
+		// Set the body's shape, recalculate mass & inertia, wake up body too. 
+		bodyInterface->SetShape(nutsInSystemReversed[nut], newShapeResult.Get(), true, JPH::EActivation::Activate);
+	}
+		break;
+	}
+}
+
+void SQ::PhysicsJolt::BodyElasticityUpdated(PhysicsNut* nut)
+{
+	bodyInterface->SetRestitution(nutsInSystemReversed[nut], nut->GetElasticity());
 }
 
 void SQJOLT::MyContactListener::OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings)

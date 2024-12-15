@@ -22,8 +22,8 @@ namespace SQ {
 		temp->SetParent(&rootNut, std::move(sceneReady));
 		//sceneReady.release();
 
-		GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physs"));
-		GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physsy"));
+		//GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physs"));
+		//GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physsy"));
 	}
 
 	void Tree::RunLoop()

@@ -1,5 +1,6 @@
 #pragma once
 #include "WorldNut.h"
+#include "CollisionShape.h"
 
 #include <set>
 namespace SQ {
@@ -12,9 +13,19 @@ namespace SQ {
         virtual void OnCollisionStart(PhysicsNut* other) {}
         virtual void OnCollisionEnd(PhysicsNut* other) {}
 
+        void SetShape(std::shared_ptr<CollisionShape> mesh);
+        std::shared_ptr<CollisionShape> GetShape();
+
+        float GetElasticity();
+        float GetDensity();
+
         std::set<PhysicsNut*> currentlyColliding;
 
     private:
+        float elasticity; 
+        float density; 
+
+        std::shared_ptr<CollisionShape> shape;
     };
 
 }
