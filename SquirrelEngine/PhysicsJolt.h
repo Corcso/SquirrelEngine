@@ -2,27 +2,9 @@
 
 #include "SquirrelEnginePI.h"
 #include "Physics.h"
+#include <iostream>
 
-namespace SQ {
-	class PhysicsJolt :
-		public Physics
-	{
-	public:
-		virtual void Init() final;
-		virtual void RegisterBody(PhysicsNut* nut) final;
-		virtual void Update() final;
-	private:
-		// TODO make unique ptrs
-		JPH::TempAllocatorImpl* tempAllocator;
-		JPH::JobSystemThreadPool* jobSystem;
-
-		JPH::PhysicsSystem physicsSystem;
-		JPH::BodyInterface* bodyInterface;
-
-		std::vector<std::pair<JPH::BodyID, PhysicsNut*>> nutsInSystem;
-	};
-}
-namespace SQJOLT{
+namespace SQJOLT {
 	// Layer that objects can be in, determines which other objects it can collide with
 // Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
 // layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation
@@ -89,12 +71,12 @@ namespace SQJOLT{
 		}
 
 #if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-		virtual const char* GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
+		virtual const char* GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const override
 		{
-			switch ((BroadPhaseLayer::Type)inLayer)
+			switch ((JPH::BroadPhaseLayer::Type)inLayer)
 			{
-			case (BroadPhaseLayer::Type)BroadPhaseLayers::NON_MOVING:	return "NON_MOVING";
-			case (BroadPhaseLayer::Type)BroadPhaseLayers::MOVING:		return "MOVING";
+			case (JPH::BroadPhaseLayer::Type)BroadPhaseLayers::NON_MOVING:	return "NON_MOVING";
+			case (JPH::BroadPhaseLayer::Type)BroadPhaseLayers::MOVING:		return "MOVING";
 			default:													JPH_ASSERT(false); return "INVALID";
 			}
 		}
@@ -123,5 +105,64 @@ namespace SQJOLT{
 		}
 	};
 
+	class MyContactListener : public JPH::ContactListener
+	{
+	public:
+		// See: ContactListener
+		virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult) override
+		{
+			//std::cout << "Contact validate callback" << std::endl;
 
+			// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
+			return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
+		}
+
+		virtual void			OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override;
+
+		virtual void			OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+		{
+			//std::cout << "A contact was persisted" << std::endl;
+		}
+
+		virtual void			OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override;
+	};
+}
+
+namespace SQ {
+	class PhysicsJolt :
+		public Physics
+	{
+	public:
+		friend class SQJOLT::MyContactListener;
+
+		virtual void Init() final;
+		virtual void RegisterBody(PhysicsNut* nut) final;
+		virtual void Update() final;
+	private:
+		// TODO make unique ptrs
+		JPH::TempAllocatorImpl* tempAllocator;
+		JPH::JobSystemThreadPool* jobSystem;
+		SQJOLT::MyContactListener contactListner;
+		JPH::PhysicsSystem physicsSystem;
+		JPH::BodyInterface* bodyInterface;
+
+		// Create mapping table from object layer to broadphase layer
+	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+	// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
+		SQJOLT::BPLayerInterfaceImpl broad_phase_layer_interface;
+
+		// Create class that filters object vs broadphase layers
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		// Also have a look at ObjectVsBroadPhaseLayerFilterTable or ObjectVsBroadPhaseLayerFilterMask for a simpler interface.
+		SQJOLT::ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
+
+		// Create class that filters object vs object layers
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		// Also have a look at ObjectLayerPairFilterTable or ObjectLayerPairFilterMask for a simpler interface.
+		SQJOLT::ObjectLayerPairFilterImpl object_vs_object_layer_filter;
+
+		std::map<JPH::BodyID, PhysicsNut*> nutsInSystem;
+		std::vector<std::pair<JPH::BodyID, JPH::BodyID>> collisionsEnteredThisFrame;
+		std::vector<std::pair<JPH::BodyID, JPH::BodyID>> collisionsExitedThisFrame;
+	};
 }

@@ -23,6 +23,7 @@ namespace SQ {
 		//sceneReady.release();
 
 		GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physs"));
+		GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physsy"));
 	}
 
 	void Tree::RunLoop()

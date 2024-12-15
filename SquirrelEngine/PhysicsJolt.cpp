@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "PhysicsJolt.h"
+#include "Services.h"
 
 void SQ::PhysicsJolt::Init()
 {
@@ -51,20 +52,7 @@ void SQ::PhysicsJolt::Init()
 	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
 	const UINT cMaxContactConstraints = 1024;
 
-	// Create mapping table from object layer to broadphase layer
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
-	SQJOLT::BPLayerInterfaceImpl broad_phase_layer_interface;
-
-	// Create class that filters object vs broadphase layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at ObjectVsBroadPhaseLayerFilterTable or ObjectVsBroadPhaseLayerFilterMask for a simpler interface.
-	SQJOLT::ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
-
-	// Create class that filters object vs object layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at ObjectLayerPairFilterTable or ObjectLayerPairFilterMask for a simpler interface.
-	SQJOLT::ObjectLayerPairFilterImpl object_vs_object_layer_filter;
+	
 
 	// Now we can create the actual physics system.
 	
@@ -80,7 +68,7 @@ void SQ::PhysicsJolt::Init()
 	// Note that this is called from a job so whatever you do here needs to be thread safe.
 	// Registering one is entirely optional.
 	//MyContactListener contact_listener;
-	//physics_system.SetContactListener(&contact_listener);
+	physicsSystem.SetContactListener(&contactListner);
 
 	// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
 	// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
@@ -110,27 +98,72 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 {
 	// Now create a dynamic body to bounce on the floor
 	// Note that this uses the shorthand version of creating and adding a body to the world
-	JPH::BodyCreationSettings sphere_settings(new JPH::SphereShape(0.5f), JPH::RVec3(0.0, 2.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
+	JPH::BodyCreationSettings sphere_settings(new JPH::SphereShape(0.5f), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
 	JPH::BodyID sphere_id = bodyInterface->CreateAndAddBody(sphere_settings, JPH::EActivation::Activate);
+	bodyInterface->SetRestitution(sphere_id, 0.78);
 
-	nutsInSystem.push_back(std::pair<JPH::BodyID, PhysicsNut*>(sphere_id, nut));
+	nutsInSystem[sphere_id] = nut;
 }
 
 void SQ::PhysicsJolt::Update()
 {
 
 	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
-	const int cCollisionSteps = 1;
-	const float cDeltaTime = 1.0f / 60.0f;
+	const int cCollisionSteps = 10;
+	const float cDeltaTime = 1.0f / 6000.0f;
+
+	// Clear collision lists
+	collisionsEnteredThisFrame.clear();
+	collisionsExitedThisFrame.clear();
 
 	// Step the world
 	physicsSystem.Update(cDeltaTime, cCollisionSteps, tempAllocator, jobSystem);
+	
+	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
+		JPH::RVec3 pos = bodyInterface->GetCenterOfMassPosition(it->first);
+		JPH::Quat rot = bodyInterface->GetRotation(it->first);
 
-	for (int i = 0; i < nutsInSystem.size(); ++i) {
-		JPH::RVec3 pos = bodyInterface->GetCenterOfMassPosition(nutsInSystem[i].first);
-		JPH::Quat rot = bodyInterface->GetRotation(nutsInSystem[i].first);
-
-		nutsInSystem[i].second->SetPosition(V3(pos.GetX(), pos.GetY(), pos.GetZ()));
-		nutsInSystem[i].second->SetRotation(Q(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW()));
+		it->second->SetPosition(V3(pos.GetX(), pos.GetY(), pos.GetZ()));
+		it->second->SetRotation(Q(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW()));
 	}
+
+	// Collision Signalling & Updating
+	// For new collisions
+	for (int i = 0; i < collisionsEnteredThisFrame.size(); i++) {
+		if (collisionsEnteredThisFrame[i].first.GetIndexAndSequenceNumber() == 16777216 || collisionsEnteredThisFrame[i].second.GetIndexAndSequenceNumber() == 16777216) continue;
+
+		// Add them to the currently colliding list
+		nutsInSystem[collisionsEnteredThisFrame[i].first]->currentlyColliding.insert(nutsInSystem[collisionsEnteredThisFrame[i].second]);
+		nutsInSystem[collisionsEnteredThisFrame[i].second]->currentlyColliding.insert(nutsInSystem[collisionsEnteredThisFrame[i].first]);
+
+		// Also run function for collision entered
+		nutsInSystem[collisionsEnteredThisFrame[i].first]->OnCollisionStart(nutsInSystem[collisionsEnteredThisFrame[i].second]);
+		nutsInSystem[collisionsEnteredThisFrame[i].second]->OnCollisionStart(nutsInSystem[collisionsEnteredThisFrame[i].first]);
+		
+	}
+
+	// For ended collisions
+	for (int i = 0; i < collisionsExitedThisFrame.size(); i++) {
+		if (collisionsExitedThisFrame[i].first.GetIndexAndSequenceNumber() == 16777216 || collisionsExitedThisFrame[i].second.GetIndexAndSequenceNumber() == 16777216) continue;
+
+		// Remove them from the currently colliding list
+		nutsInSystem[collisionsExitedThisFrame[i].first]->currentlyColliding.erase(nutsInSystem[collisionsExitedThisFrame[i].second]);
+		nutsInSystem[collisionsExitedThisFrame[i].second]->currentlyColliding.erase(nutsInSystem[collisionsExitedThisFrame[i].first]);
+
+		// Also run function for collision exited
+		nutsInSystem[collisionsExitedThisFrame[i].first]->OnCollisionEnd(nutsInSystem[collisionsExitedThisFrame[i].second]);
+		nutsInSystem[collisionsExitedThisFrame[i].second]->OnCollisionEnd(nutsInSystem[collisionsExitedThisFrame[i].first]);
+	}
+
+
+}
+
+void SQJOLT::MyContactListener::OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings)
+{
+	dynamic_cast<SQ::PhysicsJolt*>(SQ::Services::GetPhysics())->collisionsEnteredThisFrame.push_back(std::pair<JPH::BodyID, JPH::BodyID>(inBody1.GetID(), inBody2.GetID()));
+}
+
+void SQJOLT::MyContactListener::OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair)
+{
+	dynamic_cast<SQ::PhysicsJolt*>(SQ::Services::GetPhysics())->collisionsExitedThisFrame.push_back(std::pair<JPH::BodyID, JPH::BodyID>(inSubShapePair.GetBody1ID(), inSubShapePair.GetBody2ID()));
 }

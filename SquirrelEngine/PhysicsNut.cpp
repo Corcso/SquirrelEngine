@@ -15,7 +15,7 @@ namespace SQ {
             deserializeInto = owner.get();
         }
         // Call parent deserialise, passing in our toWorkOn.
-        Nut::Deserialize(toWorkOn, serializedData);
+        WorldNut::Deserialize(toWorkOn, serializedData);
 
         // Perform deserialization on our data. 
 

@@ -159,10 +159,10 @@
     },
 	{
       "type": "PhysicsNut",
-      "name": "physs",
+      "name": "physsy",
       "position": [
-        0,
-        0,
+        0.5,
+        12,
         0
       ],
       "eulerAngles": [
@@ -181,8 +181,53 @@
 		  "type": "MeshNut",
 		  "name": "Child",
 		  "position": [
-			2,
-			2,
+			0,
+			0,
+			0
+		  ],
+		  "eulerAngles": [
+			0,
+			0,
+			0
+		  ],
+		  "scale": [
+			1,
+			1,
+			1
+		  ],
+		  "mesh": "./Resources/sphere.obj",
+		  "material": "./Resources/test.mat",
+		  "children": []
+		}
+	  ]
+    },
+	
+	{
+      "type": "PhysicsNut",
+      "name": "physs",
+      "position": [
+        0,
+        10,
+        0
+      ],
+      "eulerAngles": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+    
+      "children": [
+		{
+		  "type": "MeshNut",
+		  "name": "Child",
+		  "position": [
+			0,
+			0,
 			0
 		  ],
 		  "eulerAngles": [
