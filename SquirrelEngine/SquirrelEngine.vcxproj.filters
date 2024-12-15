@@ -45,9 +45,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="SQUtility.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -108,29 +105,32 @@
     <ClInclude Include="Tree.h">
       <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="PoolAllocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PoolAllocationService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SQTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files</Filter>
+      <Filter>Services</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsJolt.h">
-      <Filter>Header Files</Filter>
+      <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsNut.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Physics.h">
+      <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionShape.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="PoolAllocationService.h">
+      <Filter>Services</Filter>
     </ClInclude>
     <ClInclude Include="RootNut.h">
-      <Filter>Header Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsNut.h">
+      <Filter>Nuts</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionShape.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolAllocator.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="Resource.cpp">
       <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="SQUtility.cpp">
       <Filter>Core</Filter>
@@ -197,29 +194,32 @@
     <ClCompile Include="Tree.cpp">
       <Filter>Services</Filter>
     </ClCompile>
-    <ClCompile Include="PoolAllocator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SQTime.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
     <ClCompile Include="PoolAllocationService.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SQTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Services</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsJolt.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Services</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsNut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionShape.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
     <ClCompile Include="RootNut.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsNut.cpp">
+      <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionShape.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolAllocator.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
