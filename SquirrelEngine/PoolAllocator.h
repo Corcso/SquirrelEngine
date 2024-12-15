@@ -85,8 +85,8 @@ namespace SQ {
 		/// <param name="address">Address of data to delete</param>
 		template <typename T>
 		inline void Delete(void* address) {
-			std::lock_guard<std::mutex> poolLock(poolMutex);
 			reinterpret_cast<T*>(address)->~T();
+			std::lock_guard<std::mutex> poolLock(poolMutex);
 			*reinterpret_cast<void**>(address) = nextFreeLocation;
 			nextFreeLocation = address;
 			--blocksInUse;
@@ -181,17 +181,15 @@ namespace SQ {
 			return *this;
 		};
 
-		/*template <typename TO>
+		template <typename TO>
 		inline UniquePoolPtr<TO> DynamicUniquePoolPtrCast() {
-			UniquePoolPtr<TO> result;
+			UniquePoolPtr<TO> result(static_cast<TO*>(rawPointer), poolAllocator);
 			if (dynamic_cast<TO*>(rawPointer) != nullptr) {
-				result.rawPointer = rawPointer;
-				result.poolAllocator = poolAllocator;
 				rawPointer = nullptr;
 				poolAllocator = nullptr;
 			}
 			return std::move(result);
-		}*/
+		}
 
 		template <typename TO>
 		inline UniquePoolPtr<TO> StaticUniquePoolPtrCast() {

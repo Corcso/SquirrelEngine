@@ -108,7 +108,7 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 
 	// Create the body in the system setting relevant parameters.
 	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), 
-		JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), 
+		JPH::RVec3(nut->GetGlobalPosition().X, nut->GetGlobalPosition().Y, nut->GetGlobalPosition().Z),
 		JPH::Quat(nut->GetRotation().X, nut->GetRotation().Y, nut->GetRotation().Z, nut->GetRotation().W), motionType, layer);
 	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, wake);
 	bodyInterface->SetRestitution(newBodyID, 0.78);
@@ -133,7 +133,7 @@ void SQ::PhysicsJolt::Update()
 	// Make sure physics world is same as game world
 	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
 		// Get position and rotation from game world. 
-		Vec3 worldPos = it->second->GetPosition();
+		Vec3 worldPos = it->second->GetGlobalPosition();
 		Quat worldRot = it->second->GetRotation();
 
 		// Compare to the current position & rotation in the physics system, and change and wake up if different. 
@@ -161,7 +161,9 @@ void SQ::PhysicsJolt::Update()
 	// Collision Signalling & Updating
 	// For new collisions
 	for (int i = 0; i < collisionsEnteredThisFrame.size(); i++) {
-		if (collisionsEnteredThisFrame[i].first.GetIndexAndSequenceNumber() == 16777216 || collisionsEnteredThisFrame[i].second.GetIndexAndSequenceNumber() == 16777216) continue;
+		// Make sure nuts exist for the collisions
+		if (nutsInSystem.find(collisionsEnteredThisFrame[i].first) == nutsInSystem.end() ||
+			nutsInSystem.find(collisionsEnteredThisFrame[i].second) == nutsInSystem.end()) continue;
 
 		// Add them to the currently colliding list
 		nutsInSystem[collisionsEnteredThisFrame[i].first]->currentlyColliding.insert(nutsInSystem[collisionsEnteredThisFrame[i].second]);
@@ -175,7 +177,10 @@ void SQ::PhysicsJolt::Update()
 
 	// For ended collisions
 	for (int i = 0; i < collisionsExitedThisFrame.size(); i++) {
-		if (collisionsExitedThisFrame[i].first.GetIndexAndSequenceNumber() == 16777216 || collisionsExitedThisFrame[i].second.GetIndexAndSequenceNumber() == 16777216) continue;
+		// Make sure nuts exist for the collisions
+		// After deletion things can collision exit, make sure those are not processed. 
+		if (nutsInSystem.find(collisionsExitedThisFrame[i].first) == nutsInSystem.end() ||
+			nutsInSystem.find(collisionsExitedThisFrame[i].second) == nutsInSystem.end()) continue;
 
 		// Remove them from the currently colliding list
 		nutsInSystem[collisionsExitedThisFrame[i].first]->currentlyColliding.erase(nutsInSystem[collisionsExitedThisFrame[i].second]);

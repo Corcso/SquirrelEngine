@@ -23,7 +23,7 @@ namespace SQ {
 		}
 
 		if (!jsonData["boxHalfDimentions"].is_null()) newShape->boxHalfDimentions = V3(jsonData["boxHalfDimentions"][0], jsonData["boxHalfDimentions"][1], jsonData["boxHalfDimentions"][2]);
-		if (!jsonData["sphereRadius"].is_null()) newShape->sphereRadius = jsonData["boxHalfDimentions"];
+		if (!jsonData["sphereRadius"].is_null()) newShape->sphereRadius = jsonData["sphereRadius"];
 		if (!jsonData["capsuleRadius"].is_null()) newShape->capsuleRadius = jsonData["capsuleRadius"];
 		if (!jsonData["capsuleHalfHeight"].is_null()) newShape->capsuleHalfHeight = jsonData["capsuleHalfHeight"];
 

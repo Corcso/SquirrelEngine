@@ -7,6 +7,9 @@
 #include "FPVCamera.h"
 #include "Spinner.h"
 #include "Player.h"
+#include "Enemy.h"
+#include "Bullet.h"
+#include "AirlockSceneLoading.h"
 // ====================================
 
 // Dictionary setup
@@ -24,7 +27,10 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 // {"Name Of Type In .nut file", MYCLASS::Deserialize}
 	{"FPVCamera", FPVCamera::Deserialize},
 	{"Spinner", Spinner::Deserialize},
-	{"Player", Player::Deserialize}
+	{"Player", Player::Deserialize},
+	{"Enemy", Enemy::Deserialize},
+	{"Bullet", Bullet::Deserialize},
+	{"AirlockSceneLoading", AirlockSceneLoading::Deserialize}
 
 	
 	

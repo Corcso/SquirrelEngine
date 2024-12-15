@@ -19,12 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AirlockSceneLoading.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FPVCamera.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SerializationTypeDictionary.cpp" />
     <ClCompile Include="Spinner.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AirlockSceneLoading.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FPVCamera.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Spinner.h" />

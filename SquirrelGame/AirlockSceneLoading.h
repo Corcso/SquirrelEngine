@@ -1,8 +1,9 @@
 #pragma once
-#include <SquirrelEngine.h>
+#include "SquirrelEngine.h"
+
 using namespace SQ;
-class Player :
-    public PhysicsNut
+class AirlockSceneLoading :
+    public Nut
 {
 public:
     static SQ::UniquePoolPtr<SQ::Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
@@ -11,6 +12,8 @@ public:
     virtual void Update() override;
     virtual void LateUpdate() override;
 private:
-    std::shared_ptr<ShelledNut> packedBullet;
+    std::shared_ptr<ShelledNut> packedScene;
+    std::shared_ptr<ShelledNut::InstantiatePromise> promise;
+    bool loaded;
 };
 

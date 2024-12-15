@@ -27,6 +27,12 @@ namespace SQ {
 		CameraNut* GetActiveCamera(Nut* nutToLookFrom = nullptr);
 
 		/// <summary>
+		/// Returns the root nut
+		/// </summary>
+		/// <returns>Root Nut</returns>
+		Nut* GetRootNut();
+
+		/// <summary>
 		/// Quits the run loop, closes the game.
 		/// </summary>
 		void Quit();

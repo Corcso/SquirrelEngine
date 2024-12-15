@@ -1,30 +1,10 @@
 {
-  "type": "Nut",
-  "name": "Scene",
+  "type": "WorldNut",
+  "name": "Second Level",
+  "position": [0, 0, 40],
+  "eulerAngles": [0, 0, 0],
+  "scale": [1,1,1],
   "children": [
-	{
-      "type": "Player",
-      "name": "Main Player",
-	  "collisionShape": "./Resources/player.shape",
-	  "density": 1,
-	  "elasticity": 0.1,
-	  "static": false,
-      "position": [0, 1, 0],
-      "eulerAngles": [0, 0, 0],
-      "scale": [1,1,1],
-      "children": [
-		{
-		  "type": "CameraNut",
-		  "name": "Main Player Camera",
-		  "fov": 70,
-		  "isActive": true,
-		  "position": [0, 0.5, 0],
-		  "eulerAngles": [0, 0, 0],
-		  "scale": [1,1,1],
-		  "children": []
-		}
-	  ]
-    },
 	{
       "type": "PhysicsNut",
       "name": "Floor",
@@ -48,24 +28,11 @@
     },
 	{
       "type": "LightNut",
-      "name": "World Light",
+      "name": "Spot Light",
       "position": [0,5,0],
       "eulerAngles": [0,0,0],
       "scale": [1,1,1],
-      "diffuseColor": [1 ,1,1],
-      "lightType": "point",
-      "spotlightInnerAngle": 0.0,
-      "spotlightOuterAngle": 0.0,
-      "intensity": 1,
-      "children": []
-    },
-	{
-      "type": "LightNut",
-      "name": "Spot Light",
-      "position": [0,5,20],
-      "eulerAngles": [0,0,0],
-      "scale": [1,1,1],
-      "diffuseColor": [1 ,0,0],
+      "diffuseColor": [0 ,1,0],
       "lightType": "point",
       "spotlightInnerAngle": 1.5,
       "spotlightOuterAngle": 1.6,
@@ -94,11 +61,6 @@
 		  "children": []
 	  }
 	  ]
-    },
-	{
-		  "type": "AirlockSceneLoading",
-		  "name": "SceneLoadTrigger",
-		  "children": []
-	  }
+    }
   ]
 }

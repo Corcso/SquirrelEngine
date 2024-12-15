@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include "Bullet.h"
 SQ::UniquePoolPtr<SQ::Nut> Player::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 {
     // PERFORM PRE DESERIALIZE WORK
@@ -25,6 +25,8 @@ void Player::Ready()
 {
     // Call base ready (required)
     PhysicsNut::Ready();
+
+    packedBullet = GetResourceManager()->Retrieve<ShelledNut>("./Resources/bullet.nut");
 }
 
 void Player::Update()
@@ -43,6 +45,14 @@ void Player::Update()
     if (SQ::Services::GetInput()->IsMouseLocked()) {
         RotateGlobalY(SQ::Services::GetInput()->GetMouseMovement().X * -0.01);
         GetNthChild<CameraNut>(0)->RotateSuperLocalX(SQ::Services::GetInput()->GetMouseMovement().Y * -0.01);
+    }
+
+    if (GetInput()->IsMouseReleased(Input::MouseButton::LEFT)) {
+        UniquePoolPtr<Bullet> newBullet = packedBullet->Instantiate().DynamicUniquePoolPtrCast<Bullet>();
+        newBullet->SetPosition(GetPosition());
+        newBullet->SetRotation(GetRotation());
+        Bullet* observer = newBullet.get();
+        observer->SetParent(GetTree()->GetRootNut(), newBullet.StaticUniquePoolPtrCast<Nut>());
     }
 }
 

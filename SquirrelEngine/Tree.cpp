@@ -84,6 +84,10 @@ namespace SQ {
 		return nullptr;
 	}
 
+	Nut* Tree::GetRootNut() {
+		return &rootNut;
+	}
+
 	void Tree::Quit()
 	{
 		toQuit = true;
@@ -129,8 +133,8 @@ namespace SQ {
 	bool Tree::DestroyQueued(Nut* nut)
 	{
 		// Loop first, then act on delete from the children up
-		unsigned int childCount = nut->GetChildCount();
-		for (unsigned int c = 0; c < childCount; ++c) {
+		//unsigned int childCount = nut->GetChildCount();
+		for (unsigned int c = 0; c < nut->GetChildCount(); ++c) {
 			if(DestroyQueued(nut->GetNthChild(c))) --c;
 		}
 
