@@ -30,6 +30,8 @@ namespace SQ {
         if (!serializedData["density"].is_null()) toWorkOn->density = serializedData["density"];
         if (!serializedData["collisionShape"].is_null()) toWorkOn->shape = Services::GetResourceManager()->Retrieve<CollisionShape>(serializedData["collisionShape"]);
        
+        toWorkOn->shape->RegisterNut(toWorkOn);
+
         // Return toWorkOn
         return owner;
     }
@@ -43,12 +45,24 @@ namespace SQ {
 
     void PhysicsNut::SetShape(std::shared_ptr<CollisionShape> shape)
     {
+        if (this->shape.get() != nullptr) this->shape->RemoveNut(this);
         this->shape = shape;
+        this->shape->RegisterNut(this);
         Services::GetPhysics()->BodyShapeUpdated(this);
     }
     std::shared_ptr<CollisionShape> PhysicsNut::GetShape()
     {
         return shape;
+    }
+    void PhysicsNut::SetElasticity(float elasticity)
+    {
+        this->elasticity = elasticity;
+        Services::GetPhysics()->BodyElasticityUpdated(this);
+    }
+    void PhysicsNut::SetDensity(float density)
+    {
+        this->density = density;
+        Services::GetPhysics()->BodyShapeUpdated(this);
     }
     float PhysicsNut::GetElasticity()
     {

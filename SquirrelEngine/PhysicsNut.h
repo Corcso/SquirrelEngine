@@ -24,6 +24,8 @@ namespace SQ {
         void SetShape(std::shared_ptr<CollisionShape> mesh);
         std::shared_ptr<CollisionShape> GetShape();
 
+        void SetElasticity(float elasticity);
+        void SetDensity(float density);
         float GetElasticity();
         float GetDensity();
         bool IsStatic();

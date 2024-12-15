@@ -129,9 +129,6 @@
     <ClInclude Include="CollisionShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionShapeJolt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RootNut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -219,9 +216,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CollisionShape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionShapeJolt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RootNut.cpp">

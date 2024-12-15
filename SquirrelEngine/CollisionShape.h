@@ -1,7 +1,12 @@
 #pragma once
 #include "Resource.h"
 #include "SQMath.h"
+#include <set>
 namespace SQ {
+
+    // Forward declare PhysicsNut
+    class PhysicsNut;
+
     class CollisionShape :
         public Resource
     {
@@ -31,12 +36,17 @@ namespace SQ {
         float GetCapsuleHalfHeight();
         float GetSphereRadius();
 
-        virtual void Update() {}
+        void Updated();
+
+        void RegisterNut(PhysicsNut* nut);
+        void RemoveNut(PhysicsNut* nut);
     public:
         Type type;
         Vec3 boxHalfDimentions;
         float capsuleRadius;
         float capsuleHalfHeight;
         float sphereRadius;
+
+        std::set<PhysicsNut*> activeOnTheseNuts;
     };
 }
