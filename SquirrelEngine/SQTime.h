@@ -34,6 +34,8 @@ namespace SQ {
 
 		
 	private:
+		
+		void FrameStart();
 
 		/// <summary>
 		/// <para>Private frame end function, sets time points for second last and last frame</para>
@@ -41,7 +43,12 @@ namespace SQ {
 		/// </summary>
 		void FrameEnd();
 
+		void WaitForTargetFPS();
+
 		std::chrono::high_resolution_clock clock;
+
+		std::chrono::time_point<std::chrono::high_resolution_clock> frameTargetStartTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> frameTargetEndTime;
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointAtStart;
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointLastFrame;

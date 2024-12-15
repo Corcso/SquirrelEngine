@@ -117,8 +117,8 @@ void SQ::PhysicsJolt::Update()
 {
 
 	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
-	const int cCollisionSteps = 10;
-	const float cDeltaTime = 1.0f / 6000.0f;
+	const int cCollisionSteps = 2;
+	const float cDeltaTime = 1.0f / 120.0f;
 
 	// Clear collision lists
 	collisionsEnteredThisFrame.clear();

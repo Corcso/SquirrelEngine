@@ -29,6 +29,8 @@ namespace SQ {
 	void Tree::RunLoop()
 	{
 		while (!toQuit) {
+			GetTime()->FrameStart();
+
 			SQ::Services::GetInput()->ProcessInput();
 
 			GetPhysics()->Update();
@@ -55,6 +57,8 @@ namespace SQ {
 			DestroyQueued(&rootNut);
 
 			GetTime()->FrameEnd();
+
+			GetTime()->WaitForTargetFPS();
 		}
 
 		FreeAllNuts(&rootNut);
