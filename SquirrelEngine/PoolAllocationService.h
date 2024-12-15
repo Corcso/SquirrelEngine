@@ -123,8 +123,7 @@ namespace SQ {
 				}
 			}
 			
-			// If there isnt a fit
-			// TODO POOL NOT BIG ENOUGH
+			// If there isnt a fit use new as a fallback and output a warning
 			if (roundedSize == 0) {
 				std::cout << "WARN : " << "Pool for size " << std::to_string(sizeof(T)) << " not available, new called.\n";
 				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));

@@ -25,7 +25,7 @@ namespace SQ {
 			std::lock_guard<std::mutex> lockGuard(loaderLock);
 			// Once in, check again, just incase we were being blocked by something else loading the resource we want. 
 			// This stops it being loaded twice. 
-			// TODO confirm unloads mid check are ok prob have a double expiry check or something
+			// If the resource expires between the return and if statement (due to multithreading) not certain how to handle such. 
 			if (resources.find(path) != resources.end()) {
 				if (!resources[path].expired()) {
 					return std::dynamic_pointer_cast<T, SQ::Resource>(resources[path].lock());

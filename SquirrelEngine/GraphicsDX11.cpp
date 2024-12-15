@@ -199,7 +199,7 @@ namespace SQ {
         rasterizerDescription.DepthBiasClamp = 0.0f;
         rasterizerDescription.DepthClipEnable = TRUE;
         rasterizerDescription.FillMode = D3D11_FILL_SOLID;
-        rasterizerDescription.FrontCounterClockwise = FALSE; // TODO, when model loading library imported, change this to TRUE
+        rasterizerDescription.FrontCounterClockwise = FALSE; 
         rasterizerDescription.MultisampleEnable = FALSE;
         rasterizerDescription.ScissorEnable = FALSE;
         rasterizerDescription.SlopeScaledDepthBias = 0.0f;
@@ -222,9 +222,8 @@ namespace SQ {
         // Initialise constant buffers
         initialiseConstantBuffers();
 
-        // TODO Add shader init
+        // Shader init
         initialiseShaders();
-        // TODO Ready rasteriser and output merger
 
         // Set clear color
         this->clearColor = clearColor;

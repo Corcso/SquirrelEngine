@@ -279,6 +279,9 @@ Input::Key::INVALID_KEY
         GetCursorPos(mousePos);
         mousePositionThisFrame = V2(mousePos->x, mousePos->y);
         delete mousePos;
+
+        // Also mouse by default is unlocked, so set the state to reflect that. 
+        isMouseLocked = false;
     }
 
     LRESULT InputWindows::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -400,14 +403,14 @@ Input::Key::INVALID_KEY
     void InputWindows::LockMouse()
     {
         // Hide cursor and set mouse locked to true
-        ShowCursor(false); // TODO fix this as show cursor is like a stack of numbers rather than bool?!
+        if(!isMouseLocked) ShowCursor(false); // Only do this on a toggle, it works like a counter. https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showcursor
         isMouseLocked = true;
     }
 
     void InputWindows::UnlockMouse()
     {
         // Show cursor and set mouse locked to false
-        ShowCursor(true);// TODO fix this as show cursor is like a stack of numbers rather than bool?!
+        if(isMouseLocked) ShowCursor(true);// Only do this on a toggle, it works like a counter. https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showcursor
         isMouseLocked = false;
     }
 }

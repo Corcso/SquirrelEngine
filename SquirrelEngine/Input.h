@@ -33,7 +33,7 @@ namespace SQ {
 			ENTER,
 			SHIFT,
 			CONTROL,
-			ALT, // todo support r AND l 
+			ALT, // Possible Addition: support right and left variants
 			PAUSE,
 			CAPSLOCK,
 			ESCAPE,
@@ -60,7 +60,7 @@ namespace SQ {
 			EIGHT,
 			NINE,
 			A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-			// todo add oem
+			// Possible Addition: Add OEM Keys
 
 			TOTAL_SUPPORTED_KEYS
 		};
