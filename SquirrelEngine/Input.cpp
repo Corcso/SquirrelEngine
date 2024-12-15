@@ -56,6 +56,10 @@ namespace SQ {
 		for (int k = 0; k < static_cast<int>(Key::TOTAL_SUPPORTED_KEYS); ++k) {
 			keys[k] = InputState::UP;
 		}
+		// Same for mouse buttons
+		for (int b = 0; b < static_cast<int>(MouseButton::TOTAL_SUPPORTED_BUTTONS); ++b) {
+			mouseButtons[b] = InputState::UP;
+		}
 	}
 
 	void Input::Update()

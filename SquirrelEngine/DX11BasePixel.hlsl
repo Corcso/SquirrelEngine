@@ -111,9 +111,9 @@ float4 main(Input input) : SV_TARGET{
         ambientTotal += lights[i].ambientColor * lights[i].ambientIntensity * diffuseColor / attenuation;
         // Add diffuse light to total
         diffuseTotal += CalculateDiffusePower(input.normal, lightRayDirection) * diffuseColor * lights[i].diffuseColor * spotlightMultFactor * lights[i].intensity / attenuation;
-        // Add specular light to total
+        // Add specular light to total (Specular doesn't attenuate)
         specularTotal += CalculateSpecularPower(input.normal, lightRayDirection, input.worldPosition) * 
-                                specularColor * lights[i].diffuseColor * spotlightMultFactor * smoothness * lights[i].intensity / attenuation;
+                                specularColor * lights[i].diffuseColor * spotlightMultFactor * smoothness * lights[i].intensity;
 
     }
     
