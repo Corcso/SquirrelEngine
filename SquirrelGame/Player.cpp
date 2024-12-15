@@ -51,7 +51,7 @@ void Player::Update()
     }
     
     // Shoot a bullet
-    if (GetInput()->IsMouseReleased(Input::MouseButton::LEFT)) {
+    if (GetInput()->IsMousePressed(Input::MouseButton::LEFT)) {
         UniquePoolPtr<Bullet> newBullet = packedBullet->Instantiate().DynamicUniquePoolPtrCast<Bullet>();
         newBullet->SetPosition(GetPosition());
         newBullet->SetRotation(GetRotation());

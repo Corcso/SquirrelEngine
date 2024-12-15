@@ -110,7 +110,7 @@ namespace SQ {
 		unsigned int childCount = nut->GetChildCount();
 
 		for (unsigned int c = 0; c < childCount; ++c) {
-			Update(nut->GetNthChild(c));
+			LateUpdate(nut->GetNthChild(c));
 		}
 	}
 
