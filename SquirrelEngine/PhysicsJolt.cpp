@@ -107,7 +107,9 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 	JPH::EActivation wake = nut->IsStatic() ? JPH::EActivation::DontActivate : JPH::EActivation::Activate;
 
 	// Create the body in the system setting relevant parameters.
-	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), motionType, layer);
+	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), 
+		JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), 
+		JPH::Quat(nut->GetRotation().X, nut->GetRotation().Y, nut->GetRotation().Z, nut->GetRotation().W), motionType, layer);
 	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, wake);
 	bodyInterface->SetRestitution(newBodyID, 0.78);
 
@@ -128,9 +130,26 @@ void SQ::PhysicsJolt::Update()
 	collisionsEnteredThisFrame.clear();
 	collisionsExitedThisFrame.clear();
 
+	// Make sure physics world is same as game world
+	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
+		// Get position and rotation from game world. 
+		Vec3 worldPos = it->second->GetPosition();
+		Quat worldRot = it->second->GetRotation();
+
+		// Compare to the current position & rotation in the physics system, and change and wake up if different. 
+		JPH::RVec3 physPos = bodyInterface->GetCenterOfMassPosition(it->first);
+		JPH::Quat physRot = bodyInterface->GetRotation(it->first);
+
+		if(ABS(worldPos.X - physPos.GetX()) > 0.0001 || ABS(worldPos.Y - physPos.GetY()) > 0.0001 || ABS(worldPos.Z - physPos.GetZ()) > 0.0001)
+			bodyInterface->SetPosition(it->first, JPH::Vec3(worldPos.X, worldPos.Y, worldPos.Z), JPH::EActivation::Activate);
+		if(ABS(worldRot.X - physRot.GetX()) > 0.0001 || ABS(worldRot.Y - physRot.GetY()) > 0.0001 || ABS(worldRot.Z - physRot.GetZ()) > 0.0001 || ABS(worldRot.W - physRot.GetW()) > 0.0001) 
+			bodyInterface->SetRotation(it->first, JPH::Quat(worldRot.X, worldRot.Y, worldRot.Z, worldRot.W), JPH::EActivation::Activate);
+	}
+
 	// Step the world
 	physicsSystem.Update(cDeltaTime, cCollisionSteps, tempAllocator, jobSystem);
 	
+	// Update rotation and position
 	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
 		JPH::RVec3 pos = bodyInterface->GetCenterOfMassPosition(it->first);
 		JPH::Quat rot = bodyInterface->GetRotation(it->first);

@@ -44,6 +44,12 @@ namespace SQ {
         //Vec3 GetEulerAngles();
 
         /// <summary>
+        /// Gets the local rotation in quaternion form.
+        /// </summary>
+        /// <returns>Local Rotation Quaternion</returns>
+        Quat GetRotation();
+
+        /// <summary>
         /// Returns the Global Position of the WorldNut
         /// </summary>
         /// <returns>Global Position</returns>

@@ -81,6 +81,11 @@ namespace SQ {
         return eulerRotation;
     }*/
 
+    Quat WorldNut::GetRotation()
+    {
+        return rotation;
+    }
+
     Vec3 WorldNut::GetGlobalPosition()
     {
         return (SRTWorldMatrixGlobal * V4(0, 0, 0, 1)).XYZ;
