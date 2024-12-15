@@ -62,6 +62,30 @@ namespace SQ {
     {
         return isStatic;
     }
+    void PhysicsNut::AddForce(Vec3 force)
+    {
+        Services::GetPhysics()->AddForce(this, force);
+    }
+    void PhysicsNut::AddImpulse(Vec3 impulse)
+    {
+        Services::GetPhysics()->AddImpulse(this, impulse);
+    }
+    void PhysicsNut::AddAngularImpulse(Vec3 impulse)
+    {
+        Services::GetPhysics()->AddAngularImpulse(this, impulse);
+    }
+    void PhysicsNut::AddTorque(Vec3 torque)
+    {
+        Services::GetPhysics()->AddTorque(this, torque);
+    }
+    void PhysicsNut::SetLinearVelocity(Vec3 velocity)
+    {
+        Services::GetPhysics()->SetLinearVelocity(this, velocity);
+    }
+    void PhysicsNut::SetAngularVelociry(Vec3 velocity)
+    {
+        Services::GetPhysics()->SetAngularVelociry(this, velocity);
+    }
     PhysicsNut::~PhysicsNut()
     {
         Services::GetPhysics()->RemoveBody(this);

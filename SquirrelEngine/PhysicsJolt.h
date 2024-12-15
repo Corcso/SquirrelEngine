@@ -143,6 +143,13 @@ namespace SQ {
 		virtual void BodyShapeUpdated(PhysicsNut* nut) final;
 
 		virtual void BodyElasticityUpdated(PhysicsNut* nut) final;
+
+		virtual void AddForce(PhysicsNut* nut, Vec3 force) final;
+		virtual void AddImpulse(PhysicsNut* nut, Vec3 impulse) final;
+		virtual void AddAngularImpulse(PhysicsNut* nut, Vec3 impulse) final;
+		virtual void AddTorque(PhysicsNut* nut, Vec3 torque) final;
+		virtual void SetLinearVelocity(PhysicsNut* nut, Vec3 velocity) final;
+		virtual void SetAngularVelociry(PhysicsNut* nut, Vec3 velocity) final;
 	private:
 		// TODO make unique ptrs
 		JPH::TempAllocatorImpl* tempAllocator;

@@ -30,6 +30,14 @@ namespace SQ {
 
         std::set<PhysicsNut*> currentlyColliding;
 
+        // force, torque, impulse and velocity 
+        void AddForce(Vec3 force);
+        void AddImpulse(Vec3 impulse);
+        void AddAngularImpulse(Vec3 impulse);
+        void AddTorque(Vec3 torque);
+        void SetLinearVelocity(Vec3 velocity);
+        void SetAngularVelociry(Vec3 velocity);
+
         ~PhysicsNut();
 
     private:
