@@ -21,6 +21,7 @@ namespace SQ {
 			this->blockCount = blockCount;
 			blocksInUse = 0;
 
+			// Use calloc not malloc, so memory is zero. Safe for uninitialized attributes. 
 			base = calloc(blockCount, blockSize);
 			char* forAddition = reinterpret_cast<char*>(base);
 			nextFreeLocation = base;
@@ -39,7 +40,6 @@ namespace SQ {
 		/// </summary>
 		/// <returns>Pointer to free memory, blockSize big</returns>
 		void* Alloc() {
-			// TODO throw if alloc over bounds
 			std::lock_guard<std::mutex> poolLock(poolMutex);
 			void* freeAddress = nextFreeLocation;
 			nextFreeLocation = *reinterpret_cast<void**>(freeAddress);
@@ -54,6 +54,10 @@ namespace SQ {
 		/// <param name="address">Address of pool block to free</param>
 		void Free(void* address) {
 			std::lock_guard<std::mutex> poolLock(poolMutex);
+			// Zero memory, for saftey of uninitialized attributes. 
+			for (int b = 0; b < blockSize; ++b) {
+				*(reinterpret_cast<char*>(address) + b) = 0x00;
+			}
 			*reinterpret_cast<void**>(address) = nextFreeLocation;
 			nextFreeLocation = address;
 			--blocksInUse;
@@ -87,6 +91,10 @@ namespace SQ {
 		inline void Delete(void* address) {
 			reinterpret_cast<T*>(address)->~T();
 			std::lock_guard<std::mutex> poolLock(poolMutex);
+			// Zero memory, for saftey of uninitialized attributes. 
+			for (int b = 0; b < blockSize; ++b) {
+				*(reinterpret_cast<char*>(address) + b) = 0x00;
+			}
 			*reinterpret_cast<void**>(address) = nextFreeLocation;
 			nextFreeLocation = address;
 			--blocksInUse;

@@ -292,7 +292,7 @@ namespace SQ {
         if (lightsData.lightCount >= 8) return;
 
         // Set all the lights attributes
-        lightsData.lights[lightsData.lightCount].lightPosition = light->GetPosition(); // TODO SET TO GLOBAL POSITION
+        lightsData.lights[lightsData.lightCount].lightPosition = light->GetGlobalPosition(); 
         lightsData.lights[lightsData.lightCount].lightDirection = light->GetForward();
         lightsData.lights[lightsData.lightCount].diffuseColor = light->GetDiffuseColor();
         lightsData.lights[lightsData.lightCount].ambientColor = light->GetAmbientColor();

@@ -4,6 +4,7 @@
 namespace SQ {
 	void Nut::SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership)
 	{
+		
 		if (parent != nullptr) {
 			for (std::vector<UniquePoolPtr<Nut>>::iterator it = parent->children.begin(); it != parent->children.end(); it++) {
 				if (it->get() == this) {

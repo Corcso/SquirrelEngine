@@ -151,6 +151,9 @@ namespace SQ {
 		virtual void SetLinearVelocity(PhysicsNut* nut, Vec3 velocity) final;
 		virtual void SetAngularVelociry(PhysicsNut* nut, Vec3 velocity) final;
 	private:
+		// Mutex access to physics system
+		std::mutex mutex;
+
 		// TODO make unique ptrs
 		JPH::TempAllocatorImpl* tempAllocator;
 		JPH::JobSystemThreadPool* jobSystem;

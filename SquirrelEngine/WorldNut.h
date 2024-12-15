@@ -22,6 +22,12 @@ namespace SQ {
         void SetPosition(Vec3 position);
 
         /// <summary>
+        /// Sets the Global Position of the WorldNut
+        /// </summary>
+        /// <param name="position">Global Position</param>
+        void SetGlobalPosition(Vec3 position);
+
+        /// <summary>
         /// Sets the Euler Angle Rotation of the WorldNut
         /// Uses global pitch yaw and roll axes
         /// </summary>

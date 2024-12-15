@@ -40,7 +40,7 @@ void SQ::PhysicsJolt::Init()
 	const UINT cMaxBodies = 1024;
 
 	// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
-	const UINT cNumBodyMutexes = 0;
+	const UINT cNumBodyMutexes = 1;
 
 	// This is the max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
 	// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
@@ -96,6 +96,8 @@ void SQ::PhysicsJolt::Init()
 
 void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	// Default shape will be overwritten
 	// Set new shape settings
 	JPH::SphereShapeSettings tempShapeBeforeUpdate(1.0f);
@@ -121,7 +123,7 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 
 void SQ::PhysicsJolt::Update()
 {
-
+	std::lock_guard<std::mutex> lock(mutex);
 	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
 	const int cCollisionSteps = 2;
 	const float cDeltaTime = 1.0f / 120.0f;
@@ -139,10 +141,10 @@ void SQ::PhysicsJolt::Update()
 		// Compare to the current position & rotation in the physics system, and change and wake up if different. 
 		JPH::RVec3 physPos = bodyInterface->GetCenterOfMassPosition(it->first);
 		JPH::Quat physRot = bodyInterface->GetRotation(it->first);
-
+		
 		if(ABS(worldPos.X - physPos.GetX()) > 0.0001 || ABS(worldPos.Y - physPos.GetY()) > 0.0001 || ABS(worldPos.Z - physPos.GetZ()) > 0.0001)
 			bodyInterface->SetPosition(it->first, JPH::Vec3(worldPos.X, worldPos.Y, worldPos.Z), JPH::EActivation::Activate);
-		if(ABS(worldRot.X - physRot.GetX()) > 0.0001 || ABS(worldRot.Y - physRot.GetY()) > 0.0001 || ABS(worldRot.Z - physRot.GetZ()) > 0.0001 || ABS(worldRot.W - physRot.GetW()) > 0.0001) 
+		if(DotQ(worldRot, Q(physRot.GetX(), physRot.GetY(), physRot.GetZ(), physRot.GetW())) > 0.001)
 			bodyInterface->SetRotation(it->first, JPH::Quat(worldRot.X, worldRot.Y, worldRot.Z, worldRot.W), JPH::EActivation::Activate);
 	}
 
@@ -151,10 +153,12 @@ void SQ::PhysicsJolt::Update()
 	
 	// Update rotation and position
 	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
+		Vec3 worldPos = it->second->GetGlobalPosition();
 		JPH::RVec3 pos = bodyInterface->GetCenterOfMassPosition(it->first);
 		JPH::Quat rot = bodyInterface->GetRotation(it->first);
 
-		it->second->SetPosition(V3(pos.GetX(), pos.GetY(), pos.GetZ()));
+		it->second->SetGlobalPosition(V3(pos.GetX(), pos.GetY(), pos.GetZ()));
+		Vec3 worldPosCheck = it->second->GetGlobalPosition();
 		it->second->SetRotation(Q(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW()));
 	}
 
@@ -196,6 +200,7 @@ void SQ::PhysicsJolt::Update()
 
 void SQ::PhysicsJolt::RemoveBody(PhysicsNut* nut)
 {
+	std::lock_guard<std::mutex> lock(mutex);
 	// Remove and delete body
 	bodyInterface->RemoveBody(nutsInSystemReversed[nut]);
 	bodyInterface->DestroyBody(nutsInSystemReversed[nut]);

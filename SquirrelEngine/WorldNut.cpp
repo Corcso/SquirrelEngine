@@ -47,6 +47,13 @@ namespace SQ {
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
+    void WorldNut::SetGlobalPosition(Vec3 position)
+    {
+        Mat4 translationLocally = Translate(position) * InvGeneralM4(SRTWorldMatrixParent);
+        this->position = V3(translationLocally.Columns[3].X, translationLocally.Columns[3].Y, translationLocally.Columns[3].Z);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
     void WorldNut::SetEulerAngles(Vec3 eulerRotation)
     {
         //this->eulerRotation = eulerRotation;
