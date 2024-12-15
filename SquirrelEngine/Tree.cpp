@@ -36,6 +36,7 @@ namespace SQ {
 			GetPhysics()->Update();
 
 			Update(&rootNut);
+			LateUpdate(&rootNut);
 
 			Services::GetGraphics()->BeginRender();
 
@@ -96,6 +97,16 @@ namespace SQ {
 	void Tree::Update(Nut* nut)
 	{
 		nut->Update();
+		unsigned int childCount = nut->GetChildCount();
+
+		for (unsigned int c = 0; c < childCount; ++c) {
+			Update(nut->GetNthChild(c));
+		}
+	}
+
+	void Tree::LateUpdate(Nut* nut)
+	{
+		nut->LateUpdate();
 		unsigned int childCount = nut->GetChildCount();
 
 		for (unsigned int c = 0; c < childCount; ++c) {

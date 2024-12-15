@@ -45,7 +45,18 @@ namespace SQ {
 		/// <param name="nut">Nut to call on</param>
 		void Update(Nut* nut);
 
+		/// <summary>
+		/// <para>Calls LateUpdate() on nut provided and all descendants.</para>
+		/// <para>Recursive function. </para>
+		/// </summary>
+		/// <param name="nut">Nut to call on</param>
+		void LateUpdate(Nut* nut);
 
+		/// <summary>
+		/// <para>Registers all lights with the graphics API</para>
+		/// <para>Recursive function. </para>
+		/// </summary>
+		/// <param name="nut">Nut to call on.</param>
 		void RegisterLights(Nut* nut);
 
 		/// <summary>
