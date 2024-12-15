@@ -37,8 +37,9 @@ namespace SQ {
 	void Nut::AddChild(UniquePoolPtr<Nut> newChild)
 	{
 		newChild->parent = this;
+		Nut* childPointerForSignal = newChild.get();
 		children.push_back(std::move(newChild));
-		NewChildAdded(true);
+		NewChildAdded(true, childPointerForSignal);
 	}
 
 	unsigned int Nut::GetChildCount()
@@ -69,8 +70,8 @@ namespace SQ {
 
 		return owner;
 	}
-	void Nut::NewChildAdded(bool myChild)
+	void Nut::NewChildAdded(bool myChild, Nut* newChild)
 	{
-		if(parent != nullptr) parent->NewChildAdded(false);
+		if(parent != nullptr) parent->NewChildAdded(false, newChild);
 	}
 }

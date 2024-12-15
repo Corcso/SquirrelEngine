@@ -29,12 +29,16 @@ namespace SQ {
         if (!serializedData["elasticity"].is_null()) toWorkOn->elasticity = serializedData["elasticity"];
         if (!serializedData["density"].is_null()) toWorkOn->density = serializedData["density"];
         if (!serializedData["collisionShape"].is_null()) toWorkOn->shape = Services::GetResourceManager()->Retrieve<CollisionShape>(serializedData["collisionShape"]);
-
-        // TEMP
-        Services::GetPhysics()->RegisterBody(toWorkOn);
        
         // Return toWorkOn
         return owner;
+    }
+
+    void PhysicsNut::Ready()
+    {
+        // Call base ready and register body with physics engine
+        WorldNut::Ready();
+        Services::GetPhysics()->RegisterBody(this);
     }
 
     void PhysicsNut::SetShape(std::shared_ptr<CollisionShape> shape)
@@ -57,5 +61,9 @@ namespace SQ {
     bool PhysicsNut::IsStatic()
     {
         return isStatic;
+    }
+    PhysicsNut::~PhysicsNut()
+    {
+        Services::GetPhysics()->RemoveBody(this);
     }
 }

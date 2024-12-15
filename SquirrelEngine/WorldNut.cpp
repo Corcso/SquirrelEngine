@@ -220,11 +220,11 @@ namespace SQ {
         return SRTWorldMatrixParent;
     }
 
-    void WorldNut::NewChildAdded(bool myChild)
+    void WorldNut::NewChildAdded(bool myChild, Nut* newChild)
     {
         UpdateTransforms(this, SRTWorldMatrixParent);
 
-        Nut::NewChildAdded(myChild);
+        Nut::NewChildAdded(myChild, newChild);
     }
 
     void WorldNut::RecalculateLocalDirections()

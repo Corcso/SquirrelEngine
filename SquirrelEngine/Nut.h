@@ -1,7 +1,7 @@
 #pragma once
 #include "PCH.h"
 #include "SQUtility.h"
-
+#include <iostream>
 namespace SQ {
 	class Nut
 	{
@@ -72,7 +72,7 @@ namespace SQ {
 
 		unsigned int GetChildCount();
 
-		virtual void Ready() {}
+		virtual void Ready() { hasReadyBeenCalled = true; std::cout << "Hi im ready: " << name << "\n"; }
 		virtual void Update() {}
 		virtual void LateUpdate() {}
 
@@ -99,6 +99,8 @@ namespace SQ {
 		/// <returns>Pointer to nut which was deserialized.</returns>
 		static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+		bool HasReadyBeenCalled() { return hasReadyBeenCalled; }
+
 		virtual ~Nut() {}
 	protected:
 		/// <summary>
@@ -107,12 +109,15 @@ namespace SQ {
 		/// Protected so child classes can call it when overriding it. 
 		/// </summary>
 		/// <param name="myChild">If the new child is this nodes direct child.</param>
-		virtual void NewChildAdded(bool myChild);
+		/// <param name="newChild">A pointer to the new child.</param>
+		virtual void NewChildAdded(bool myChild, Nut* newChild);
+
+		
 	private:
 		Nut* parent;
 		std::vector<UniquePoolPtr<Nut>> children;
 
-		
+		bool hasReadyBeenCalled = false;
 
 		bool isQueuedToDestroy;
 	};

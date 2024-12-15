@@ -160,6 +160,7 @@
     <ClInclude Include="PhysicsNut.h" />
     <ClInclude Include="PoolAllocationService.h" />
     <ClInclude Include="PoolAllocator.h" />
+    <ClInclude Include="RootNut.h" />
     <ClInclude Include="SerializationTypeDictionary.h" />
     <ClInclude Include="ShelledNut.h" />
     <ClInclude Include="SQMath.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="RootNut.cpp" />
     <ClCompile Include="Services.cpp" />
     <ClCompile Include="ShelledNut.cpp" />
     <ClCompile Include="SQTime.cpp" />

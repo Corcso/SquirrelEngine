@@ -11,6 +11,10 @@ namespace SQ {
 
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+        virtual void Ready() override { Nut::Ready(); }
+        virtual void Update() override { Nut::Update(); }
+        virtual void LateUpdate() override { Nut::LateUpdate(); }
+
         /// <summary>
         /// Sets the Local Position of the WorldNut
         /// </summary>
@@ -181,7 +185,7 @@ namespace SQ {
     private:
 
         // Override new child added to update all children's global matrices;
-        virtual void NewChildAdded(bool myChild) override;
+        virtual void NewChildAdded(bool myChild, Nut* newChild) override;
 
         Vec3 position;
         Vec3 eulerRotation;

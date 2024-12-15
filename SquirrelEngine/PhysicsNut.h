@@ -13,6 +13,11 @@ namespace SQ {
 
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+        // Make sure to call base class ready update and late update
+        virtual void Ready() override;
+        virtual void Update() override { WorldNut::Update(); }
+        virtual void LateUpdate() override { WorldNut::LateUpdate(); }
+
         virtual void OnCollisionStart(PhysicsNut* other) {}
         virtual void OnCollisionEnd(PhysicsNut* other) {}
 
@@ -24,6 +29,8 @@ namespace SQ {
         bool IsStatic();
 
         std::set<PhysicsNut*> currentlyColliding;
+
+        ~PhysicsNut();
 
     private:
         float elasticity; 

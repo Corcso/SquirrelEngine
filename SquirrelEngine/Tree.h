@@ -2,6 +2,7 @@
 #include "Nut.h"
 #include "CameraNut.h"
 #include "SQMath.h"
+#include "RootNut.h"
 namespace SQ {
 	class Tree
 	{
@@ -54,8 +55,9 @@ namespace SQ {
 
 		/// <summary>
 		/// The root nut
+		/// Special root nut type which calls ready when objects nuts the tree. 
 		/// </summary>
-		Nut rootNut;
+		RootNut rootNut;
 
 		/// <summary>
 		/// Stores if the game will close at the end of the frame

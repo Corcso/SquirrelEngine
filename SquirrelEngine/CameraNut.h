@@ -9,6 +9,11 @@ namespace SQ {
 
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+        // Make sure to call base class ready update and late update
+        virtual void Ready() override { WorldNut::Ready(); }
+        virtual void Update() override { WorldNut::Update(); }
+        virtual void LateUpdate() override { WorldNut::LateUpdate(); }
+
         /// <summary>
         /// <para>Returns the View Matrix of this camera.</para>
         /// <para>Left Handed</para>
