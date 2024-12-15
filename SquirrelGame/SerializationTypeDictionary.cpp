@@ -6,6 +6,7 @@
 // PLACE YOUR INCLUDES HERE
 #include "FPVCamera.h"
 #include "Spinner.h"
+#include "Player.h"
 // ====================================
 
 // Dictionary setup
@@ -22,7 +23,8 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 // PLACE YOUR NUT DESERIALIZE FUNCTIONS HERE!
 // {"Name Of Type In .nut file", MYCLASS::Deserialize}
 	{"FPVCamera", FPVCamera::Deserialize},
-	{"Spinner", Spinner::Deserialize}
+	{"Spinner", Spinner::Deserialize},
+	{"Player", Player::Deserialize}
 
 	
 	

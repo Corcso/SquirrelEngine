@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FPVCamera.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SerializationTypeDictionary.cpp" />
     <ClCompile Include="Spinner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPVCamera.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Spinner.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
