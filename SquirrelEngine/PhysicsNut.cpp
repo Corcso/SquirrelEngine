@@ -18,7 +18,8 @@ namespace SQ {
         WorldNut::Deserialize(toWorkOn, serializedData);
 
         // Perform deserialization on our data. 
-
+        if (!serializedData["static"].is_null()) toWorkOn->isStatic = serializedData["static"];
+        else toWorkOn->isStatic = false;
         if (!serializedData["elasticity"].is_null()) toWorkOn->elasticity = serializedData["elasticity"];
         if (!serializedData["density"].is_null()) toWorkOn->density = serializedData["density"];
         if (!serializedData["collisionShape"].is_null()) toWorkOn->shape = Services::GetResourceManager()->Retrieve<CollisionShape>(serializedData["collisionShape"]);
@@ -46,5 +47,9 @@ namespace SQ {
     float PhysicsNut::GetDensity()
     {
         return density;
+    }
+    bool PhysicsNut::IsStatic()
+    {
+        return isStatic;
     }
 }

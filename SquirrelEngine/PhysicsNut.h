@@ -18,12 +18,14 @@ namespace SQ {
 
         float GetElasticity();
         float GetDensity();
+        bool IsStatic();
 
         std::set<PhysicsNut*> currentlyColliding;
 
     private:
         float elasticity; 
         float density; 
+        bool isStatic;
 
         std::shared_ptr<CollisionShape> shape;
     };

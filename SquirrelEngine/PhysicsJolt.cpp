@@ -76,22 +76,22 @@ void SQ::PhysicsJolt::Init()
 	bodyInterface = &physicsSystem.GetBodyInterface();
 
 
-	JPH::BoxShapeSettings floor_shape_settings(JPH::Vec3(100.0f, 1.0f, 100.0f));
-	floor_shape_settings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+	//JPH::BoxShapeSettings floor_shape_settings(JPH::Vec3(100.0f, 1.0f, 100.0f));
+	//floor_shape_settings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 
 	// Create the shape
-	JPH::ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
-	JPH::ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+	//JPH::ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
+	//JPH::ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
 
 
 	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-	JPH::BodyCreationSettings floor_settings(floor_shape, JPH::RVec3(0.0, -1.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, SQJOLT::Layers::NON_MOVING);
+	//JPH::BodyCreationSettings floor_settings(floor_shape, JPH::RVec3(0.0, -1.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, SQJOLT::Layers::NON_MOVING);
 
 	// Create the actual rigid body
-	JPH::Body* floor = bodyInterface->CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
+	//JPH::Body* floor = bodyInterface->CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
 
 	// Add it to the world
-	bodyInterface->AddBody(floor->GetID(), JPH::EActivation::DontActivate);
+	//bodyInterface->AddBody(floor->GetID(), JPH::EActivation::DontActivate);
 
 }
 
@@ -102,9 +102,14 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 	JPH::SphereShapeSettings tempShapeBeforeUpdate(1.0f);
 	tempShapeBeforeUpdate.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 
+	// Get static/dynamic properties ready.
+	JPH::EMotionType motionType = nut->IsStatic() ? JPH::EMotionType::Static : JPH::EMotionType::Dynamic;
+	JPH::ObjectLayer layer = nut->IsStatic() ? SQJOLT::Layers::NON_MOVING : SQJOLT::Layers::MOVING;
+	JPH::EActivation wake = nut->IsStatic() ? JPH::EActivation::DontActivate : JPH::EActivation::Activate;
+
 	// Create the body in the system setting relevant parameters.
-	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, SQJOLT::Layers::MOVING);
-	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, JPH::EActivation::Activate);
+	JPH::BodyCreationSettings newBodySettings(tempShapeBeforeUpdate.Create().Get(), JPH::RVec3(nut->GetPosition().X, nut->GetPosition().Y, nut->GetPosition().Z), JPH::Quat::sIdentity(), motionType, layer);
+	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, wake);
 	bodyInterface->SetRestitution(newBodyID, 0.78);
 
 	nutsInSystem[newBodyID] = nut;

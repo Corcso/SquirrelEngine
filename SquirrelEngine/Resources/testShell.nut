@@ -251,6 +251,55 @@
 		  "children": []
 		}
 	  ]
+    },
+	
+	{
+      "type": "PhysicsNut",
+      "name": "physsaa",
+	  "collisionShape": "./Resources/sphere.shape",
+	  "density": 1,
+	  "elasticity": 0.1,
+	  "static": true,
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "eulerAngles": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+    
+      "children": [
+		{
+		  "type": "MeshNut",
+		  "name": "Child",
+		  "position": [
+			0,
+			0,
+			0
+		  ],
+		  "eulerAngles": [
+			0,
+			0,
+			0
+		  ],
+		  "scale": [
+			1,
+			1,
+			1
+		  ],
+		  "mesh": "./Resources/cube.obj",
+		  "material": "./Resources/test.mat",
+		  "children": []
+		}
+	  ]
     }
   ]
 }
