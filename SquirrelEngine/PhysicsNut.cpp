@@ -2,6 +2,12 @@
 #include "PhysicsNut.h"
 #include "Services.h"
 namespace SQ {
+    
+    PhysicsNut::PhysicsNut(bool isStatic)
+    {
+        this->isStatic = isStatic;
+    }
+
     UniquePoolPtr<Nut> SQ::PhysicsNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
     {
         // Cast deserializeInto to our type, call it toWorkOn

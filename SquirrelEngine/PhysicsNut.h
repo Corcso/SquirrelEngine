@@ -8,6 +8,9 @@ namespace SQ {
         public WorldNut
     {
     public:
+        PhysicsNut() { isStatic = false; }
+        PhysicsNut(bool isStatic);
+
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
         virtual void OnCollisionStart(PhysicsNut* other) {}
