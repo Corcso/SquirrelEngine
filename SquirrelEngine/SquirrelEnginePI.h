@@ -31,21 +31,22 @@
 
 	// Jolt Physics
 	// (Rouwe, no date a)
-#define JOLT
+
 #ifdef JOLT
+#ifdef _DEBUG
 #define JPH_DEBUG_RENDERER 
 #define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
-////#define JPH_DEBUG_RENDERER
 #define JPH_PROFILE_ENABLED
 #define JPH_OBJECT_STREAM
-//#define JPH_USE_AVX2
-//#define JPH_USE_AVX
-//#define JPH_USE_SSE4_1
-//#define JPH_USE_SSE4_2
-//#define JPH_USE_LZCNT
-//#define JPH_USE_TZCNT
-//#define JPH_USE_F16C
-//#define JPH_USE_FMADD
+#pragma comment(lib, "Jolt.lib")
+#else
+#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
+#define JPH_OBJECT_STREAM
+#define JPH_DEBUG_RENDERER 
+#define JPH_PROFILE_ENABLED
+#pragma comment(lib, "Jolt_Release.lib")
+#endif
+
 #include <Jolt/Jolt.h>
 #include <Jolt/Core/Core.h>
 
@@ -64,5 +65,5 @@
 #include <thread>
 
 
-#pragma comment(lib, "Jolt.lib")
+
 #endif // JOLT
