@@ -29,10 +29,10 @@ void FPVCamera::Update()
 	if (SQ::Services::GetInput()->IsKeyPressed('q')) SQ::Services::GetInput()->LockMouse();
 	else if (SQ::Services::GetInput()->IsKeyReleased('e')) SQ::Services::GetInput()->UnlockMouse();
 
-	if (Services::GetInput()->IsKeyDown('A')) SetPosition(GetPosition() - GetLocalRight() * 0.0005f);
-	if (Services::GetInput()->IsKeyDown('D')) SetPosition(GetPosition() + GetLocalRight() * 0.0005f);
-	if (Services::GetInput()->IsKeyDown('W')) SetPosition(GetPosition() + GetLocalForward() * 0.0005f);
-	if (Services::GetInput()->IsKeyDown('S')) SetPosition(GetPosition() - GetLocalForward() * 0.0005f);
+	if (Services::GetInput()->IsKeyDown('A')) SetPosition(GetPosition() - (GetLocalRight() * 3.0f * GetTime()->Delta()));
+	if (Services::GetInput()->IsKeyDown('D')) SetPosition(GetPosition() + (GetLocalRight() * 3.0f * GetTime()->Delta()));
+	if (Services::GetInput()->IsKeyDown('W')) SetPosition(GetPosition() + (GetLocalForward() * 3.0f * GetTime()->Delta()));
+	if (Services::GetInput()->IsKeyDown('S')) SetPosition(GetPosition() - (GetLocalForward() * 3.0f * GetTime()->Delta()));
 
 	float sens = -0.005f;
 
