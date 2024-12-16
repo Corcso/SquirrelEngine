@@ -4,6 +4,12 @@
 #include "Physics.h"
 #include <iostream>
 
+
+// ============================
+// DEFAULT CLASSES FOR JOLT INTEGRATION
+// TAKEN FROM (Rouwe, no date b)
+// ============================
+
 namespace SQJOLT {
 	// Layer that objects can be in, determines which other objects it can collide with
 // Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
@@ -111,18 +117,13 @@ namespace SQJOLT {
 		// See: ContactListener
 		virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult) override
 		{
-			//std::cout << "Contact validate callback" << std::endl;
-
 			// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
 			return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 		}
 
 		virtual void			OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override;
 
-		virtual void			OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
-		{
-			//std::cout << "A contact was persisted" << std::endl;
-		}
+		virtual void			OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override{}
 
 		virtual void			OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override;
 	};
@@ -154,9 +155,8 @@ namespace SQ {
 		// Mutex access to physics system
 		std::mutex mutex;
 
-		// TODO make unique ptrs
-		JPH::TempAllocatorImpl* tempAllocator;
-		JPH::JobSystemThreadPool* jobSystem;
+		std::unique_ptr<JPH::TempAllocatorImpl> tempAllocator;
+		std::unique_ptr < JPH::JobSystemThreadPool> jobSystem;
 		SQJOLT::MyContactListener contactListner;
 		JPH::PhysicsSystem physicsSystem;
 		JPH::BodyInterface* bodyInterface;

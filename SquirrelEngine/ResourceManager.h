@@ -8,6 +8,13 @@ namespace SQ {
 	{
 	public:
 
+		/// <summary>
+		/// Retrieve a resource based on its file path. 
+		/// Loads it in if required. 
+		/// </summary>
+		/// <typeparam name="T">Type of resource expected</typeparam>
+		/// <param name="path">Filepath of resource</param>
+		/// <returns>Shared pointer to resource</returns>
 		template<typename T>
 		inline std::shared_ptr<T> Retrieve(std::string path) {
 			// Look for the resource in the map of loaded resources. 

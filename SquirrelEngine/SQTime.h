@@ -20,7 +20,7 @@ namespace SQ {
 
 		/// <summary>
 		/// <para>Gets deltaTime, time the last frame took from start to finish. </para>
-		/// <para>Microsecond precision.
+		/// <para>Microsecond precision.</para>
 		/// </summary>
 		/// <returns>Delta Time</returns>
 		float Delta();
@@ -35,6 +35,9 @@ namespace SQ {
 		
 	private:
 		
+		/// <summary>
+		/// Private frame start function, for use with wait for target FPS
+		/// </summary>
 		void FrameStart();
 
 		/// <summary>
@@ -43,6 +46,9 @@ namespace SQ {
 		/// </summary>
 		void FrameEnd();
 
+		/// <summary>
+		/// Wait until frame time reaches target FPS. 
+		/// </summary>
 		void WaitForTargetFPS();
 
 		std::chrono::high_resolution_clock clock;

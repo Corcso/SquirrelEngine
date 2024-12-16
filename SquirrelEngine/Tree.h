@@ -67,7 +67,20 @@ namespace SQ {
 		/// <param name="nut">Nut to call on</param>
 		void Render(Nut* nut);
 
+		/// <summary>
+		/// Destroy all queued for destruction nuts. 
+		/// <para>Recursive function. </para>
+		/// </summary>
+		/// <param name="nut">Nut to call on</param>
+		/// <returns>True if destroyed, needed for child list traversal</returns>
 		bool DestroyQueued(Nut* nut);
+
+		/// <summary>
+		/// Destroy all nuts. Except from root. 
+		/// <para>Recursive function. </para>
+		/// </summary>
+		/// <param name="nut">Nut to call on</param>
+		/// <returns>True if destroyed, needed for child list traversal</returns>
 		bool FreeAllNuts(Nut* nut);
 
 		/// <summary>

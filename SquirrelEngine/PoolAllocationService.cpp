@@ -4,12 +4,15 @@
 namespace SQ {
 	void PoolAllocationService::Init()
 	{
+		// Create all pools
 		for (int i = 0; i < 8; ++i) {
 			pools[POOL_BLOCK_SIZES[i]] = std::unique_ptr<PoolAllocator>(new PoolAllocator(POOL_BLOCK_SIZES[i], POOL_BLOCK_COUNTS[i]));
 		}
 	}
 	std::string PoolAllocationService::GetDebugPoolUsageStatement()
 	{
+		// Get useage details in output string nicely formatted. 
+		// Includes blocks used and bytes used totals. 
 		std::string output = "";
 		unsigned int totalPoolSize = 0;
 		unsigned int totalPoolSizeInUse = 0;

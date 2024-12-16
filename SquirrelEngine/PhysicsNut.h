@@ -4,6 +4,9 @@
 
 #include <set>
 namespace SQ {
+    /// <summary>
+    /// Physics nut, a physically simulated nut which supports collision detection. 
+    /// </summary>
     class PhysicsNut :
         public WorldNut
     {

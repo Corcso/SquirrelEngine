@@ -232,13 +232,14 @@ namespace SQ {
 
     void GraphicsDX11::BeginRender()
     {
-        //const float clearColor[]{ 0, 1, 0, 1 };
+        //Clear depth and color buffer
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), reinterpret_cast<float*>(&clearColor));
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
     }
 
     void GraphicsDX11::UpdateProjectionMatrix(CameraNut* camera)
     {
+        // Update projection matrix
         DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(camera->GetFov()), GetRenderWindowSize().Width / GetRenderWindowSize().Height, 0.001, 100);
 
         deviceContext->UpdateSubresource(projectionBuffer.Get(), 0, NULL, &projectionMatrix, 0, 0);
@@ -246,6 +247,7 @@ namespace SQ {
 
     void GraphicsDX11::SetupCameraForFrame(CameraNut* camera)
     {
+        // Update camera view matrix and position
         CameraBufferData thisFramesData{
             camera->GetViewMatrix(),
             camera->GetGlobalPosition()
@@ -256,16 +258,18 @@ namespace SQ {
 
     void GraphicsDX11::Render(MeshNut* toRender)
     {
-
+        // Get world matrix
         WorldBufferData thisNutsWorldBufferData{
             toRender->GetGlobalSRTWorldMatrix(),
             toRender->GetGlobalSRTWorldMatrix()
         };
-
+        // Update the world matrix buffer
         deviceContext->UpdateSubresource(worldBuffer.Get(), 0, NULL, &thisNutsWorldBufferData, 0, 0);
 
+        // Get the mesh to render but cast it to a DX11 mesh 
         std::shared_ptr<MeshDX11> meshToRender = std::dynamic_pointer_cast<MeshDX11>(toRender->GetMesh());
 
+        // Set vertex and index buffers
         const UINT vertexStride = sizeof(Vertex);
         const UINT vertexOffset = 0;
         deviceContext->IASetVertexBuffers(0, 1, meshToRender->GetVertexBuffer().GetAddressOf(), &vertexStride, &vertexOffset);
@@ -277,11 +281,13 @@ namespace SQ {
             deviceContext->UpdateSubresource(materialBuffer.Get(), 0, NULL, materialOnMesh->GetBufferData(), 0, 0);
         }
 
+        // Draw the mesh
         deviceContext->DrawIndexed(meshToRender->GetIndexCount(), 0, 0);
     }
 
     void GraphicsDX11::EndRender()
     {
+        // Present the back buffer to screen
         swapChain->Present(0, 0);
     }
 
@@ -311,6 +317,7 @@ namespace SQ {
 
     void GraphicsDX11::ClearFrameLights()
     {
+        // Set light count to 0
         lightsData.lightCount = 0;
         deviceContext->UpdateSubresource(lightBuffer.Get(), 0, nullptr, &lightsData, 0, 0);
     }
@@ -336,6 +343,7 @@ namespace SQ {
     {
         ComPtr<ID3D11Buffer> toReturn;
 
+        // Buffer description with parameters
         D3D11_BUFFER_DESC bufferDescription;
         ZeroMemory(&bufferDescription, sizeof(D3D11_BUFFER_DESC));
 
@@ -349,11 +357,8 @@ namespace SQ {
 
         resourceData.pSysMem = data;
 
+        // Create the buffer
         HRESULT hr = device->CreateBuffer(&bufferDescription, &resourceData, toReturn.GetAddressOf());
-        /*if (FAILED(hr))
-        {
-           Fail handling?
-        }*/
 
         return toReturn;
     }

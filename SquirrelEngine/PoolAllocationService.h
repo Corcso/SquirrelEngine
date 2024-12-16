@@ -112,6 +112,15 @@ namespace SQ {
 		//	return UniquePoolPtr<T>();
 		//}
 
+
+		/// <summary>
+		/// Makes a unique pool pointer in the correct sized pool. 
+		/// Otherwise falls back and uses new if pools are full. 
+		/// </summary>
+		/// <typeparam name="T">Type to create</typeparam>
+		/// <typeparam name="...A">Constructor args</typeparam>
+		/// <param name="...args">Constructor args</param>
+		/// <returns>UniquePoolPtr to new object</returns>
 		template <typename T, typename... A>
 		inline UniquePoolPtr<T> MakeUniquePoolPtr(A... args) {
 			// Round size up to pool size it will fit in
@@ -145,13 +154,19 @@ namespace SQ {
 				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
 			}
 
+			// We shouldn't reach here, throw an error. 
 			throw 19;
 			return UniquePoolPtr<T>();
 		}
 
+		/// <summary>
+		/// Get a string with details of pools capacity. Useful for debug.
+		/// </summary>
+		/// <returns>Details of pools capacity</returns>
 		std::string GetDebugPoolUsageStatement();
 
 	private:
+		// Sizes of pools to use and how many blocks to create
 		const size_t POOL_BLOCK_SIZES[8] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
 		const size_t POOL_BLOCK_COUNTS[8] = { 64, 64, 64, 16, 32, 16, 16, 16 };
 

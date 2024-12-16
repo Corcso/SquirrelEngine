@@ -30,18 +30,21 @@ namespace SQ {
 
 	std::shared_ptr<ShelledNut::InstantiatePromise> ShelledNut::InstantiateMultithread()
 	{
+		// Create promise
 		std::shared_ptr<InstantiatePromise> myRecordOfPromise(new InstantiatePromise());
 		myRecordOfPromise->complete = false;
 
+		// Start and detatch worker 
 		std::thread worker(ShelledNut::InstantiateMultithreadWorkFunction, jsonData, myRecordOfPromise);
 		worker.detach();
 
+		// Return the promise
 		return myRecordOfPromise;
 	}
 
 	void ShelledNut::InstantiateMultithreadWorkFunction(nlohmann::json data, std::shared_ptr<ShelledNut::InstantiatePromise> promiseToActOn)
 	{
-
+		// Instantiate and get the result into the promise, set the promise as complete and finish. 
 		promiseToActOn->result = Instantiate(data);
 		promiseToActOn->complete = true;
 
@@ -62,11 +65,10 @@ namespace SQ {
 			for (int i = 0; i < data["children"].size(); ++i) {
 				// Create the child, ownership is ours
 				UniquePoolPtr<Nut> child = Instantiate(data["children"][i]);
-				Nut* temp = child.get();
 				// Reparent the child, ownership is transfered to the parent
+				// Get an observer pointer as we wont own it to be able to call set parent. 
+				Nut* temp = child.get();
 				temp->SetParent(newNut.get(), std::move(child));
-				// We need to release our ownership.
-				//child.release();
 			}
 		}
 

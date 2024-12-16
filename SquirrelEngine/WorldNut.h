@@ -2,6 +2,9 @@
 #include "Nut.h"
 #include "SQMath.h"
 namespace SQ {
+    /// <summary>
+    /// WorldNut, a nut with some sort of position, rotation and scale in the 3D world. 
+    /// </summary>
     class WorldNut :
         public Nut
     {

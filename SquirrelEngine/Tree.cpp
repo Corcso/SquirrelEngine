@@ -18,50 +18,66 @@ namespace SQ {
 		// Load the initial nut
  		std::shared_ptr<ShelledNut> myLittleScene = Services::GetResourceManager()->Retrieve<ShelledNut>(initialNutPath);
 		UniquePoolPtr<Nut> sceneReady = myLittleScene->Instantiate();
+		// Set as a child of root, need to get observer to call function as ownership is lost. 
 		Nut* temp = sceneReady.get();
 		temp->SetParent(&rootNut, std::move(sceneReady));
-		//sceneReady.release();
-
-		//GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physs"));
-		//GetPhysics()->RegisterBody(rootNut.GetNut<PhysicsNut>("SceneAssets/physsy"));
 	}
 
 	void Tree::RunLoop()
 	{
+		// Until we should quit
 		while (!toQuit) {
+			// Get start time (used for target FPS waiting)
 			GetTime()->FrameStart();
 
+			// Process all input
 			SQ::Services::GetInput()->ProcessInput();
 
+			// Run physics updates
 			GetPhysics()->Update();
 
+			// Run update then late update on all nuts
 			Update(&rootNut);
 			LateUpdate(&rootNut);
 
+			// Begin graphics render
 			Services::GetGraphics()->BeginRender();
 
+			// Get active camera
 			CameraNut* activeCamera = GetActiveCamera();
 			bool usingTempCamera = false;
 			if (activeCamera == nullptr) { activeCamera = new CameraNut; usingTempCamera = true; activeCamera->SetFov(70); }
+			// Set camera information
 			Services::GetGraphics()->UpdateProjectionMatrix(activeCamera);
 			Services::GetGraphics()->SetupCameraForFrame(activeCamera);
 			if (usingTempCamera) delete activeCamera;
 
+			// Register all scene lights
 			RegisterLights(&rootNut);
+
+			// Render scene
 			Render(&rootNut);
 
+			// End render and display results
 			Services::GetGraphics()->EndRender();
+
+			// Clear lights list
 			Services::GetGraphics()->ClearFrameLights();
 
+			// Update input, setting pressed keys down etc. 
 			SQ::Services::GetInput()->Update();
 
+			// Destroy any queued for destruction nuts
 			DestroyQueued(&rootNut);
 
+			// Get frame end time, used for delta time and target FPS
 			GetTime()->FrameEnd();
 
+			// Wait until target FPS reached if processing frame too fast. 
 			GetTime()->WaitForTargetFPS();
 		}
 
+		// Delete all nuts 
 		FreeAllNuts(&rootNut);
 	}
 
@@ -69,12 +85,14 @@ namespace SQ {
 	{
 		if (nutToLookFrom == nullptr) nutToLookFrom = &rootNut;
 
+		// Check if this nut is a camera and if its the active one. 
 		CameraNut* cameraCast = dynamic_cast<CameraNut*>(nutToLookFrom);
 
 		if (cameraCast != nullptr) {
 			if (cameraCast->IsActiveCamera()) return cameraCast;
 		}
 
+		// Check all children if it isnt this nut
 		unsigned int childCount = nutToLookFrom->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
 			CameraNut* camFromChild = GetActiveCamera(nutToLookFrom->GetNthChild(c));
@@ -96,9 +114,11 @@ namespace SQ {
 
 	void Tree::Update(Nut* nut)
 	{
+		// Update this nut
 		nut->Update();
+		
+		// Update all children
 		unsigned int childCount = nut->GetChildCount();
-
 		for (unsigned int c = 0; c < childCount; ++c) {
 			Update(nut->GetNthChild(c));
 		}
@@ -106,9 +126,11 @@ namespace SQ {
 
 	void Tree::LateUpdate(Nut* nut)
 	{
+		// Late update this nut
 		nut->LateUpdate();
-		unsigned int childCount = nut->GetChildCount();
 
+		// Late update all children
+		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
 			LateUpdate(nut->GetNthChild(c));
 		}
@@ -116,12 +138,14 @@ namespace SQ {
 
 	void Tree::RegisterLights(Nut* nut)
 	{
+		// If light, register it with the graphics service
 		LightNut* lightCast = dynamic_cast<LightNut*>(nut);
 
 		if (lightCast != nullptr) {
 			Services::GetGraphics()->RegisterLightForFrame(lightCast);
 		}
 
+		// Check all children for lights. 
 		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
 			RegisterLights(nut->GetNthChild(c));
@@ -130,17 +154,20 @@ namespace SQ {
 
 	void Tree::Render(Nut* nut)
 	{
+		// If mesh, render it using the graphics service. 
 		MeshNut* meshCast = dynamic_cast<MeshNut*>(nut);
 
 		if (meshCast != nullptr) {
 			Services::GetGraphics()->Render(meshCast);
 		}
 
+		// Check all children for meshes. 
 		unsigned int childCount = nut->GetChildCount();
 		for (unsigned int c = 0; c < childCount; ++c) {
 			Render(nut->GetNthChild(c));
 		}
 	}
+
 	bool Tree::DestroyQueued(Nut* nut)
 	{
 		// Loop first, then act on delete from the children up

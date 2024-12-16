@@ -22,6 +22,9 @@ namespace SQ {
         }
     };
 
+    /// <summary>
+    /// The 3D geometry mesh for mesh nuts. 
+    /// </summary>
     class Mesh :
         public Resource
     {

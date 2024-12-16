@@ -18,6 +18,7 @@ namespace SQ {
 
 		file.close();
 
+		// Deserialize data
 		if (!jsonData["type"].is_null()) { 
 			if (jsonData["type"] == "box") newShape->type = Type::BOX;
 			else if (jsonData["type"] == "sphere") newShape->type = Type::SPHERE;
@@ -30,6 +31,7 @@ namespace SQ {
 		if (!jsonData["capsuleRadius"].is_null()) newShape->capsuleRadius = jsonData["capsuleRadius"];
 		if (!jsonData["capsuleHalfHeight"].is_null()) newShape->capsuleHalfHeight = jsonData["capsuleHalfHeight"];
 
+		// Update physics system
 		newShape->Updated();
 
 		return newShape;
@@ -41,7 +43,7 @@ namespace SQ {
 		Updated();
 	}
 
-	void CollisionShape::SetBoxHalfDimentions(Vec3 halfDimentions)
+	void CollisionShape::SetBoxHalfDimensions(Vec3 halfDimentions)
 	{
 		boxHalfDimentions = halfDimentions;
 		if (type == Type::BOX) Updated();
@@ -69,7 +71,7 @@ namespace SQ {
 	{
 		return type;
 	}
-	Vec3 CollisionShape::GetBoxHalfDimentions()
+	Vec3 CollisionShape::GetBoxHalfDimensions()
 	{
 		return boxHalfDimentions;
 	}

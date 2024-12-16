@@ -26,6 +26,13 @@ namespace SQ {
         virtual Vec2 GetRenderWindowSize() final;
         virtual Vec2 GetWindowLocation() final;
 
+        /// <summary>
+        /// Creates a buffer on the GPU
+        /// </summary>
+        /// <param name="data">Data to prefill with</param>
+        /// <param name="size">Size of the buffer</param>
+        /// <param name="bindFlag">Bind flags to use</param>
+        /// <returns></returns>
         ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size, D3D11_BIND_FLAG bindFlag);
     private:
         // Windows Window Handle

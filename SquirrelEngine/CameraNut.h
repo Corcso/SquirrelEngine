@@ -1,6 +1,9 @@
 #pragma once
 #include "WorldNut.h"
 namespace SQ {
+    /// <summary>
+    /// Camera nut, used for any cameras. 
+    /// </summary>
     class CameraNut :
         public WorldNut
     {

@@ -1,6 +1,9 @@
 #pragma once
 #include "WorldNut.h"
 namespace SQ {
+    /// <summary>
+    /// Light nut, used for scene lighting.
+    /// </summary>
     class LightNut :
         public WorldNut
     {

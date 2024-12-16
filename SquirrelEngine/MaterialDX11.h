@@ -15,6 +15,8 @@ namespace SQ {
         /// <returns>A pointer to the new material</returns>
         static Material* Load(std::string path);
 
+        // Overrides for properties
+
         virtual void SetDiffuseColor(Vec3 diffuseColor) final;
         virtual void SetSpecularColor(Vec3 specularColor) final;
         virtual void SetSpecularity(unsigned int specularity) final;
@@ -25,6 +27,9 @@ namespace SQ {
         virtual unsigned int GetSpecularity() final;
         virtual float GetSmoothness() final;
 
+        /// <summary>
+        /// Material data struct in a GPU friendly format
+        /// </summary>
         struct MaterialDX11Data {
             DirectX::XMFLOAT3 diffuseColor;
 
@@ -42,6 +47,10 @@ namespace SQ {
             uint32_t padding_3;
         };
 
+        /// <summary>
+        /// Returns the buffer data in the correct GPU format for the constant buffer. 
+        /// </summary>
+        /// <returns>Material buffer data</returns>
         MaterialDX11Data* GetBufferData();
 
     private:

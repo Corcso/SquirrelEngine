@@ -5,13 +5,12 @@
 void SQ::PhysicsJolt::Init()
 {
 	// Contains Adapted Code From (Rouwe, no date b)
+	// 
+	// 
+	// 
 	// Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
 	// This needs to be done before any other Jolt function is called.
 	JPH::RegisterDefaultAllocator();
-
-	// Install trace and assert callbacks
-	//Trace = TraceImpl;
-	//JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
 
 	// Create a factory, this class is responsible for creating instances of classes based on their name or hash and is mainly used for deserialization of saved data.
 	// It is not directly used in this example but still required.
@@ -27,42 +26,35 @@ void SQ::PhysicsJolt::Init()
 	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
 	// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
 	// malloc / free.
-	tempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
+	tempAllocator = std::move(std::unique_ptr<JPH::TempAllocatorImpl>(new JPH::TempAllocatorImpl(10 * 1024 * 1024)));
 
 	// We need a job system that will execute physics jobs on multiple threads. Typically
 	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
 	// of your own job scheduler. JobSystemThreadPool is an example implementation.
-	jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+	jobSystem = std::move(std::unique_ptr<JPH::JobSystemThreadPool>(new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1)));
 
 	// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
-	const UINT cMaxBodies = 1024;
+	// For a real project use something in the order of 65536.
+	const UINT cMaxBodies = 65536;
 
 	// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
+	// Ive set to 1
 	const UINT cNumBodyMutexes = 1;
 
 	// This is the max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
 	// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
 	// too small the queue will fill up and the broad phase jobs will start to do narrow phase work. This is slightly less efficient.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
-	const UINT cMaxBodyPairs = 1024;
+	// Note: For a real project use something in the order of 65536.
+	const UINT cMaxBodyPairs = 65536;
 
 	// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this
 	// number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
-	const UINT cMaxContactConstraints = 1024;
-
-	
+	// Note: For a real project use something in the order of 10240.
+	const UINT cMaxContactConstraints = 10240;
 
 	// Now we can create the actual physics system.
-	
 	physicsSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
 
-	// A body activation listener gets notified when bodies activate and go to sleep
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
-	//MyBodyActivationListener body_activation_listener;
-	//physics_system.SetBodyActivationListener(&body_activation_listener);
 
 	// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
 	// Note that this is called from a job so whatever you do here needs to be thread safe.
@@ -73,24 +65,6 @@ void SQ::PhysicsJolt::Init()
 	// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
 	// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
 	bodyInterface = &physicsSystem.GetBodyInterface();
-
-
-	//JPH::BoxShapeSettings floor_shape_settings(JPH::Vec3(100.0f, 1.0f, 100.0f));
-	//floor_shape_settings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
-
-	// Create the shape
-	//JPH::ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
-	//JPH::ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
-
-
-	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-	//JPH::BodyCreationSettings floor_settings(floor_shape, JPH::RVec3(0.0, -1.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, SQJOLT::Layers::NON_MOVING);
-
-	// Create the actual rigid body
-	//JPH::Body* floor = bodyInterface->CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
-
-	// Add it to the world
-	//bodyInterface->AddBody(floor->GetID(), JPH::EActivation::DontActivate);
 }
 
 void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
@@ -114,9 +88,11 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, wake);
 	bodyInterface->SetRestitution(newBodyID, 0.78);
 
+	// Register nut in maps
 	nutsInSystem[newBodyID] = nut;
 	nutsInSystemReversed[nut] = newBodyID;
 
+	// Add the nuts actual shape to its body
 	BodyShapeUpdated(nut);
 }
 
@@ -148,7 +124,7 @@ void SQ::PhysicsJolt::Update()
 	}
 
 	// Step the world
-	physicsSystem.Update(cDeltaTime, cCollisionSteps, tempAllocator, jobSystem);
+	physicsSystem.Update(cDeltaTime, cCollisionSteps, tempAllocator.get(), jobSystem.get());
 	
 	// Update rotation and position
 	for (std::map<JPH::BodyID, PhysicsNut*>::iterator it = nutsInSystem.begin(); it != nutsInSystem.end(); ++it) {
@@ -218,7 +194,7 @@ void SQ::PhysicsJolt::BodyShapeUpdated(PhysicsNut* nut)
 	case CollisionShape::Type::BOX:
 	{
 		// Set new shape settings
-		JPH::BoxShapeSettings newBoxShapeSettings(JPH::Vec3(JPH::RVec3(nut->GetShape()->GetBoxHalfDimentions().X, nut->GetShape()->GetBoxHalfDimentions().Y, nut->GetShape()->GetBoxHalfDimentions().Z)));
+		JPH::BoxShapeSettings newBoxShapeSettings(JPH::Vec3(JPH::RVec3(nut->GetShape()->GetBoxHalfDimensions().X, nut->GetShape()->GetBoxHalfDimensions().Y, nut->GetShape()->GetBoxHalfDimensions().Z)));
 		newBoxShapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 		newBoxShapeSettings.SetDensity(nut->GetDensity());
 

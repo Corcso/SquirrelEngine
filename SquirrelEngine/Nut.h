@@ -3,6 +3,9 @@
 #include "SQUtility.h"
 #include <iostream>
 namespace SQ {
+	/// <summary>
+	/// Base nut.
+	/// </summary>
 	class Nut
 	{
 	public: 

@@ -4,6 +4,9 @@
 #include "Material.h"
 
 namespace SQ {
+    /// <summary>
+    /// Mesh nut, used for 3D geometry.
+    /// </summary>
     class MeshNut :
         public WorldNut
     {

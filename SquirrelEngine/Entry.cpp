@@ -38,7 +38,7 @@ int main() {
 		if (!options["Background Color"].is_array()) return 21;
 
 
-		// REGISTER SERVICES
+		// REGISTER SERVICES (Order of registration does not matter)
 #ifdef WINDOWS
 		SQ::Services::RegisterInput(new SQ::InputWindows());
 #endif // WINDOWS
@@ -55,9 +55,13 @@ int main() {
 		SQ::Services::RegisterTime(new SQ::Time());
 		SQ::Services::RegisterPoolAllocationService(new SQ::PoolAllocationService());
 
+		// INITIALISE SERVICES order does matter
+
 		// Init Graphics
 		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1], SQ::V4(options["Background Color"][0], options["Background Color"][1], options["Background Color"][2], 1));
+		// Init Physics
 		SQ::Services::GetPhysics()->Init();
+		// Init Pool Allocation
 		SQ::Services::GetPoolAllocationService()->Init();
 
 		// Init Tree 	
@@ -66,11 +70,9 @@ int main() {
 		// Init Time
 		SQ::Services::GetTime()->Init();
 
-		
+		// There is no init for input
 
-		
-
-		// Unlock mouse TEMP
+		// Default mouse to be unlocked
 		SQ::Services::GetInput()->UnlockMouse();
 
 		// Begin game loop
