@@ -19,7 +19,8 @@ namespace SQ {
 	std::string JoinString(const std::vector<std::string>& stringsToJoin, char delimiter)
 	{
 		std::string toReturn = "";
-		
+
+		// Join vector by the delimiter
 		for (int s = 0; s < stringsToJoin.size(); ++s) {
 			toReturn += stringsToJoin[s];
 			if (s < stringsToJoin.size() - 1)toReturn += delimiter;

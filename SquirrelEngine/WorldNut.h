@@ -34,6 +34,10 @@ namespace SQ {
         /// <param name="eulerRotation">Euler Angle Rotation</param>
         void SetEulerAngles(Vec3 eulerRotation);
 
+        /// <summary>
+        /// Sets the local quaternion rotation
+        /// </summary>
+        /// <param name="quaternionRotation">Local quaternion rotation</param>
         void SetRotation(Quat quaternionRotation);
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace SQ {
         /// </summary>
         /// <returns>Local Position</returns>
         Vec3 GetPosition();
-        //Vec3 GetEulerAngles();
+        
 
         /// <summary>
         /// Gets the local rotation in quaternion form.

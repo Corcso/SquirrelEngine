@@ -66,14 +66,45 @@ namespace SQ {
 			return nullptr;
 		}
 
+		/// <summary>
+		/// Sets the parent, use this when reparenting a nut.
+		/// </summary>
+		/// <param name="newParent">New parent</param>
+		/// <param name="currentOwnership">Current owner unique pointer, only set this if you own the nut, if it is owned by another nut as a child this will be handled automatically. </param>
 		void SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership = UniquePoolPtr<Nut>());
+
+		/// <summary>
+		/// <para>Takes ownership of the nut out of the parent</para>
+		/// <para>Essentially a deparent</para>
+		/// </summary>
+		/// <returns>Ownership of the nut</returns>
 		UniquePoolPtr<Nut> TakeOwnership();
+
+		/// <summary>
+		/// Adds a child to this nut.
+		/// <para>Does not handle ownership! Use set parent instead for safe ownership transfer.</para>
+		/// </summary>
+		/// <param name="newChild"></param>
 		void AddChild(UniquePoolPtr<Nut> newChild);
 
+		/// <summary>
+		/// Gets the number of children on this nut
+		/// </summary>
+		/// <returns>Number of children</returns>
 		unsigned int GetChildCount();
 
-		virtual void Ready() { hasReadyBeenCalled = true; std::cout << "Hi im ready: " << name << "\n"; }
+		/// <summary>
+		/// Ready function, runs once a nut's lifetime when it first enters the main tree. 
+		/// <para>You must call this manually, if you don't add the nut to the main scene tree</para>
+		/// </summary>
+		virtual void Ready() {}
+		/// <summary>
+		/// Update function, runs once a frame
+		/// </summary>
 		virtual void Update() {}
+		/// <summary>
+		/// Late Update function, runs once a frame, after all updates. 
+		/// </summary>
 		virtual void LateUpdate() {}
 
 		/// <summary>
@@ -99,6 +130,10 @@ namespace SQ {
 		/// <returns>Pointer to nut which was deserialized.</returns>
 		static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+		/// <summary>
+		/// Check for if ready has been called. 
+		/// </summary>
+		/// <returns>True if ready has been called. False if not.</returns>
 		bool HasReadyBeenCalled() { return hasReadyBeenCalled; }
 
 		virtual ~Nut() {}

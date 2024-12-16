@@ -7,12 +7,15 @@ namespace SQ {
 		// Cast deserializeInto to our type, call it toWorkOn
 		MeshNut* toWorkOn = dynamic_cast<MeshNut*>(deserializeInto);
 		// If toWorkOn is nullptr, make a new nut of our type. 
+		// We need to follow strict ownership with the pool ptr
 		UniquePoolPtr<Nut> owner;
-		if (deserializeInto == nullptr) {
+		if (toWorkOn == nullptr) {
+			// Get the instance
 			UniquePoolPtr<MeshNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<MeshNut>();
+			// Set to work on to the instance
 			toWorkOn = instance.get();
+			// Transfer ownership into owner and static cast to nut base class
 			owner = instance.StaticUniquePoolPtrCast<Nut>();
-			deserializeInto = owner.get();
 		}
 		// Call parent deserialise, passing in our toWorkOn.
 		WorldNut::Deserialize(toWorkOn, serializedData);

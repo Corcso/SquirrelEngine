@@ -21,12 +21,15 @@ namespace SQ {
         // Cast deserializeInto to our type, call it toWorkOn
         WorldNut* toWorkOn = dynamic_cast<WorldNut*>(deserializeInto);
         // If toWorkOn is nullptr, make a new nut of our type. 
+        // We need to follow strict ownership with the pool ptr
         UniquePoolPtr<Nut> owner;
-        if (deserializeInto == nullptr) {
+        if (toWorkOn == nullptr) {
+            // Get the instance
             UniquePoolPtr<WorldNut> instance = Services::GetPoolAllocationService()->MakeUniquePoolPtr<WorldNut>();
+            // Set to work on to the instance
             toWorkOn = instance.get();
+            // Transfer ownership into owner and static cast to nut base class
             owner = instance.StaticUniquePoolPtrCast<Nut>();
-            deserializeInto = owner.get();
         }
         // Call parent deserialise, passing in our toWorkOn.
         Nut::Deserialize(toWorkOn, serializedData);
@@ -56,12 +59,8 @@ namespace SQ {
 
     void WorldNut::SetEulerAngles(Vec3 eulerRotation)
     {
-        //this->eulerRotation = eulerRotation;
-
         rotation = MulQ(MulQ(QFromAxisAngle_LH(V3(1, 0, 0), eulerRotation.X), QFromAxisAngle_LH(V3(0, 1, 0), eulerRotation.Y)), QFromAxisAngle_LH(V3(0, 0, 1), eulerRotation.Z));
 
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
@@ -74,7 +73,6 @@ namespace SQ {
     void WorldNut::SetScale(Vec3 scale)
     {
         this->scale = scale;
-        //RecalculateWorldMatrices();
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
@@ -82,11 +80,6 @@ namespace SQ {
     {
         return position;
     }
-
-  /*  Vec3 WorldNut::GetEulerAngles()
-    {
-        return eulerRotation;
-    }*/
 
     Quat WorldNut::GetRotation()
     {
@@ -136,48 +129,42 @@ namespace SQ {
     void WorldNut::RotateGlobalX(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(1, 0, 0), rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+      
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateGlobalY(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(0, 1, 0), rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+ 
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateGlobalZ(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(V3(0, 0, 1), rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+     
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalX(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(right, rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalY(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(up, rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+      
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
     void WorldNut::RotateLocalZ(float rad)
     {
         rotation = MulQ(QFromAxisAngle_LH(forward, rad), rotation);
-        //RecalculateLocalDirections();
-        //RecalculateWorldMatrices();
+
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
@@ -241,7 +228,6 @@ namespace SQ {
 
     void WorldNut::RecalculateLocalDirections()
     {
-        //Mat4 rotationMatrix = Rotate_LH(eulerRotation.X, V3(1, 0, 0)) * Rotate_LH(eulerRotation.Y, V3(0, 1, 0)) * Rotate_LH(eulerRotation.Z, V3(0, 0, 1));
         Mat4 rotationMatrix = QToM4(rotation);
         
         forward = NormV3((SRTWorldMatrixGlobal * V4(0, 0, 1, 0)).XYZ);
@@ -261,7 +247,6 @@ namespace SQ {
     {
         Mat4 translateMatrix = Translate(position);
         Mat4 scaleMatrix = Scale(scale);
-        //Mat4 rotationMatrix = Rotate_LH(eulerRotation.X, V3(1, 0, 0)) * Rotate_LH(eulerRotation.Y, V3(0, 1, 0)) * Rotate_LH(eulerRotation.Z, V3(0, 0, 1));
         Mat4 rotationMatrix = QToM4(rotation);
 
         SRTWorldMatrixLocal = translateMatrix * rotationMatrix * scaleMatrix;

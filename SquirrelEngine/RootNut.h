@@ -7,10 +7,14 @@ namespace SQ {
 
     class Tree;
 
+    /// <summary>
+    /// Special nut only used by Tree, for calling Ready functions. 
+    /// </summary>
     class RootNut :
         public Nut
     {
     public:
+        // Friends with tree so private constructor can be accessed. 
         friend class Tree;
 
         // Make sure to call base class ready update and late update

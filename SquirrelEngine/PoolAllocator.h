@@ -5,7 +5,8 @@
 #include <atomic>
 namespace SQ {
 	/// <summary>
-	/// Thead safe pool allocator (Gregory, 2018)
+	/// <para>Thead safe pool allocator (Gregory, 2018)</para>
+	/// <para>Next free blocks are stored in a linked list, where nodes are in free blocks.</para>
 	/// </summary>
 	class PoolAllocator
 	{
@@ -25,10 +26,7 @@ namespace SQ {
 			base = calloc(blockCount, blockSize);
 			char* forAddition = reinterpret_cast<char*>(base);
 			nextFreeLocation = base;
-			// Push locations onto free locations available in reverse order. 
-			/*for (int b = blockCount - 1; b >= 0; --b) {
-				freeLocations.push_front(reinterpret_cast<void*>(forAddition + (blockSize * b)));
-			}*/
+			// Push locations into free blocks. 
 			for (unsigned int b = 0; b < blockCount - 1; ++b) {
 				*reinterpret_cast<void**>(forAddition + (blockSize * b)) = reinterpret_cast<void*>(forAddition + (blockSize * (b + 1)));
 			}
@@ -40,7 +38,9 @@ namespace SQ {
 		/// </summary>
 		/// <returns>Pointer to free memory, blockSize big</returns>
 		void* Alloc() {
+			if (blocksInUse >= blockCount) throw 21;
 			std::lock_guard<std::mutex> poolLock(poolMutex);
+			// Get the next free address, pop front out of linked list, increase the usage counter. 
 			void* freeAddress = nextFreeLocation;
 			nextFreeLocation = *reinterpret_cast<void**>(freeAddress);
 			++blocksInUse;
@@ -58,6 +58,7 @@ namespace SQ {
 			for (int b = 0; b < blockSize; ++b) {
 				*(reinterpret_cast<char*>(address) + b) = 0x00;
 			}
+			// Push front onto the linked list and decrease usage counter
 			*reinterpret_cast<void**>(address) = nextFreeLocation;
 			nextFreeLocation = address;
 			--blocksInUse;
@@ -73,8 +74,10 @@ namespace SQ {
 		/// <returns>Pointer to new object on the pool</returns>
 		template <typename T, typename... A>
 		inline T* New(A... args) {
-			// TODO throw if new over bounds
+			if (blocksInUse >= blockCount) throw 21;
 			std::lock_guard<std::mutex> poolLock(poolMutex);
+			// Get the next free address, pop front out of linked list, increase the usage counter. 
+			// Use placement new at free address
 			void* freeAddress = nextFreeLocation;
 			nextFreeLocation = *reinterpret_cast<void**>(freeAddress);
 			T* toReturn = new(freeAddress) T(std::forward<A>(args)...);
@@ -89,26 +92,40 @@ namespace SQ {
 		/// <param name="address">Address of data to delete</param>
 		template <typename T>
 		inline void Delete(void* address) {
+			// Call deconstructor first, that means anything which will be taken out of the pool because of this will happen first. So no deadlock with mutex. 
 			reinterpret_cast<T*>(address)->~T();
+			// Now lock
 			std::lock_guard<std::mutex> poolLock(poolMutex);
 			// Zero memory, for saftey of uninitialized attributes. 
 			for (int b = 0; b < blockSize; ++b) {
 				*(reinterpret_cast<char*>(address) + b) = 0x00;
 			}
+			// Push front onto the linked list and decrease usage counter
 			*reinterpret_cast<void**>(address) = nextFreeLocation;
 			nextFreeLocation = address;
 			--blocksInUse;
 			return;
 		}
 
+		/// <summary>
+		/// Returns the number of blocks in use
+		/// </summary>
+		/// <returns>Number of blocks in use</returns>
 		unsigned int GetBlocksInUse() {
 			return blocksInUse;
 		}
 
+		/// <summary>
+		/// Returns the total number of blocks in the pool
+		/// </summary>
+		/// <returns>Total number of blocks in the pool</returns>
 		unsigned int GetBlockCount() {
 			return blockCount;
 		}
 
+		/// <summary>
+		/// Free the pool on deconstruction
+		/// </summary>
 		~PoolAllocator() {
 			free(base);
 		}
@@ -156,14 +173,14 @@ namespace SQ {
 			poolAllocator = nullptr;
 		}
 
+		// Direct setting of pointer and pool allocator
 		inline UniquePoolPtr<T>(T* p, PoolAllocator* pp) {
-			//By default, our underlying pointer should be empty
 			rawPointer = p;
 			poolAllocator = pp;
 		}
 
+		// Pointer only use, this functions as a regular unique pointer. For use when pools are full
 		inline UniquePoolPtr<T>(T* p) {
-			//By default, our underlying pointer should be empty
 			rawPointer = p;
 			poolAllocator = nullptr;
 		}
@@ -173,6 +190,7 @@ namespace SQ {
 		UniquePoolPtr<T>& operator=(const UniquePoolPtr<T>&) = delete;
 
 		// Move Allowed
+
 		inline UniquePoolPtr<T>(UniquePoolPtr<T>&& toMove) noexcept {
 			rawPointer = toMove.rawPointer;
 			poolAllocator = toMove.poolAllocator;
@@ -189,6 +207,12 @@ namespace SQ {
 			return *this;
 		};
 
+		/// <summary>
+		/// <para>Dynamic Cast for Unique Pool Pointers </para>
+		/// <para>Automatically moves the return result. </para>
+		/// </summary>
+		/// <typeparam name="TO">Type to cast to</typeparam>
+		/// <returns>Nullptr if cast failed, casted if cast success</returns>
 		template <typename TO>
 		inline UniquePoolPtr<TO> DynamicUniquePoolPtrCast() {
 			UniquePoolPtr<TO> result(static_cast<TO*>(rawPointer), poolAllocator);
@@ -199,6 +223,12 @@ namespace SQ {
 			return std::move(result);
 		}
 
+		/// <summary>
+		/// <para>Static Cast for Unique Pool Pointers </para>
+		/// <para>Automatically moves the return result. </para>
+		/// </summary>
+		/// <typeparam name="TO">Type to cast to</typeparam>
+		/// <returns>Nullptr if cast failed, casted if cast success</returns>
 		template <typename TO>
 		inline UniquePoolPtr<TO> StaticUniquePoolPtrCast() {
 			UniquePoolPtr<TO> result(static_cast<TO*>(rawPointer), poolAllocator);
@@ -209,12 +239,18 @@ namespace SQ {
 			return std::move(result);
 		}
 
-		// Data operations
+		/// <summary>
+		/// Releases ownership of the pointer. 
+		/// </summary>
 		inline void release() {
 			rawPointer = nullptr;
 			poolAllocator = nullptr;
 		}
 
+		/// <summary>
+		/// Returns raw pointer, should be used for observations. 
+		/// </summary>
+		/// <returns>Raw pointer</returns>
 		inline T* get() {
 			return rawPointer;
 		}
@@ -227,6 +263,9 @@ namespace SQ {
 			return *rawPointer;
 		}
 
+		/// <summary>
+		/// Delete from pool if in a pool, if not in a pool use delete. 
+		/// </summary>
 		~UniquePoolPtr<T>() {
 			if (poolAllocator && rawPointer) poolAllocator->Delete<T>(rawPointer);
 			if (!poolAllocator && rawPointer) delete rawPointer;
@@ -252,6 +291,11 @@ namespace SQ {
 	inline UniquePoolPtr<T> MakeUniquePoolPtr(PoolAllocator* pool, A... args) {
 		return UniquePoolPtr<T>(pool->New<T>(std::forward<A>(args)...), pool);
 	}
+
+	// ===============
+	// Shared and Weak Pool PTRs need cast functions and new/delete fallback support like unique PTR
+	// They are not used in the engine at the moment. 
+	// ===============
 
 	template<typename T>
 	class WeakPoolPtr;
