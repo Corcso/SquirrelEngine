@@ -1,6 +1,6 @@
 {
-          "type": "MeshNut",
-          "name": "LARGEMODEL",
+          "type": "WorldNut",
+          "name": "LargeNutHolder",
           "position": [
             0,
             0,
@@ -16,8 +16,6 @@
             0.2,
             0.2
           ],
-          "mesh": "./Resources/HQsphere.obj",
-          "material": "./Resources/test.mat",
           "children": [
 			{
   "type": "Nut",

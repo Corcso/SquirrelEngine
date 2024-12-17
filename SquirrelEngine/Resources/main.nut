@@ -82,6 +82,7 @@
       "position": [5, 1, 5],
       "eulerAngles": [0, 0, 0],
       "scale": [1,1,1],
+	  "speed": 2,
       "children": [
 		  {
 		  "type": "MeshNut",

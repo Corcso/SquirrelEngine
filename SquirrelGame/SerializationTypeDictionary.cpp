@@ -5,7 +5,6 @@
 // ====================================
 // PLACE YOUR INCLUDES HERE
 #include "FPVCamera.h"
-#include "Spinner.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Bullet.h"
@@ -26,7 +25,6 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 // PLACE YOUR NUT DESERIALIZE FUNCTIONS HERE!
 // {"Name Of Type In .nut file", MYCLASS::Deserialize}
 	{"FPVCamera", FPVCamera::Deserialize},
-	{"Spinner", Spinner::Deserialize},
 	{"Player", Player::Deserialize},
 	{"Enemy", Enemy::Deserialize},
 	{"Bullet", Bullet::Deserialize},

@@ -2,6 +2,10 @@
 #include "SquirrelEngine.h"
 
 using namespace SQ;
+
+/// <summary>
+/// Simple enemy which moves toward the player
+/// </summary>
 class Enemy :
     public PhysicsNut
 {
@@ -13,5 +17,8 @@ public:
     virtual void LateUpdate() override;
 
     virtual void OnCollisionStart(PhysicsNut* other) override;
+
+private:
+    float speed;
 };
 

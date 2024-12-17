@@ -2,6 +2,10 @@
 #include "SquirrelEngine.h"
 
 using namespace SQ;
+
+/// <summary>
+/// Simple example bullet nut which dies on collision. 
+/// </summary>
 class Bullet :
     public PhysicsNut
 {

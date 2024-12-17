@@ -1,6 +1,9 @@
 #pragma once
 #include <SquirrelEngine.h>
 using namespace SQ;
+/// <summary>
+/// Example Player Class, Player can move and shoot. First Person.
+/// </summary>
 class Player :
     public PhysicsNut
 {
