@@ -3,7 +3,10 @@
 #include "PoolAllocator.h"
 #include <unordered_map>
 
+#ifdef _DEBUG
 #define POOL_ALLOCATOR_WARNINGS
+#endif // _DEBUG
+
 #include <iostream>
 namespace SQ {
 	constexpr int ALLOC_SERVICE_POOL_COUNT = 4;

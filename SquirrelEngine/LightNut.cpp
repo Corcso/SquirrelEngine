@@ -2,6 +2,18 @@
 #include "LightNut.h"
 #include "Services.h"
 namespace SQ {
+	LightNut::LightNut()
+	{
+		diffuseColor = V3(1, 1, 1);
+		ambientColor = V3(1, 1, 1);
+		intensity = 1;
+		ambientIntensity = 0.1;
+		SetLightType(LightType::POINT);
+		spotInnerAngle = 0;
+		spotOuterAngle = 0;
+		linearAttenuation = 0;
+		quadraticAttenuation = 0;
+	}
 	UniquePoolPtr<Nut> SQ::LightNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
 	{
 		// Cast deserializeInto to our type, call it toWorkOn

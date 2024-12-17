@@ -8,6 +8,8 @@ namespace SQ {
         public WorldNut
     {
     public:
+        LightNut();
+
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
         // Make sure to call base class ready update and late update

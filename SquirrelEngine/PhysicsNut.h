@@ -11,7 +11,7 @@ namespace SQ {
         public WorldNut
     {
     public:
-        PhysicsNut() { isStatic = false; }
+        PhysicsNut() { isStatic = false; elasticity = 0.2f; density = 1; }
         /// <summary>
         /// Constructor for setting static or dynamic as its 1 time set. 
         /// </summary>

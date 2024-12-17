@@ -6,6 +6,8 @@ namespace SQ {
     PhysicsNut::PhysicsNut(bool isStatic)
     {
         this->isStatic = isStatic;
+        elasticity = 0.2f; 
+        density = 1;
     }
 
     UniquePoolPtr<Nut> SQ::PhysicsNut::Deserialize(Nut* deserializeInto, nlohmann::json serializedData)
@@ -43,6 +45,10 @@ namespace SQ {
     {
         // Call base ready and register body with physics engine
         WorldNut::Ready();
+
+        // Throw an error if no collision shape assigned. 
+        if (shape.get() == nullptr) throw 25;
+
         Services::GetPhysics()->RegisterBody(this);
     }
 
