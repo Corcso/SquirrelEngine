@@ -37,6 +37,7 @@
       "spotlightInnerAngle": 0.9,
       "spotlightOuterAngle": 1.0,
       "intensity": 1,
+	  "ambientIntensity": 0,
       "children": []
     },
 	{
@@ -55,7 +56,7 @@
 		  "type": "MeshNut",
 		  "name": "Enemy Mesh",
 		  "mesh": "./Resources/cube.obj",
-		  "material": "./Resources/floor.mat",
+		  "material": "./Resources/enemy.mat",
 		  "position": [0, 0, 0],
 		  "eulerAngles": [0, 0, 0],
 		  "scale": [0.5,2,0.5],

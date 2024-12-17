@@ -47,13 +47,28 @@ void Player::Update()
     // Press Q to lock the mouse, Press E to unlock it. 
     if (SQ::Services::GetInput()->IsKeyPressed('q')) SQ::Services::GetInput()->LockMouse();
     else if (SQ::Services::GetInput()->IsKeyReleased('e')) SQ::Services::GetInput()->UnlockMouse();
+    
+    //Only move if colliding with the floor
+    bool onFloor = false;
+    for (std::set<PhysicsNut*>::iterator it = currentlyColliding.begin(); it != currentlyColliding.end(); ++it) {
+        if ((*it)->name == "Floor") onFloor = true;
+    }
+    if (onFloor) {
+        // Take in lateral movement with wasd
+        Vec3 movementDesire = V3(0, 0, 0);
+        if (GetInput()->IsKeyDown('A')) movementDesire += -GetRight();
+        else if (GetInput()->IsKeyDown('D')) movementDesire += GetRight();
+        if (GetInput()->IsKeyDown('W')) movementDesire += GetForward();
+        else if (GetInput()->IsKeyDown('S')) movementDesire += -GetForward();
+        // Use desire to move the player, normalize if desire length is more than 0, otherwise don't as can't normalize a 0 length vector
+        if (LenSqrV3(movementDesire) > 0) movementDesire = NormV3(movementDesire);
+        SetLinearVelocity(movementDesire * 4);
+        // Remove all angular velocity
+        SetAngularVelociry(V3(0, 0, 0));
 
-    // Take in lateral movement with wasd
-    if (GetInput()->IsKeyDown('A')) SetLinearVelocity(-GetRight() * 4);
-    else if (GetInput()->IsKeyDown('D')) SetLinearVelocity(GetRight() * 4);
-    if (GetInput()->IsKeyDown('W')) SetLinearVelocity(GetForward() * 4);
-    else if (GetInput()->IsKeyDown('S')) SetLinearVelocity(-GetForward() * 4);
-
+        // Process a jump
+        if (GetInput()->IsKeyPressed(Input::Key::SPACE)) AddImpulse(V3(0, 15, 0));
+    }
     // If the mouse is locked, take in mouse input
     if (SQ::Services::GetInput()->IsMouseLocked()) {
         RotateGlobalY(SQ::Services::GetInput()->GetMouseMovement().X * -0.01);
@@ -71,7 +86,7 @@ void Player::Update()
         // Setup child properties
         childMesh->name = "Bullet Mesh";
         childMesh->SetMesh(bulletMeshPreload);
-        childMesh->SetMaterial(GetResourceManager()->Retrieve<Material>("./Resources/floot.mat"));
+        childMesh->SetMaterial(GetResourceManager()->Retrieve<Material>("./Resources/bullet.mat"));
         childMesh->SetEulerAngles(V3(0, 3.14f, 0));
         // Get observer to child (as we are relinquishing ownership) and use that to reparent the child to the bullet. 
         MeshNut* observerOfMesh = childMesh.get();
