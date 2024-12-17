@@ -237,37 +237,51 @@ void SQ::PhysicsJolt::BodyShapeUpdated(PhysicsNut* nut)
 
 void SQ::PhysicsJolt::BodyElasticityUpdated(PhysicsNut* nut)
 {
-	bodyInterface->SetRestitution(nutsInSystemReversed[nut], nut->GetElasticity());
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->SetRestitution(nutsInSystemReversed[nut], nut->GetElasticity());
 }
 
 void SQ::PhysicsJolt::AddForce(PhysicsNut* nut, Vec3 force)
 {
-	bodyInterface->AddForce(nutsInSystemReversed[nut], JPH::Vec3(force.X, force.Y, force.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->AddForce(nutsInSystemReversed[nut], JPH::Vec3(force.X, force.Y, force.Z));
 }
 
 void SQ::PhysicsJolt::AddImpulse(PhysicsNut* nut, Vec3 impulse)
 {
-	bodyInterface->AddImpulse(nutsInSystemReversed[nut], JPH::Vec3(impulse.X, impulse.Y, impulse.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->AddImpulse(nutsInSystemReversed[nut], JPH::Vec3(impulse.X, impulse.Y, impulse.Z));
 }
 
 void SQ::PhysicsJolt::AddAngularImpulse(PhysicsNut* nut, Vec3 impulse)
 {
-	bodyInterface->AddAngularImpulse(nutsInSystemReversed[nut], JPH::Vec3(impulse.X, impulse.Y, impulse.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->AddAngularImpulse(nutsInSystemReversed[nut], JPH::Vec3(impulse.X, impulse.Y, impulse.Z));
 }
 
 void SQ::PhysicsJolt::AddTorque(PhysicsNut* nut, Vec3 torque)
 {
-	bodyInterface->AddTorque(nutsInSystemReversed[nut], JPH::Vec3(torque.X, torque.Y, torque.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->AddTorque(nutsInSystemReversed[nut], JPH::Vec3(torque.X, torque.Y, torque.Z));
 }
 
 void SQ::PhysicsJolt::SetLinearVelocity(PhysicsNut* nut, Vec3 velocity)
 {
-	bodyInterface->SetLinearVelocity(nutsInSystemReversed[nut], JPH::Vec3(velocity.X, velocity.Y, velocity.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->SetLinearVelocity(nutsInSystemReversed[nut], JPH::Vec3(velocity.X, velocity.Y, velocity.Z));
 }
 
 void SQ::PhysicsJolt::SetAngularVelociry(PhysicsNut* nut, Vec3 velocity)
 {
-	bodyInterface->SetAngularVelocity(nutsInSystemReversed[nut], JPH::Vec3(velocity.X, velocity.Y, velocity.Z));
+	if (nutsInSystemReversed.find(nut) != nutsInSystemReversed.end()) bodyInterface->SetAngularVelocity(nutsInSystemReversed[nut], JPH::Vec3(velocity.X, velocity.Y, velocity.Z));
+}
+
+SQ::Vec3 SQ::PhysicsJolt::GetLinearVelocity(PhysicsNut* nut)
+{
+	if (nutsInSystemReversed.find(nut) == nutsInSystemReversed.end()) return V3(0, 0, 0);
+	JPH::Vec3 result = bodyInterface->GetLinearVelocity(nutsInSystemReversed[nut]);
+	return V3(result.GetX(), result.GetY(), result.GetZ());
+}
+
+SQ::Vec3 SQ::PhysicsJolt::GetAngularVelocity(PhysicsNut* nut)
+{
+	if (nutsInSystemReversed.find(nut) == nutsInSystemReversed.end()) return V3(0, 0, 0);
+	JPH::Vec3 result = bodyInterface->GetAngularVelocity(nutsInSystemReversed[nut]);
+	return V3(result.GetX(), result.GetY(), result.GetZ());
 }
 
 void SQJOLT::MyContactListener::OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings)

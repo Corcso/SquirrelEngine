@@ -49,5 +49,10 @@ namespace SQ {
 		virtual void SetLinearVelocity(PhysicsNut* nut, Vec3 velocity) = 0;
 		virtual void SetAngularVelociry(PhysicsNut* nut, Vec3 velocity) = 0;
 
+		// Get velocities, see PhysicsNut for details.
+
+		virtual Vec3 GetLinearVelocity(PhysicsNut*) = 0;
+		virtual Vec3 GetAngularVelocity(PhysicsNut*) = 0;
+
 	};
 }

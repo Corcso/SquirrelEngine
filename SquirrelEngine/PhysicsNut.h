@@ -129,6 +129,20 @@ namespace SQ {
         void SetAngularVelociry(Vec3 velocity);
 
         /// <summary>
+        /// Returns the linear velocity.
+        /// <para>If the nut isnt in the physics system, 0, 0, 0 will be returned.</para>
+        /// </summary>
+        /// <returns>Linear velocity</returns>
+        Vec3 GetLinearVelocity();
+
+        /// <summary>
+        /// Returns the angular velocity.
+        /// <para>If the nut isnt in the physics system, 0, 0, 0 will be returned.</para>
+        /// </summary>
+        /// <returns>Angular velocity</returns>
+        Vec3 GetAngularVelocity();
+
+        /// <summary>
         /// Destructor, removes the nut from the physics world. 
         /// </summary>
         ~PhysicsNut();

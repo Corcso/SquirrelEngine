@@ -107,6 +107,16 @@ namespace SQ {
     {
         if (HasReadyBeenCalled()) Services::GetPhysics()->SetAngularVelociry(this, velocity);
     }
+    Vec3 PhysicsNut::GetLinearVelocity()
+    {
+        if (HasReadyBeenCalled()) return Services::GetPhysics()->GetLinearVelocity(this);
+        return V3(0, 0, 0);
+    }
+    Vec3 PhysicsNut::GetAngularVelocity()
+    {
+        if (HasReadyBeenCalled()) return Services::GetPhysics()->GetAngularVelocity(this);
+        return V3(0, 0, 0);
+    }
     PhysicsNut::~PhysicsNut()
     {
         if (HasReadyBeenCalled()) Services::GetPhysics()->RemoveBody(this);

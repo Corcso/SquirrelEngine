@@ -151,6 +151,9 @@ namespace SQ {
 		virtual void AddTorque(PhysicsNut* nut, Vec3 torque) final;
 		virtual void SetLinearVelocity(PhysicsNut* nut, Vec3 velocity) final;
 		virtual void SetAngularVelociry(PhysicsNut* nut, Vec3 velocity) final;
+
+		virtual Vec3 GetLinearVelocity(PhysicsNut* nut) final;
+		virtual Vec3 GetAngularVelocity(PhysicsNut* nut) final;
 	private:
 		// Mutex access to physics system
 		std::mutex mutex;
@@ -162,8 +165,8 @@ namespace SQ {
 		JPH::BodyInterface* bodyInterface;
 
 		// Create mapping table from object layer to broadphase layer
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
 		SQJOLT::BPLayerInterfaceImpl broad_phase_layer_interface;
 
 		// Create class that filters object vs broadphase layers
