@@ -107,7 +107,7 @@ namespace SQ {
         void RemoveNut(PhysicsNut* nut);
     public:
         Type type;
-        Vec3 boxHalfDimentions;
+        Vec3 boxHalfDimensions;
         float capsuleRadius;
         float capsuleHalfHeight;
         float sphereRadius;

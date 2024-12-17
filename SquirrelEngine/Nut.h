@@ -85,7 +85,7 @@ namespace SQ {
 
 		/// <summary>
 		/// Adds a child to this nut.
-		/// <para>Does not handle ownership! Use set parent instead for safe ownership transfer.</para>
+		/// <para>Does not handle reparenting ownership! Only use when you are the owner of the nut being added!</para>
 		/// </summary>
 		/// <param name="newChild"></param>
 		void AddChild(UniquePoolPtr<Nut> newChild);
