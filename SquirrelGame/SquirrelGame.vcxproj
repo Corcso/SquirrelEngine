@@ -25,6 +25,10 @@
     <ClCompile Include="FPVCamera.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SerializationTypeDictionary.cpp" />
+    <ClCompile Include="TEMPLATE.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AirlockSceneLoading.h" />
@@ -32,6 +36,10 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FPVCamera.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="TEMPLATE.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

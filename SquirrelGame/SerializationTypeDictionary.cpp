@@ -29,9 +29,6 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 	{"Enemy", Enemy::Deserialize},
 	{"Bullet", Bullet::Deserialize},
 	{"AirlockSceneLoading", AirlockSceneLoading::Deserialize}
-
-	
-	
 // ====================================
 
 });
