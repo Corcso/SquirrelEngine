@@ -4,8 +4,6 @@
 #include "InputWindows.h"
 #include "Services.h"
 
-// Temp 
-#include <iostream>
 namespace SQ {
 
     // Setup the virtual key code lookup table
