@@ -38,7 +38,16 @@
       "spotlightOuterAngle": 1.0,
       "intensity": 1,
 	  "ambientIntensity": 0,
-      "children": []
+      "children": [{
+		  "type": "MeshNut",
+		  "name": "Light Arrow",
+		  "mesh": "./Resources/arrow.obj",
+		  "material": "./Resources/floor.mat",
+		  "position": [0, 0, 0],
+		  "eulerAngles": [0, 0, 0],
+		  "scale": [0.1,0.1,0.1],
+		  "children": []
+	  }]
     },
 	{
       "type": "Enemy",

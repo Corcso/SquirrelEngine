@@ -36,6 +36,9 @@ void AirlockSceneLoading::Ready()
 
     // Load our ShelledNut (note this does not load the scene)
     packedScene = GetResourceManager()->Retrieve<ShelledNut>("./Resources/secondLevel.nut");
+
+    // Large numebr of nuts ~4k Performance test.
+    //packedScene = GetResourceManager()->Retrieve<ShelledNut>("./Resources/crazyNumber.nut");
 }
 
 void AirlockSceneLoading::Update()

@@ -59,7 +59,16 @@
       "spotlightInnerAngle": 0.0,
       "spotlightOuterAngle": 0.0,
       "intensity": 1,
-      "children": []
+      "children": [{
+		  "type": "MeshNut",
+		  "name": "Light Sphere",
+		  "mesh": "./Resources/sphere.obj",
+		  "material": "./Resources/floor.mat",
+		  "position": [0, 0, 0],
+		  "eulerAngles": [0, 0, 0],
+		  "scale": [0.1,0.1,0.1],
+		  "children": []
+	  }]
     },
 	{
       "type": "LightNut",
@@ -73,7 +82,16 @@
       "spotlightInnerAngle": 0.3,
       "spotlightOuterAngle": 0.5,
       "intensity": 1,
-      "children": []
+      "children": [{
+		  "type": "MeshNut",
+		  "name": "Light Arrow",
+		  "mesh": "./Resources/arrow.obj",
+		  "material": "./Resources/floor.mat",
+		  "position": [0, 0, 0],
+		  "eulerAngles": [0, 0, 0],
+		  "scale": [0.1,0.1,0.1],
+		  "children": []
+	  }]
     },
 	{
       "type": "Enemy",
