@@ -17,7 +17,7 @@ namespace SQ {
 		/// <param name="blockSize">Size of a block</param>
 		/// <param name="blockCount">Number of blocks in the pool</param>
 		PoolAllocator(size_t blockSize, unsigned int blockCount) {
-			// TODO error if block size < size of void*
+			if (blockSize < sizeof(max_align_t) || blockSize < sizeof(void*) || blockSize % sizeof(max_align_t) != 0) throw 24;
 			this->blockSize = blockSize;
 			this->blockCount = blockCount;
 			blocksInUse = 0;

@@ -3,9 +3,11 @@
 #include "PoolAllocator.h"
 #include <unordered_map>
 
-// TEMP
+#define POOL_ALLOCATOR_WARNINGS
 #include <iostream>
 namespace SQ {
+	constexpr int ALLOC_SERVICE_POOL_COUNT = 4;
+
 	class PoolAllocationService
 	{
 	public:
@@ -14,104 +16,7 @@ namespace SQ {
 		void Init();
 
 
-		//void* Alloc(size_t size) {
-		//	// Round size up to pool size it will fit in
-		//	size_t roundedSize = 0;
-		//	for (int i = 0; i < 8; ++i) {
-		//		if (size <= POOL_BLOCK_SIZES[i]) {
-		//			roundedSize = POOL_BLOCK_SIZES[i];
-		//			break;
-		//		}
-		//	}
-		//	
-		//	// If there isnt a fit
-		//	// TODO POOL NOT BIG ENOUGH
-		//	if (roundedSize == 0);
-
-		//	// Check we have a pool which fits the size
-		//	if (pools.find(roundedSize) != pools.end()) {
-		//		PoolAllocator* poolToAllocInto = nullptr;
-		//		for (int vp = 0; vp < pools[roundedSize].size(); ++vp) {
-		//			if (pools[roundedSize][vp]->GetBlocksInUse() < pools[roundedSize][vp]->GetBlockCount()) {
-		//				poolToAllocInto = pools[roundedSize][vp].get();
-		//			}
-		//		}
-		//		if (poolToAllocInto == nullptr) {
-		//			pools[roundedSize].push_back(std::make_unique<PoolAllocator>(roundedSize, 64));
-		//			poolToAllocInto = pools[roundedSize].back().get();
-		//		}
-
-		//		return poolToAllocInto->Alloc();
-		//	}
-		//	else; //TODO THROW ERROR
-		//}
-
-		/*/// <summary>
-		/// <para>Frees memory on the pool</para>
-		/// <para>This block becomes the next chosen one</para>
-		/// </summary>
-		/// <param name="address">Address of pool block to free</param>
-		void Free(void* address) {
-
-		}
-
-		/// <summary>
-		/// Simulates new keyword, but for allocation on the pool
-		/// </summary>
-		/// <typeparam name="T">Type to create</typeparam>
-		/// <typeparam name="...A">Constructor Args</typeparam>
-		/// <param name="...args">Constructor Args</param>
-		/// <returns>Pointer to new object on the pool</returns>
-		template <typename T, typename... A>
-		inline T* New(A... args) {
-
-		}
-
-		/// <summary>
-		/// Simulates delete keyword, calls deconstructor
-		/// </summary>
-		/// <typeparam name="T">Type being deleted</typeparam>
-		/// <param name="address">Address of data to delete</param>
-		template <typename T>
-		inline void Delete(void* address) {
-
-		}*/
-
-		//template <typename T, typename... A>
-		//inline UniquePoolPtr<T> MakeUniquePoolPtr(A... args) {
-		//	// Round size up to pool size it will fit in
-		//	size_t roundedSize = 0;
-		//	for (int i = 0; i < 8; ++i) {
-		//		if (sizeof(T) <= POOL_BLOCK_SIZES[i]) {
-		//			roundedSize = POOL_BLOCK_SIZES[i];
-		//			break;
-		//		}
-		//	}
-		//	
-		//	// If there isnt a fit
-		//	// TODO POOL NOT BIG ENOUGH
-		//	if (roundedSize == 0);
-
-		//	// Check we have a pool which fits the size
-		//	if (pools.find(roundedSize) != pools.end()) {
-		//		PoolAllocator* poolToAllocInto = nullptr;
-		//		for (int vp = 0; vp < pools[roundedSize].size(); ++vp) {
-		//			if (pools[roundedSize][vp]->GetBlocksInUse() < pools[roundedSize][vp]->GetBlockCount()) {
-		//				poolToAllocInto = pools[roundedSize][vp].get();
-		//			}
-		//		}
-		//		if (poolToAllocInto == nullptr) {
-		//			pools[roundedSize].push_back(std::make_unique<PoolAllocator>(roundedSize, 64));
-		//			poolToAllocInto = pools[roundedSize].back().get();
-		//		}
-		//		return UniquePoolPtr<T>(poolToAllocInto->New<T>(std::forward<A>(args)...), poolToAllocInto)
-		//	}
-		//	else; //TODO THROW ERROR
-
-
-		//	return UniquePoolPtr<T>();
-		//}
-
+		
 
 		/// <summary>
 		/// Makes a unique pool pointer in the correct sized pool. 
@@ -125,7 +30,7 @@ namespace SQ {
 		inline UniquePoolPtr<T> MakeUniquePoolPtr(A... args) {
 			// Round size up to pool size it will fit in
 			size_t roundedSize = 0;
-			for (int i = 0; i < 8; ++i) {
+			for (int i = 0; i < ALLOC_SERVICE_POOL_COUNT; ++i) {
 				if (sizeof(T) <= POOL_BLOCK_SIZES[i]) {
 					roundedSize = POOL_BLOCK_SIZES[i];
 					break;
@@ -134,7 +39,9 @@ namespace SQ {
 			
 			// If there isnt a fit use new as a fallback and output a warning
 			if (roundedSize == 0) {
+#ifdef POOL_ALLOCATOR_WARNINGS
 				std::cout << "WARN : " << "Pool for size " << std::to_string(sizeof(T)) << " not available, new called.\n";
+#endif // POOL_ALLOCATOR_WARNINGS
 				return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
 			}
 
@@ -146,7 +53,9 @@ namespace SQ {
 				}
 				if (poolToAllocInto != nullptr) return UniquePoolPtr<T>(poolToAllocInto->New<T>(std::forward<A>(args)...), poolToAllocInto);
 				else {
+#ifdef POOL_ALLOCATOR_WARNINGS
 					std::cout << "WARN : " << "Pool for size " << std::to_string(roundedSize) << " full, new called.\n";
+#endif // POOL_ALLOCATOR_WARNINGS
 					return UniquePoolPtr<T>(new T(std::forward<A>(args)...));
 				}
 			}
@@ -167,8 +76,9 @@ namespace SQ {
 
 	private:
 		// Sizes of pools to use and how many blocks to create
-		const size_t POOL_BLOCK_SIZES[8] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
-		const size_t POOL_BLOCK_COUNTS[8] = { 64, 64, 64, 16, 32, 16, 16, 16 };
+		// POOL SIZE MUST BE EQUAL OR MORE THAN 8 AND DIVISIBLE BY 8
+		const size_t POOL_BLOCK_SIZES[ALLOC_SERVICE_POOL_COUNT] = { 128, 256, 512, 1024 };
+		const size_t POOL_BLOCK_COUNTS[ALLOC_SERVICE_POOL_COUNT] = { 64, 128, 128, 64};
 
 		std::unordered_map<size_t, std::unique_ptr<PoolAllocator>> pools;
 	};
