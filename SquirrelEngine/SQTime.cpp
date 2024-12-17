@@ -1,8 +1,9 @@
 #include "PCH.h"
 #include "SQTime.h"
 namespace SQ {
-	void Time::Init()
+	void Time::Init(int targetFPS)
 	{
+		this->targetFPS = targetFPS;
 		timePointAtStart = timePointLastFrame = clock.now();
 	}
 
@@ -30,7 +31,7 @@ namespace SQ {
 	void Time::WaitForTargetFPS()
 	{
 		float frameTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(timePointLastFrame - timePointSecondLastFrame).count() / 1000000.0f;
-		float waitTime = (1.0f / 120.0f) - frameTime;
+		float waitTime = (1.0f / (float)targetFPS) - frameTime;
 		if (waitTime > 0) std::this_thread::sleep_for(std::chrono::microseconds((long long)(waitTime * 1000000.0f)));
 	}
 }

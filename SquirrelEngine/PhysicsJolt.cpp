@@ -2,8 +2,11 @@
 #include "PhysicsJolt.h"
 #include "Services.h"
 
-void SQ::PhysicsJolt::Init()
+void SQ::PhysicsJolt::Init(int targetFPS)
 {
+	// Set target fps
+	this->targetFPS = targetFPS;
+
 	// Contains Adapted Code From (Rouwe, no date b)
 	// 
 	// 
@@ -100,8 +103,8 @@ void SQ::PhysicsJolt::Update()
 {
 	std::lock_guard<std::mutex> lock(mutex);
 	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
-	const int cCollisionSteps = 2;
-	const float cDeltaTime = 1.0f / 120.0f;
+	const int cCollisionSteps = (int)ceilf((float)targetFPS / 60.0f);
+	const float cDeltaTime = 1.0f / (float)targetFPS;
 
 	// Clear collision lists
 	collisionsEnteredThisFrame.clear();

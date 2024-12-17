@@ -2,5 +2,6 @@
 "Window Name": "Squirrel Game",
 "Window Size": [900, 900],
 "On Load Nut": "./Resources/main.nut",
-"Background Color": [0.2, 0.7, 0.7]
+"Background Color": [0.2, 0.7, 0.7],
+"Target FPS": 120
 }

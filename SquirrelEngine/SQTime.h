@@ -16,7 +16,7 @@ namespace SQ {
 		/// <summary>
 		/// <para>Setup time service, this is the starting point for all timers</para>
 		/// </summary>
-		void Init();
+		void Init(int targetFPS);
 
 		/// <summary>
 		/// <para>Gets deltaTime, time the last frame took from start to finish. </para>
@@ -59,6 +59,8 @@ namespace SQ {
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointAtStart;
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointLastFrame;
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointSecondLastFrame;
+
+		int targetFPS;
 	};
 
 }

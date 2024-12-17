@@ -38,7 +38,7 @@ namespace SQ {
 		/// </summary>
 		/// <returns>Pointer to free memory, blockSize big</returns>
 		void* Alloc() {
-			if (blocksInUse >= blockCount) throw 20;
+			if (blocksInUse >= blockCount) throw 22;
 			std::lock_guard<std::mutex> poolLock(poolMutex);
 			// Get the next free address, pop front out of linked list, increase the usage counter. 
 			void* freeAddress = nextFreeLocation;
@@ -74,7 +74,7 @@ namespace SQ {
 		/// <returns>Pointer to new object on the pool</returns>
 		template <typename T, typename... A>
 		inline T* New(A... args) {
-			if (blocksInUse >= blockCount) throw 20;
+			if (blocksInUse >= blockCount) throw 22;
 			std::lock_guard<std::mutex> poolLock(poolMutex);
 			// Get the next free address, pop front out of linked list, increase the usage counter. 
 			// Use placement new at free address

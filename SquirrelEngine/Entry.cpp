@@ -30,12 +30,13 @@ int main() {
 		file.close();
 
 		// Check all required options parameters are set
-		if (options["Window Name"].is_null()) return 12;
-		if (options["Window Size"].is_null()) return 13;
-		if (!options["Window Size"].is_array()) return 14;
-		if (options["On Load Nut"].is_null()) return 15;
-		if (options["Background Color"].is_null()) return 20;
-		if (!options["Background Color"].is_array()) return 21;
+		if (options["Window Name"].is_null()) throw 12;
+		if (options["Window Size"].is_null()) throw 13;
+		if (!options["Window Size"].is_array()) throw 14;
+		if (options["On Load Nut"].is_null()) throw 15;
+		if (options["Background Color"].is_null()) throw 20;
+		if (!options["Background Color"].is_array()) throw 21;
+		if (options["Target FPS"].is_null()) throw 23;
 
 
 		// REGISTER SERVICES (Order of registration does not matter)
@@ -60,7 +61,7 @@ int main() {
 		// Init Graphics
 		SQ::Services::GetGraphics()->Init(options["Window Name"], options["Window Size"][0], options["Window Size"][1], SQ::V4(options["Background Color"][0], options["Background Color"][1], options["Background Color"][2], 1));
 		// Init Physics
-		SQ::Services::GetPhysics()->Init();
+		SQ::Services::GetPhysics()->Init(options["Target FPS"]);
 		// Init Pool Allocation
 		SQ::Services::GetPoolAllocationService()->Init();
 
@@ -68,7 +69,7 @@ int main() {
 		SQ::Services::GetTree()->Init(options["On Load Nut"]);
 		
 		// Init Time
-		SQ::Services::GetTime()->Init();
+		SQ::Services::GetTime()->Init(options["Target FPS"]);
 
 		// There is no init for input
 

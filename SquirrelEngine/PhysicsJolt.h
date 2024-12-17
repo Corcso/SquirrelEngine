@@ -136,7 +136,7 @@ namespace SQ {
 	public:
 		friend class SQJOLT::MyContactListener;
 
-		virtual void Init() final;
+		virtual void Init(int targetFPS) final;
 		virtual void RegisterBody(PhysicsNut* nut) final;
 		virtual void Update() final; 
 		virtual void RemoveBody(PhysicsNut* nut) final;
@@ -157,6 +157,9 @@ namespace SQ {
 	private:
 		// Mutex access to physics system
 		std::mutex mutex;
+
+		// Physics tick target FPS
+		int targetFPS;
 
 		std::unique_ptr<JPH::TempAllocatorImpl> tempAllocator;
 		std::unique_ptr < JPH::JobSystemThreadPool> jobSystem;

@@ -9,7 +9,7 @@ namespace SQ {
 		/// <summary>
 		/// Setup physics system
 		/// </summary>
-		virtual void Init() = 0;
+		virtual void Init(int targetFPS) = 0;
 
 		/// <summary>
 		/// Register a nut as a body in the physics system
