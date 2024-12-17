@@ -86,7 +86,7 @@ void SQ::PhysicsJolt::RegisterBody(PhysicsNut* nut)
 		JPH::RVec3(nut->GetGlobalPosition().X, nut->GetGlobalPosition().Y, nut->GetGlobalPosition().Z),
 		JPH::Quat(nut->GetRotation().X, nut->GetRotation().Y, nut->GetRotation().Z, nut->GetRotation().W), motionType, layer);
 	JPH::BodyID newBodyID = bodyInterface->CreateAndAddBody(newBodySettings, wake);
-	bodyInterface->SetRestitution(newBodyID, 0.78);
+	bodyInterface->SetRestitution(newBodyID, nut->GetElasticity());
 
 	// Register nut in maps
 	nutsInSystem[newBodyID] = nut;
@@ -187,6 +187,8 @@ void SQ::PhysicsJolt::RemoveBody(PhysicsNut* nut)
 
 void SQ::PhysicsJolt::BodyShapeUpdated(PhysicsNut* nut)
 {
+	// Don't do anything if this nut isn't in the system
+	if (nutsInSystemReversed.find(nut) == nutsInSystemReversed.end()) return;
 	// Define shape result, accross all types
 	JPH::ShapeSettings::ShapeResult newShapeResult;
 

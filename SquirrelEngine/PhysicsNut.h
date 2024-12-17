@@ -73,6 +73,13 @@ namespace SQ {
         float GetDensity();
 
         /// <summary>
+        /// <para>Sets the nut to be static or dynamic</para>
+        /// <para>Note: Must be done before Ready() is called (Added to main scene tree). </para>
+        /// </summary>
+        /// <returns>True if static, false if dynamic</returns>
+        void SetStatic(bool isStatic);
+
+        /// <summary>
         /// Get if the object is static or dynamic
         /// </summary>
         /// <returns>True if static, false if dynamic</returns>

@@ -11,6 +11,6 @@ public:
     virtual void Update() override;
     virtual void LateUpdate() override;
 private:
-    std::shared_ptr<ShelledNut> packedBullet;
+    std::shared_ptr<Mesh> bulletMeshPreload;
 };
 

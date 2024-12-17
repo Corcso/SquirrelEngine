@@ -100,7 +100,7 @@ namespace SQ {
 		/// Ready function, runs once a nut's lifetime when it first enters the main tree. 
 		/// <para>You must call this manually, if you don't add the nut to the main scene tree</para>
 		/// </summary>
-		virtual void Ready() {}
+		virtual void Ready() { hasReadyBeenCalled = true; }
 		/// <summary>
 		/// Update function, runs once a frame
 		/// </summary>

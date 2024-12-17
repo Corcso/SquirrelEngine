@@ -26,7 +26,10 @@ void Player::Ready()
     // Call base ready (required)
     PhysicsNut::Ready();
 
-    packedBullet = GetResourceManager()->Retrieve<ShelledNut>("./Resources/bullet.nut");
+    // Example of preloading resources if we are using inthread instantiation. This removes the need to load them which takes time. 
+    // Useful for things like bullets where they are being created and destroyed often, but we know as long as there is a player there could be bullets. 
+    // You can either use the preload to set the mesh or retrieve it again, both dont load the bullet but using the preload is slightly faster as the resource manager doesn't need called. 
+    bulletMeshPreload = GetResourceManager()->Retrieve<Mesh>("./Resources/bullet.obj");
 }
 
 void Player::Update()
@@ -52,9 +55,29 @@ void Player::Update()
     
     // Shoot a bullet
     if (GetInput()->IsMousePressed(Input::MouseButton::LEFT)) {
-        UniquePoolPtr<Bullet> newBullet = packedBullet->Instantiate().DynamicUniquePoolPtrCast<Bullet>();
+        // Manually create a nut and child rather than loading from file. 
+
+        // The pool service must be used to create the nut in memory
+        UniquePoolPtr<Bullet> newBullet = GetPoolAllocationService()->MakeUniquePoolPtr<Bullet>();
+        // Create the child, mesh nut
+        UniquePoolPtr<MeshNut> childMesh = GetPoolAllocationService()->MakeUniquePoolPtr<MeshNut>();
+        // Setup child properties
+        childMesh->name = "Bullet Mesh";
+        childMesh->SetMesh(bulletMeshPreload);
+        childMesh->SetMaterial(GetResourceManager()->Retrieve<Material>("./Resources/floot.mat"));
+        childMesh->SetEulerAngles(V3(0, 3.14f, 0));
+        // Get observer to child (as we are relinquishing ownership) and use that to reparent the child to the bullet. 
+        MeshNut* observerOfMesh = childMesh.get();
+        observerOfMesh->SetParent(newBullet.get(), childMesh.StaticUniquePoolPtrCast<Nut>());
+        // Setup the bullet
+        newBullet->name = "Bullet";
+        newBullet->SetStatic(false); // Not explicitally needed as dynamic is the default but here for example. Must be called before ready is called as this cant be changed once it begins physics simulation. 
+        newBullet->SetElasticity(0);
+        newBullet->SetDensity(1);
+        newBullet->SetShape(GetResourceManager()->Retrieve<CollisionShape>("./Resources/bullet.shape"));
         newBullet->SetPosition(GetPosition());
         newBullet->SetRotation(GetRotation());
+        // Get observer to bullet and reparent to scene. (Ready will now be called and bulled will be registered with physics system)
         Bullet* observer = newBullet.get();
         observer->SetParent(GetTree()->GetRootNut(), newBullet.StaticUniquePoolPtrCast<Nut>());
     }

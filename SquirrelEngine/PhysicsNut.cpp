@@ -51,7 +51,7 @@ namespace SQ {
         if (this->shape.get() != nullptr) this->shape->RemoveNut(this);
         this->shape = shape;
         this->shape->RegisterNut(this);
-        Services::GetPhysics()->BodyShapeUpdated(this);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->BodyShapeUpdated(this);
     }
     std::shared_ptr<CollisionShape> PhysicsNut::GetShape()
     {
@@ -60,12 +60,12 @@ namespace SQ {
     void PhysicsNut::SetElasticity(float elasticity)
     {
         this->elasticity = elasticity;
-        Services::GetPhysics()->BodyElasticityUpdated(this);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->BodyElasticityUpdated(this);
     }
     void PhysicsNut::SetDensity(float density)
     {
         this->density = density;
-        Services::GetPhysics()->BodyShapeUpdated(this);
+        if(HasReadyBeenCalled()) Services::GetPhysics()->BodyShapeUpdated(this);
     }
     float PhysicsNut::GetElasticity()
     {
@@ -75,36 +75,40 @@ namespace SQ {
     {
         return density;
     }
+    void PhysicsNut::SetStatic(bool isStatic) {
+        if (!HasReadyBeenCalled()) this->isStatic = isStatic;
+    }
+
     bool PhysicsNut::IsStatic()
     {
         return isStatic;
     }
     void PhysicsNut::AddForce(Vec3 force)
     {
-        Services::GetPhysics()->AddForce(this, force);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->AddForce(this, force);
     }
     void PhysicsNut::AddImpulse(Vec3 impulse)
     {
-        Services::GetPhysics()->AddImpulse(this, impulse);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->AddImpulse(this, impulse);
     }
     void PhysicsNut::AddAngularImpulse(Vec3 impulse)
     {
-        Services::GetPhysics()->AddAngularImpulse(this, impulse);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->AddAngularImpulse(this, impulse);
     }
     void PhysicsNut::AddTorque(Vec3 torque)
     {
-        Services::GetPhysics()->AddTorque(this, torque);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->AddTorque(this, torque);
     }
     void PhysicsNut::SetLinearVelocity(Vec3 velocity)
     {
-        Services::GetPhysics()->SetLinearVelocity(this, velocity);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->SetLinearVelocity(this, velocity);
     }
     void PhysicsNut::SetAngularVelociry(Vec3 velocity)
     {
-        Services::GetPhysics()->SetAngularVelociry(this, velocity);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->SetAngularVelociry(this, velocity);
     }
     PhysicsNut::~PhysicsNut()
     {
-        Services::GetPhysics()->RemoveBody(this);
+        if (HasReadyBeenCalled()) Services::GetPhysics()->RemoveBody(this);
     }
 }
