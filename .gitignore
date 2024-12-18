@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Compiled Shaders
 *CompiledShader.h
+
+# ALLOW JOLT PDB
+!Jolt.pdb
