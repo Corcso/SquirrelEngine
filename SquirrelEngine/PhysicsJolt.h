@@ -154,6 +154,8 @@ namespace SQ {
 
 		virtual Vec3 GetLinearVelocity(PhysicsNut* nut) final;
 		virtual Vec3 GetAngularVelocity(PhysicsNut* nut) final;
+
+		virtual void ImGuiRenderDebugInfo() final;
 	private:
 		// Mutex access to physics system
 		std::mutex mutex;

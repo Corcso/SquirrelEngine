@@ -25,6 +25,31 @@ namespace SQ {
 		this->mouseMovement = mouseMovement;
 	}
 
+	void Input::ImGuiRenderDebugInfo()
+	{
+		if (ImGui::BeginTable("Key Table", 2, ImGuiTableFlags_Borders))
+		{
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Key");
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("State");
+
+			for (int i = 0; i < (int)Key::TOTAL_SUPPORTED_KEYS; i++) {
+				ImGui::TableNextRow();
+
+				ImGui::TableSetColumnIndex(0);
+				ImGui::Text(std::to_string(i).c_str());
+
+				ImGui::TableSetColumnIndex(1);
+				ImGui::Text(std::to_string((unsigned int)keys[i]).c_str());
+			}
+			ImGui::EndTable();
+		}
+	}
+
 	Input::Input()
 	{
 		// Setup character lookup table

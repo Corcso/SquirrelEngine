@@ -93,5 +93,8 @@ namespace SQ {
 		/// Stores if the game will close at the end of the frame
 		/// </summary>
 		bool toQuit;
+
+		void ImGuiRenderDebugInfo();
+		void ImGuiRenderTreeNut(Nut* nut);
 	};
 }

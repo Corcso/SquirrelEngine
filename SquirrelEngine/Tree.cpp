@@ -64,6 +64,15 @@ namespace SQ {
 			Services::GetTime()->ImGuiRenderDebugInfo();
 			Services::GetResourceManager()->ImGuiRenderDebugInfo();
 			ImGui::End();
+			ImGui::Begin("Scene");
+			ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Physics");
+			Services::GetPhysics()->ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Input");
+			Services::GetInput()->ImGuiRenderDebugInfo();
+			ImGui::End();
 
 			// End render and display results
 			Services::GetGraphics()->EndRender();
@@ -206,5 +215,19 @@ namespace SQ {
 			return true;
 		}
 		return false;
+	}
+	void Tree::ImGuiRenderDebugInfo()
+	{
+		ImGui::SetNextItemOpen(true);
+		ImGuiRenderTreeNut(&rootNut);
+	}
+	void Tree::ImGuiRenderTreeNut(Nut* nut)
+	{
+		ImGui::TreeNodeEx(nut->name.c_str() , ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen);
+		unsigned int childCount = nut->GetChildCount();
+		for (unsigned int c = 0; c < childCount; ++c) {
+			ImGuiRenderTreeNut(nut->GetNthChild(c));
+		}
+		ImGui::TreePop();
 	}
 }

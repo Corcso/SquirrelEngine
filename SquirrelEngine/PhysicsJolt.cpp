@@ -287,6 +287,55 @@ SQ::Vec3 SQ::PhysicsJolt::GetAngularVelocity(PhysicsNut* nut)
 	return V3(result.GetX(), result.GetY(), result.GetZ());
 }
 
+void SQ::PhysicsJolt::ImGuiRenderDebugInfo()
+{
+	ImGui::Text((std::to_string(nutsInSystem.size()) + " Nuts being simulated").c_str());
+	ImGui::Text("Collisions");
+	if (ImGui::BeginTable("New This Frame", 2, ImGuiTableFlags_Borders))
+	{
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("ID 1");
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("ID 2");
+
+		for (int i = 0; i < collisionsEnteredThisFrame.size(); i++) {
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text(std::to_string((unsigned int)collisionsEnteredThisFrame[i].first.GetIndexAndSequenceNumber()).c_str());
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(std::to_string((unsigned int)collisionsEnteredThisFrame[i].second.GetIndexAndSequenceNumber()).c_str());
+		}
+		ImGui::EndTable();
+	}
+	if (ImGui::BeginTable("Leaving This Frame", 2, ImGuiTableFlags_Borders))
+	{
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("ID 1");
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("ID 2");
+
+		for (int i = 0; i < collisionsExitedThisFrame.size(); i++) {
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text(std::to_string((unsigned int)collisionsExitedThisFrame[i].first.GetIndexAndSequenceNumber()).c_str());
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(std::to_string((unsigned int)collisionsExitedThisFrame[i].second.GetIndexAndSequenceNumber()).c_str());
+		}
+		ImGui::EndTable();
+	}
+
+}
+
 void SQJOLT::MyContactListener::OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings)
 {
 	dynamic_cast<SQ::PhysicsJolt*>(SQ::Services::GetPhysics())->collisionsEnteredThisFrame.push_back(std::pair<JPH::BodyID, JPH::BodyID>(inBody1.GetID(), inBody2.GetID()));
