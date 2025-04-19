@@ -42,6 +42,8 @@ namespace SQ {
         /// <returns>Material resource reference</returns>
         std::shared_ptr<Material> GetMaterial();
 
+        virtual void ImGuiRenderMyInspector() override;
+
         virtual ~MeshNut() override {};
     private:
         std::shared_ptr<Mesh> mesh;

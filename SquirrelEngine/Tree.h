@@ -3,6 +3,7 @@
 #include "CameraNut.h"
 #include "SQMath.h"
 #include "RootNut.h"
+#include "Resource.h"
 namespace SQ {
 	class Tree
 	{
@@ -36,6 +37,8 @@ namespace SQ {
 		/// Quits the run loop, closes the game.
 		/// </summary>
 		void Quit();
+
+		void SetResourceInspector(std::shared_ptr<Resource> resource);
 
 	private:
 		/// <summary>
@@ -97,5 +100,6 @@ namespace SQ {
 		void ImGuiRenderDebugInfo();
 		void ImGuiRenderTreeNut(Nut* nut);
 		Nut* currentInspectorTarget = &rootNut;
+		std::shared_ptr<Resource> currentResourceInspectorTarget;
 	};
 }

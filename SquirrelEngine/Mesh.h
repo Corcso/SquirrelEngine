@@ -49,6 +49,7 @@ namespace SQ {
         /// <returns>Number of vertices of this mesh</returns>
         unsigned int GetIndexCount();
 
+        virtual void ImGuiRenderMyInspector() override;
 
         virtual ~Mesh() {};
     protected:

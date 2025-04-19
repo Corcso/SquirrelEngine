@@ -66,6 +66,19 @@ namespace SQ {
 	{
 		return &bufferData;
 	}
+	void MaterialDX11::ImGuiRenderMyInspector()
+	{
+		Material::ImGuiRenderMyInspector();
+		if (ImGui::TreeNodeEx("MaterialDX11", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+			ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&bufferData.diffuseColor));
+			ImGui::ColorEdit3("Specular Color", reinterpret_cast<float*>(&bufferData.specularColor));
+			ImGui::SliderInt("Speculariy", reinterpret_cast<int*>(&bufferData.specularity), 1, 256);
+			ImGui::SliderFloat("Smoothness", &bufferData.smoothness, 0, 1);
+
+			ImGui::TreePop();
+		}
+	}
 }
 
 #endif // DX11

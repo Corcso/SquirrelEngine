@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "ResourceManager.h"
+#include "Services.h"
 
 void SQ::ResourceManager::ImGuiRenderDebugInfo()
 {
@@ -20,7 +21,11 @@ void SQ::ResourceManager::ImGuiRenderDebugInfo()
 				ImGui::TableNextRow();
 
 				ImGui::TableSetColumnIndex(0);
-				ImGui::Text(it.first.c_str());
+				if (it.second.use_count() == 0) ImGui::Text(it.first.c_str());
+				else if (ImGui::Button(it.first.c_str())) {
+					// Cant load resources polymorphicly, maybe consider this for SQ2
+					Services::GetTree()->SetResourceInspector(it.second.lock());
+				}
 
 				ImGui::TableSetColumnIndex(1);
 				ImGui::Text(std::to_string(it.second.use_count()).c_str());

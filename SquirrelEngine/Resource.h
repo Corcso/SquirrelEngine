@@ -7,6 +7,8 @@ namespace SQ {
 	{
 	public:
 		virtual ~Resource() {}
+
+		virtual void ImGuiRenderMyInspector() {}
 	};
 }
 

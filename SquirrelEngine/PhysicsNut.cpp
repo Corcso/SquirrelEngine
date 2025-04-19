@@ -126,7 +126,7 @@ namespace SQ {
     void PhysicsNut::ImGuiRenderMyInspector()
     {
         WorldNut::ImGuiRenderMyInspector();
-        if (ImGui::TreeNodeEx("WorldNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::TreeNodeEx("PhysicsNut", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::BeginDisabled();
             ImGui::Checkbox("Static", &isStatic);
             Vec3 storage = GetLinearVelocity();
@@ -135,8 +135,12 @@ namespace SQ {
             ImGui::DragFloat3("Angular Velocity", reinterpret_cast<float*>(&storage));
             ImGui::DragFloat("Elasticity", &elasticity);
             ImGui::DragFloat("Density",&density);
-
             ImGui::EndDisabled();
+
+            if (ImGui::Button("Open Shape Resource")) {
+                Services::GetTree()->SetResourceInspector(shape);
+            }
+
             ImGui::TreePop();
         }
     }

@@ -213,4 +213,17 @@ namespace SQ {
     {
         return indicies.size();
     }
+    void Mesh::ImGuiRenderMyInspector()
+    {
+        Resource::ImGuiRenderMyInspector();
+
+        if (ImGui::TreeNodeEx("Mesh", ImGuiTreeNodeFlags_DefaultOpen)) {
+            
+            ImGui::Text(("Vertices: " + std::to_string(vertices.size())).c_str());
+            ImGui::Text(("Indicies: " + std::to_string(indicies.size())).c_str());
+            ImGui::Text(("Triangles: " + std::to_string(indicies.size() / 3)).c_str());
+
+            ImGui::TreePop();
+        }
+    }
 }

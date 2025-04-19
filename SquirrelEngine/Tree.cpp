@@ -78,6 +78,11 @@ namespace SQ {
 				currentInspectorTarget->ImGuiRenderMyInspector();
 			}
 			ImGui::End();
+			ImGui::Begin("Resource");
+			if (currentResourceInspectorTarget != nullptr) {
+				currentResourceInspectorTarget->ImGuiRenderMyInspector();
+			}
+			ImGui::End();
 
 			// End render and display results
 			Services::GetGraphics()->EndRender();
@@ -131,6 +136,11 @@ namespace SQ {
 	void Tree::Quit()
 	{
 		toQuit = true;
+	}
+
+	void Tree::SetResourceInspector(std::shared_ptr<Resource> resource)
+	{
+		currentResourceInspectorTarget = resource;
 	}
 
 	void Tree::Update(Nut* nut)

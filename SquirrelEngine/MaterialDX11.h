@@ -53,6 +53,8 @@ namespace SQ {
         /// <returns>Material buffer data</returns>
         MaterialDX11Data* GetBufferData();
 
+        virtual void ImGuiRenderMyInspector() override;
+
     private:
         MaterialDX11Data bufferData;
     };
