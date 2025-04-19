@@ -58,6 +58,13 @@ namespace SQ {
 			// Render scene
 			Render(&rootNut);
 
+			// Debug UI for Demo
+			ImGui::Begin("Info");
+			Services::GetPoolAllocationService()->ImGuiPoolUsageRender();
+			Services::GetTime()->ImGuiRenderDebugInfo();
+			Services::GetResourceManager()->ImGuiRenderDebugInfo();
+			ImGui::End();
+
 			// End render and display results
 			Services::GetGraphics()->EndRender();
 

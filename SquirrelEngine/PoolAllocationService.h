@@ -77,6 +77,8 @@ namespace SQ {
 		/// <returns>Details of pools capacity</returns>
 		std::string GetDebugPoolUsageStatement();
 
+		void ImGuiPoolUsageRender();
+
 	private:
 		// Sizes of pools to use and how many blocks to create
 		// POOL SIZE MUST BE EQUAL OR MORE THAN 8 AND DIVISIBLE BY 8

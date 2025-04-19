@@ -47,6 +47,8 @@ namespace SQ {
 			}
 		}
 
+		void ImGuiRenderDebugInfo();
+
 	private:
 		std::unordered_map<std::string, std::weak_ptr<Resource>> resources;
 		std::mutex loaderLock;

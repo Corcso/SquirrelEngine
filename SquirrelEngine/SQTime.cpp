@@ -5,6 +5,8 @@ namespace SQ {
 	{
 		this->targetFPS = targetFPS;
 		timePointAtStart = timePointLastFrame = clock.now();
+
+		frameTimeHistory.resize(30);
 	}
 
 	float Time::Delta()
@@ -15,6 +17,21 @@ namespace SQ {
 	float Time::TimeSinceStart()
 	{
 		return (float)std::chrono::duration_cast<std::chrono::milliseconds>(clock.now() - timePointAtStart).count() / 1000.0f;
+	}
+
+	void Time::ImGuiRenderDebugInfo()
+	{
+		ImGui::SetNextItemOpen(true);
+		if (ImGui::TreeNode("Time"))
+		{
+			frameTimeHistory.erase(frameTimeHistory.begin());
+			frameTimeHistory.push_back(Delta() * 1000.0f);
+			
+			ImGui::PlotLines("Frame Time", frameTimeHistory.data(), frameTimeHistory.size(), 0, nullptr, 0, 160, ImVec2{0, 60});
+			ImGui::Text(("Time Elapsed: " + std::to_string(TimeSinceStart())).c_str());
+
+			ImGui::TreePop();
+		}
 	}
 
 	void Time::FrameStart()

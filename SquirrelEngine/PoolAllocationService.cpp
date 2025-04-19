@@ -28,4 +28,33 @@ namespace SQ {
 			+ "Total Pool Space: " + std::to_string(totalPoolSize) + " Bytes\n";
 		return output;
 	}
+
+	void PoolAllocationService::ImGuiPoolUsageRender()
+	{
+		ImGui::SetNextItemOpen(true);
+		if (ImGui::TreeNode("Small Pool Allocators"))
+		{
+			unsigned int totalPoolSize = 0;
+			unsigned int totalPoolSizeInUse = 0;
+			std::string statementBar = "";
+			for (int i = 0; i < ALLOC_SERVICE_POOL_COUNT; ++i) {
+				ImGui::Text(("Pool Size " + std::to_string(POOL_BLOCK_SIZES[i])).c_str());
+				statementBar = std::to_string(pools[POOL_BLOCK_SIZES[i]]->GetBlocksInUse()) + "/" + std::to_string(pools[POOL_BLOCK_SIZES[i]]->GetBlockCount());
+				ImGui::ProgressBar((float)pools[POOL_BLOCK_SIZES[i]]->GetBlocksInUse() / (float)pools[POOL_BLOCK_SIZES[i]]->GetBlockCount(), ImVec2(0.0f, 0.0f), statementBar.c_str());
+				statementBar = std::to_string(pools[POOL_BLOCK_SIZES[i]]->GetBlocksInUse() * POOL_BLOCK_SIZES[i]) + "B/" + std::to_string(pools[POOL_BLOCK_SIZES[i]]->GetBlockCount() * POOL_BLOCK_SIZES[i]) + "B";
+				unsigned int poolSize = pools[POOL_BLOCK_SIZES[i]]->GetBlockCount() * POOL_BLOCK_SIZES[i];
+				unsigned int poolSizeInUse = pools[POOL_BLOCK_SIZES[i]]->GetBlocksInUse() * POOL_BLOCK_SIZES[i];
+				ImGui::ProgressBar(
+					(float)poolSizeInUse / (float)poolSize,
+					ImVec2(0.0f, 0.0f), statementBar.c_str());
+				totalPoolSize += pools[POOL_BLOCK_SIZES[i]]->GetBlockCount() * POOL_BLOCK_SIZES[i];
+				totalPoolSizeInUse += pools[POOL_BLOCK_SIZES[i]]->GetBlocksInUse() * POOL_BLOCK_SIZES[i];
+			}
+			ImGui::Text("Total");
+			statementBar = std::to_string(totalPoolSizeInUse) + "B/" + std::to_string(totalPoolSize) + "B";
+			ImGui::ProgressBar((float)totalPoolSizeInUse / (float)totalPoolSize, ImVec2(0.0f, 0.0f), statementBar.c_str());
+			
+			ImGui::TreePop();
+		}
+	}
 }
