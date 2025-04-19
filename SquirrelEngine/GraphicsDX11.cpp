@@ -98,6 +98,7 @@ namespace SQ {
         swapChainDescription.SampleDesc.Count = 1;
         swapChainDescription.SampleDesc.Quality = 0;
         swapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+        //swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         swapChainDescription.Windowed = TRUE;
 
         // Set device flags, only notable one is debug if debug build
@@ -235,6 +236,8 @@ namespace SQ {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;      // Enable viewports
 
         // Setup Platform/Renderer backends
         ImGui_ImplWin32_Init(window);
@@ -252,6 +255,7 @@ namespace SQ {
 
     void GraphicsDX11::BeginRender()
     {
+
         //Clear depth and color buffer
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), reinterpret_cast<float*>(&clearColor));
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -316,13 +320,22 @@ namespace SQ {
     void GraphicsDX11::EndRender()
     {
         // Rendering
+
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+        // Update and Render additional Platform Windows
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+
+            // For some reason we need to also reset the render targets
+            deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
+            deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+        }
         // Present the back buffer to screen
         swapChain->Present(0, 0);
-
-        
     }
 
     void GraphicsDX11::RegisterLightForFrame(LightNut* light)
