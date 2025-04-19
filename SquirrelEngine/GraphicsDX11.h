@@ -11,7 +11,7 @@ namespace SQ {
     {
     public:
         virtual int Init(std::string title, int width, int height, Vec4 clearColor) final;
-
+        virtual void Shutdown() final;
 
         virtual void BeginRender() final;
         virtual void UpdateProjectionMatrix(CameraNut* camera) final;
@@ -34,6 +34,7 @@ namespace SQ {
         /// <param name="bindFlag">Bind flags to use</param>
         /// <returns></returns>
         ComPtr<ID3D11Buffer> CreateBuffer(void* data, unsigned int size, D3D11_BIND_FLAG bindFlag);
+
     private:
         // Windows Window Handle
         HWND window;

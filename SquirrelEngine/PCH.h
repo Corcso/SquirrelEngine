@@ -12,3 +12,6 @@
 
 // Include pool allocator
 #include "PoolAllocator.h"
+
+// ImGui
+#include "imgui.h"

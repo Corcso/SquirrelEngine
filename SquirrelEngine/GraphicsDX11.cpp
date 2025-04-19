@@ -227,7 +227,27 @@ namespace SQ {
 
         // Set clear color
         this->clearColor = clearColor;
+
+        // == ImGui == Setup 
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+        // Setup Platform/Renderer backends
+        ImGui_ImplWin32_Init(window);
+        ImGui_ImplDX11_Init(device.Get(), deviceContext.Get());
+
         return 0;
+    }
+
+    void GraphicsDX11::Shutdown()
+    {
+        ImGui_ImplDX11_Shutdown();
+        ImGui_ImplWin32_Shutdown();
+        ImGui::DestroyContext();
     }
 
     void GraphicsDX11::BeginRender()
@@ -235,6 +255,14 @@ namespace SQ {
         //Clear depth and color buffer
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), reinterpret_cast<float*>(&clearColor));
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+        // Imgui 
+        // (Your code process and dispatch Win32 messages)
+        // Start the Dear ImGui frame
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow(); // Show demo window! :)
     }
 
     void GraphicsDX11::UpdateProjectionMatrix(CameraNut* camera)
@@ -287,8 +315,14 @@ namespace SQ {
 
     void GraphicsDX11::EndRender()
     {
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
         // Present the back buffer to screen
         swapChain->Present(0, 0);
+
+        
     }
 
     void GraphicsDX11::RegisterLightForFrame(LightNut* light)
