@@ -123,6 +123,23 @@ namespace SQ {
         if (HasReadyBeenCalled()) return Services::GetPhysics()->GetAngularVelocity(this);
         return V3(0, 0, 0);
     }
+    void PhysicsNut::ImGuiRenderMyInspector()
+    {
+        WorldNut::ImGuiRenderMyInspector();
+        if (ImGui::TreeNodeEx("WorldNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::BeginDisabled();
+            ImGui::Checkbox("Static", &isStatic);
+            Vec3 storage = GetLinearVelocity();
+            ImGui::DragFloat3("Linear Velocity", reinterpret_cast<float*>(&storage));
+            storage = GetAngularVelocity();
+            ImGui::DragFloat3("Angular Velocity", reinterpret_cast<float*>(&storage));
+            ImGui::DragFloat("Elasticity", &elasticity);
+            ImGui::DragFloat("Density",&density);
+
+            ImGui::EndDisabled();
+            ImGui::TreePop();
+        }
+    }
     PhysicsNut::~PhysicsNut()
     {
         if (HasReadyBeenCalled()) Services::GetPhysics()->RemoveBody(this);

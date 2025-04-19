@@ -219,6 +219,26 @@ namespace SQ {
         return SRTWorldMatrixParent;
     }
 
+    void WorldNut::ImGuiRenderMyInspector()
+    {
+        Vec3 positionBefore = position;
+        Quat rotationBefore = rotation;
+        Vec3 scaleBefore = scale;
+
+        Nut::ImGuiRenderMyInspector();
+        if (ImGui::TreeNodeEx("WorldNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+            //ImGui::BeginDisabled();
+            ImGui::DragFloat3("Position", reinterpret_cast<float*>(&position));
+            ImGui::DragFloat4("Rotation", reinterpret_cast<float*>(&rotation));
+            ImGui::DragFloat3("Scale", reinterpret_cast<float*>(&scale));
+
+            //ImGui::EndDisabled();
+            ImGui::TreePop();
+        }
+        // Update only if needed
+        if(position != positionBefore || rotation.X != rotationBefore.X || rotation.Y != rotationBefore.Y || rotation.Z != rotationBefore.Z || rotation.W != rotationBefore.W || scale != scaleBefore) UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
     void WorldNut::NewChildAdded(bool myChild, Nut* newChild)
     {
         UpdateTransforms(this, SRTWorldMatrixParent);

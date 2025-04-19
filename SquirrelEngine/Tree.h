@@ -96,5 +96,6 @@ namespace SQ {
 
 		void ImGuiRenderDebugInfo();
 		void ImGuiRenderTreeNut(Nut* nut);
+		Nut* currentInspectorTarget = &rootNut;
 	};
 }

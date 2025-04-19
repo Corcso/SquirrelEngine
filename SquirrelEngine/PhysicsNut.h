@@ -142,6 +142,8 @@ namespace SQ {
         /// <returns>Angular velocity</returns>
         Vec3 GetAngularVelocity();
 
+        virtual void ImGuiRenderMyInspector() override;
+
         /// <summary>
         /// Destructor, removes the nut from the physics world. 
         /// </summary>
