@@ -230,6 +230,7 @@ namespace SQ {
 	}
 	void Tree::ImGuiRenderTreeNut(Nut* nut)
 	{
+		ImGui::PushID(nut);
 		if (ImGui::TreeNodeEx(nut->name.c_str(), ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::Button("Open In Inspector")) {
 				currentInspectorTarget = nut;
@@ -240,6 +241,7 @@ namespace SQ {
 			}
 			ImGui::TreePop();
 		}
+		ImGui::PopID();
 	}
 
 }
