@@ -142,7 +142,7 @@ namespace SQ {
         // DX11 mesh if we are DX11
         Mesh* toReturn = static_cast<Mesh*>(new MeshDX11);
 #endif // DX11
-
+        Mesh* toReturn = static_cast<Mesh*>(new Mesh);
         // Code to load ASSIMP Model (Kulling, no date b)
 
         // Create an instance of the Importer class

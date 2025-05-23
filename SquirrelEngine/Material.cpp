@@ -9,5 +9,6 @@ namespace SQ {
 #ifdef DX11
         return MaterialDX11::Load(path);
 #endif // DX11
+        return nullptr;
     }
 }
