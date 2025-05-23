@@ -35,6 +35,9 @@ namespace SQ {
         // Clear colour
         Vec4 clearColor;
 
+        uint32_t currentWidth;
+        uint32_t currentHeight;
+
         // == Vulkan Objects ==
 
         // Instance

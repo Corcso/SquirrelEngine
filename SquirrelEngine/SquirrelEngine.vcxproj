@@ -176,6 +176,7 @@
     <ClInclude Include="SquirrelEngineSIMD.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="SQUtility.h" />
+    <ClInclude Include="VulkanUtility.h" />
     <ClInclude Include="WorldNut.h" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +212,7 @@
     <ClCompile Include="SQTime.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="SQUtility.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
     <ClCompile Include="WorldNut.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -132,11 +132,14 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Services</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsVulkan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SquirrelEngineSIMD.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsVulkan.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanUtility.h">
+      <Filter>Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +231,10 @@
       <Filter>Services</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsVulkan.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanUtility.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

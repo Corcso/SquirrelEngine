@@ -2,6 +2,7 @@
 #ifdef VULKAN
 
 #include "GraphicsVulkan.h"
+#include "VulkanUtility.h"
 
 #include "InputWindows.h"
 
@@ -70,6 +71,96 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     // Begin Vulkan Setup
 
+    // >>> Create instance
+    VulkanUtility::CreateInstance(&instance);
+
+    // >>> Create surface
+    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
+    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR; // On windows
+    surfaceCreateInfo.hwnd = window; // Our window
+    surfaceCreateInfo.hinstance = GetModuleHandle(nullptr); // Hinstance
+
+    if (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    // >>> Pick Device for rendering
+    // Get and check device count
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if (deviceCount == 0) {
+        throw std::runtime_error("failed to find GPUs with Vulkan support!");
+    }
+    // Get all device handles
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+    // Check each device and pick one
+    uint16_t highestPriority = 0;
+    for (const auto& device : devices) {
+        if (VulkanUtility::CheckDeviceSuitability(device, surface) && VulkanUtility::GetDevicePriority(device, surface) > highestPriority) {
+            physicalDevice = device;
+        }
+    }
+
+    if (physicalDevice == VK_NULL_HANDLE) {
+        throw std::runtime_error("failed to find a suitable GPU!");
+    }
+
+    // >>> Create logical device & queues
+    // Device queue
+    VulkanUtility::QueueFamilyIndices indices = VulkanUtility::GetQueueFamilyIndices(physicalDevice, surface);
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::vector<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
+
+    float queuePriority = 1.0f;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
+
+    // Coming back later here
+    VkPhysicalDeviceFeatures deviceFeatures{};
+
+    // Device info
+    VkDeviceCreateInfo logicDeviceCreateInfo{};
+    logicDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+    logicDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    logicDeviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+
+    logicDeviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+
+    logicDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanUtility::deviceExtensions.size());
+    std::vector<const char*> deviceExtensionsAsCStr;
+    for (const auto& string : VulkanUtility::deviceExtensions) deviceExtensionsAsCStr.push_back(string.c_str());
+    logicDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensionsAsCStr.data();
+
+    // Not required only for backwards compat
+
+    /*if (enableValidationLayers) {
+        logicDeviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        logicDeviceCreateInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+    else {
+        logicDeviceCreateInfo.enabledLayerCount = 0;
+    }*/
+
+    if (vkCreateDevice(physicalDevice, &logicDeviceCreateInfo, nullptr, &device) != VK_SUCCESS) {
+        throw -1;
+    }
+    // Get Queues
+    vkGetDeviceQueue(device, indices.graphicsFamily, 0, &graphicsQueue);
+    vkGetDeviceQueue(device, indices.presentFamily, 0, &presentQueue);
+
+    // >>> Create swap chain
+    VulkanUtility::CreateSwapChain(device, physicalDevice, surface, currentWidth, currentHeight, &swapChainImageFormat, &swapChainExtent, &swapChainImages, &swapChain);
+    VulkanUtility::CreateImageViewsForSwapChain(device, swapChainImageFormat, swapChainImages, &swapChainImageViews);
     return 0;
 }
 
