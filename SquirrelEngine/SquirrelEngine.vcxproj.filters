@@ -141,6 +141,12 @@
     <ClInclude Include="VulkanUtility.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="VulkanSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshVulkan.h">
+      <Filter>Resources\API Specific Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -235,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="VulkanUtility.cpp">
       <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSetup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshVulkan.cpp">
+      <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

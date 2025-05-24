@@ -2,7 +2,7 @@
 #ifdef VULKAN
 
 #include "GraphicsVulkan.h"
-#include "VulkanUtility.h"
+#include "VulkanSetup.h"
 
 #include "InputWindows.h"
 
@@ -72,7 +72,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     // Begin Vulkan Setup
 
     // >>> Create instance
-    VulkanUtility::CreateInstance(&instance);
+    VulkanSetup::CreateInstance(&instance);
 
     // >>> Create surface
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
@@ -98,7 +98,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     // Check each device and pick one
     uint16_t highestPriority = 0;
     for (const auto& device : devices) {
-        if (VulkanUtility::CheckDeviceSuitability(device, surface) && VulkanUtility::GetDevicePriority(device, surface) > highestPriority) {
+        if (VulkanSetup::CheckDeviceSuitability(device, surface) && VulkanSetup::GetDevicePriority(device, surface) > highestPriority) {
             physicalDevice = device;
         }
     }
@@ -109,7 +109,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     // >>> Create logical device & queues
     // Device queue
-    VulkanUtility::QueueFamilyIndices indices = VulkanUtility::GetQueueFamilyIndices(physicalDevice, surface);
+    VulkanSetup::QueueFamilyIndices indices = VulkanSetup::GetQueueFamilyIndices(physicalDevice, surface);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::vector<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
@@ -136,9 +136,9 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     logicDeviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
-    logicDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanUtility::deviceExtensions.size());
+    logicDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanSetup::deviceExtensions.size());
     std::vector<const char*> deviceExtensionsAsCStr;
-    for (const auto& string : VulkanUtility::deviceExtensions) deviceExtensionsAsCStr.push_back(string.c_str());
+    for (const auto& string : VulkanSetup::deviceExtensions) deviceExtensionsAsCStr.push_back(string.c_str());
     logicDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensionsAsCStr.data();
 
     // Not required only for backwards compat
@@ -159,8 +159,18 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     vkGetDeviceQueue(device, indices.presentFamily, 0, &presentQueue);
 
     // >>> Create swap chain
-    VulkanUtility::CreateSwapChain(device, physicalDevice, surface, currentWidth, currentHeight, &swapChainImageFormat, &swapChainExtent, &swapChainImages, &swapChain);
-    VulkanUtility::CreateImageViewsForSwapChain(device, swapChainImageFormat, swapChainImages, &swapChainImageViews);
+    VulkanSetup::CreateSwapChain(device, physicalDevice, surface, currentWidth, currentHeight, &swapChainImageFormat, &swapChainExtent, &swapChainImages, &swapChain);
+    VulkanSetup::CreateImageViewsForSwapChain(device, swapChainImageFormat, swapChainImages, &swapChainImageViews);
+    
+    // Setup render pass
+    VulkanSetup::CreateRenderPass(device, physicalDevice, swapChainImageFormat, &renderPass);
+
+    // Setup pipeline
+    VulkanSetup::CreateGraphicsPipeline(device, renderPass, swapChainExtent, &pipelineLayout, &graphicsPipeline);
+
+    // Setup depth buffer
+    VulkanSetup::CreateDepthBuffer(device, physicalDevice, swapChainExtent, &depthImage, &depthImageMemory, &depthImageView);
+        
     return 0;
 }
 

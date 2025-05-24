@@ -2,66 +2,33 @@
 
 #ifdef VULKAN
 #include "SquirrelEnginePI.h"
-
+#include <fstream>
 namespace SQ {
 	class VulkanUtility
 	{
 	public:
-		static void CreateInstance(VkInstance* instance);
+		static VkShaderModule CreateShaderModule(VkDevice device, const std::vector<char>& code);
 
-		static void CreateSwapChain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t width, uint32_t height,
-			VkFormat* swapChainFormat, VkExtent2D* swapChainExtent, std::vector<VkImage>* swapChainImages, VkSwapchainKHR* swapChain);
+        static uint32_t FindMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-		static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-		static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-		static VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, uint32_t width, uint32_t height);
+		static inline std::vector<char> ReadFile(const std::string& filename) {
+            std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
-		static void CreateImageViewsForSwapChain(VkDevice device, VkFormat swapChainFormat,
-			const std::vector<VkImage>& swapChainImages, std::vector<VkImageView>* swapChainImageViews);
+            if (!file.is_open()) {
+                throw -1;
+            }
 
-		/// <summary>
-		/// Checks if a device is suitable to render a squirrel engine game.
-		/// </summary>
-		static bool CheckDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface);
+            size_t fileSize = (size_t)file.tellg();
+            std::vector<char> buffer(fileSize);
 
-		/// <summary>
-		/// Returns that devices priority, the highest priority device should be chosen for rendering.
-		/// </summary>
-		/// <param name="device">Device to check</param>
-		/// <param name="surface">Surface for presenting</param>
-		/// <returns>Priority 1 = lowest, ascending order.</returns>
-		static uint16_t GetDevicePriority(VkPhysicalDevice device, VkSurfaceKHR surface);
+            file.seekg(0);
+            file.read(buffer.data(), fileSize);
 
-		struct SwapChainSupportDetails {
-			VkSurfaceCapabilitiesKHR capabilities;
-			std::vector<VkSurfaceFormatKHR> formats;
-			std::vector<VkPresentModeKHR> presentModes;
-		};
+            file.close();
 
-		/// <summary>
-		/// Gets details of the swap chain from the passed in device. 
-		/// </summary>
-		/// <param name="device"></param>
-		/// <returns></returns>
-		static SwapChainSupportDetails GetSwapChainSupportDetails(VkPhysicalDevice device, VkSurfaceKHR surface);
+            return buffer;
 
-		/// <summary>
-		/// Struct for storing the indices of the graphics and present queues. 
-		/// </summary>
-		struct QueueFamilyIndices {
-			bool hasGraphicsFamily;
-			uint32_t graphicsFamily;
-			bool hasPresentFamily;
-			uint32_t presentFamily;
-
-			bool IsComplete() {
-				return hasGraphicsFamily && hasPresentFamily;
-			}
-		};
-
-		static QueueFamilyIndices GetQueueFamilyIndices(VkPhysicalDevice device, VkSurfaceKHR surface);
-
-		static const std::vector<std::string> deviceExtensions;
+        }
 	};
 }
 
