@@ -256,6 +256,11 @@
       <Project>{068a1029-1835-4854-a740-6b8debc026b3}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="VULKAN_CompileAllShaders.bat" />
+    <None Include="VULKAN_fragment.frag" />
+    <None Include="VULKAN_vertex.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

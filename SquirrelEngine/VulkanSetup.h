@@ -3,10 +3,14 @@
 #ifdef VULKAN
 #include "SquirrelEnginePI.h"
 
+constexpr int VULKAN_MAX_FRAMES_IN_FLIGHT = 2;
+
 namespace SQ {
 	class VulkanSetup
 	{
 	public:
+		
+
 		static void CreateInstance(VkInstance* instance);
 
 		static void CreateSwapChain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t width, uint32_t height,
@@ -26,6 +30,14 @@ namespace SQ {
 			VkPipelineLayout* pipelineLayout, VkPipeline* graphicsPipeline);
 
 		static void CreateDepthBuffer(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D swapChainExtent, VkImage* depthImage, VkDeviceMemory* depthImageMemory, VkImageView* depthImageView);
+
+		static void CreateFrameBuffers(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent, const std::vector<VkImageView>& swapChainImageViews, const VkImageView& depthImageView, std::vector<VkFramebuffer>* swapChainFrameBuffers);
+
+		static void CreateCommandPool(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkCommandPool* commandPool);
+
+		static void CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::vector<VkCommandBuffer>* commandBuffers);
+
+		static void CreateSyncObjects(VkDevice device, std::vector<VkFence>* inFlightFences, std::vector<VkSemaphore>* imageAvailableSemaphores, std::vector<VkSemaphore>* renderFinishedSemaphores);
 
 		/// <summary>
 		/// Checks if a device is suitable to render a squirrel engine game.

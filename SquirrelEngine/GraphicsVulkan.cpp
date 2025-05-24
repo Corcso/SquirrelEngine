@@ -112,7 +112,9 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::QueueFamilyIndices indices = VulkanSetup::GetQueueFamilyIndices(physicalDevice, surface);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::vector<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
+    std::vector<uint32_t> uniqueQueueFamilies;
+    if (indices.graphicsFamily == indices.presentFamily) uniqueQueueFamilies = { indices.graphicsFamily };
+    else uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
 
     float queuePriority = 1.0f;
     for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -170,12 +172,23 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     // Setup depth buffer
     VulkanSetup::CreateDepthBuffer(device, physicalDevice, swapChainExtent, &depthImage, &depthImageMemory, &depthImageView);
-        
+       
+    // Setup frame buffers
+    VulkanSetup::CreateFrameBuffers(device, renderPass, swapChainExtent, swapChainImageViews, depthImageView, &swapChainFramebuffers);
+
+    // Setup command pool & buffers
+    VulkanSetup::CreateCommandPool(device, physicalDevice, surface, &commandPool);
+    VulkanSetup::CreateCommandBuffers(device, commandPool, &commandBuffers);
+
+    // Create Sync objects
+    VulkanSetup::CreateSyncObjects(device, &inFlightFences, &imageAvailableSemaphores, &renderFinishedSemaphores);
+
     return 0;
 }
 
 void SQ::GraphicsVulkan::BeginRender()
 {
+   
 }
 
 void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)

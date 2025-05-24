@@ -315,8 +315,8 @@ VkFormat SQ::VulkanSetup::GetDepthBufferFormat(VkPhysicalDevice physicalDevice)
 void SQ::VulkanSetup::CreateGraphicsPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent, VkPipelineLayout* pipelineLayout, VkPipeline* graphicsPipeline)
 {
     // Get shader code
-    auto vertShaderCode = VulkanUtility::ReadFile("./vert.spv");
-    auto fragShaderCode = VulkanUtility::ReadFile("./frag.spv");
+    auto vertShaderCode = VulkanUtility::ReadFile("./StaticResources/VULKAN_COMPILED_vertex.spv");
+    auto fragShaderCode = VulkanUtility::ReadFile("./StaticResources/VULKAN_COMPILED_fragment.spv");
 
     VkShaderModule vertShaderModule = VulkanUtility::CreateShaderModule(device, vertShaderCode);
     VkShaderModule fragShaderModule = VulkanUtility::CreateShaderModule(device, fragShaderCode);
@@ -524,6 +524,98 @@ void SQ::VulkanSetup::CreateDepthBuffer(VkDevice device, VkPhysicalDevice physic
     }
 
     vkBindImageMemory(device, *depthImage, *depthImageMemory, 0);
+
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = *depthImage;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = depthFormat;
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+
+    if (vkCreateImageView(device, &viewInfo, nullptr, depthImageView) != VK_SUCCESS) {
+        throw -1;
+    }
+}
+
+void SQ::VulkanSetup::CreateFrameBuffers(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent, const std::vector<VkImageView>& swapChainImageViews, const VkImageView& depthImageView, std::vector<VkFramebuffer>* swapChainFrameBuffers)
+{
+    swapChainFrameBuffers->resize(swapChainImageViews.size());
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+        VkImageView attachments[] = {
+            swapChainImageViews[i], depthImageView
+        };
+
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass = renderPass;
+        framebufferInfo.attachmentCount = 2;
+        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.width = swapChainExtent.width;
+        framebufferInfo.height = swapChainExtent.height;
+        framebufferInfo.layers = 1;
+
+        if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &(*swapChainFrameBuffers)[i]) != VK_SUCCESS) {
+            throw -1;
+        }
+    }
+}
+
+void SQ::VulkanSetup::CreateCommandPool(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkCommandPool* commandPool)
+{
+    QueueFamilyIndices queueFamilyIndices = GetQueueFamilyIndices(physicalDevice, surface);
+
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
+
+    if (vkCreateCommandPool(device, &poolInfo, nullptr, commandPool) != VK_SUCCESS) {
+        throw -1;
+    }
+}
+
+void SQ::VulkanSetup::CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::vector<VkCommandBuffer>* commandBuffers)
+{
+    commandBuffers->resize(VULKAN_MAX_FRAMES_IN_FLIGHT);
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = (uint32_t)commandBuffers->size();
+
+    if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers->data()) != VK_SUCCESS) {
+        throw -1;
+    }
+}
+
+void SQ::VulkanSetup::CreateSyncObjects(VkDevice device, std::vector<VkFence>* inFlightFences, std::vector<VkSemaphore>* imageAvailableSemaphores, std::vector<VkSemaphore>* renderFinishedSemaphores)
+{
+    imageAvailableSemaphores->resize(VULKAN_MAX_FRAMES_IN_FLIGHT);
+    renderFinishedSemaphores->resize(VULKAN_MAX_FRAMES_IN_FLIGHT);
+    inFlightFences->resize(VULKAN_MAX_FRAMES_IN_FLIGHT);
+
+    // Semaphores and dences dont need much information. 
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    // We want our fence to start signaled, as there wont be a previous frame for the first frame
+    VkFenceCreateInfo fenceInfo{};
+    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    // Create them
+    for (size_t i = 0; i < VULKAN_MAX_FRAMES_IN_FLIGHT; i++) {
+        if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &(*imageAvailableSemaphores)[i]) != VK_SUCCESS ||
+            vkCreateSemaphore(device, &semaphoreInfo, nullptr, &(*renderFinishedSemaphores)[i]) != VK_SUCCESS ||
+            vkCreateFence(device, &fenceInfo, nullptr, &(*inFlightFences)[i]) != VK_SUCCESS) {
+
+            throw -1;
+        }
+    }
 }
 
 bool SQ::VulkanSetup::CheckDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface)

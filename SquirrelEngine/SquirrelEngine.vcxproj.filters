@@ -257,4 +257,15 @@
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="VULKAN_vertex.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="VULKAN_fragment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="VULKAN_CompileAllShaders.bat">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
