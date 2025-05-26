@@ -1,5 +1,7 @@
 #include "PCH.h"
 #include "VulkanUtility.h"
+#include "Services.h"
+#include "GraphicsVulkan.h"
 
 VkShaderModule SQ::VulkanUtility::CreateShaderModule(VkDevice device, const std::vector<char>& code)
 {
@@ -31,4 +33,99 @@ uint32_t SQ::VulkanUtility::FindMemoryTypeIndex(VkPhysicalDevice physicalDevice,
     }
 
     throw -1;
+}
+
+void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+
+    VkBufferCreateInfo bufferInfo{};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = size;
+    bufferInfo.usage = usage;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    if (vkCreateBuffer(graphicsService->device, &bufferInfo, nullptr, buffer) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    VkMemoryRequirements memRequirements;
+    vkGetBufferMemoryRequirements(graphicsService->device, *buffer, &memRequirements);
+
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.memoryTypeIndex = FindMemoryTypeIndex(graphicsService->physicalDevice, memRequirements.memoryTypeBits, properties);
+
+    if (vkAllocateMemory(graphicsService->device, &allocInfo, nullptr, bufferMemory) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    vkBindBufferMemory(graphicsService->device, *buffer, *bufferMemory, 0);
+}
+
+void SQ::VulkanUtility::DestroyBuffer(VkBuffer buffer)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+
+    vkDestroyBuffer(graphicsService->device, buffer, nullptr);
+    
+}
+
+void SQ::VulkanUtility::FreeGPUMemory(VkDeviceMemory memory)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+
+    vkFreeMemory(graphicsService->device, memory, nullptr);
+}
+
+void SQ::VulkanUtility::CopyBufferData(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = graphicsService->commandPool;
+    allocInfo.commandBufferCount = 1;
+
+    VkCommandBuffer commandBuffer;
+    vkAllocateCommandBuffers(graphicsService->device, &allocInfo, &commandBuffer);
+
+    // Start recording now
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+    VkBufferCopy copyRegion{};
+    copyRegion.srcOffset = 0; // Optional
+    copyRegion.dstOffset = 0; // Optional
+    copyRegion.size = size;
+    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+    vkEndCommandBuffer(commandBuffer);
+
+    // Execute commands
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+
+    vkQueueSubmit(graphicsService->graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueWaitIdle(graphicsService->graphicsQueue);
+
+    vkFreeCommandBuffers(graphicsService->device, graphicsService->commandPool, 1, &commandBuffer);
+}
+
+void SQ::VulkanUtility::MapCopyToGPU(VkDeviceMemory memory, void* data, size_t size, VkDeviceSize offset, VkMemoryMapFlags flags)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+    void* mappedMemory;
+    vkMapMemory(graphicsService->device, memory, 0, size, 0, &mappedMemory);
+    // Copy Data
+    memcpy(mappedMemory, data, size);
+    // Unmap Data
+    vkUnmapMemory(graphicsService->device, memory);
 }

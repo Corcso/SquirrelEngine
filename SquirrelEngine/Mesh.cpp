@@ -7,6 +7,9 @@
 #ifdef DX11
 #include "MeshDX11.h"
 #endif // DX11
+#ifdef VULKAN
+#include "MeshVulkan.h"
+#endif // VULKAN
 
 // Include ASSIMP headers, (Kulling, no date a)
 #include <assimp/Importer.hpp>    // C++ importer interface
@@ -142,7 +145,10 @@ namespace SQ {
         // DX11 mesh if we are DX11
         Mesh* toReturn = static_cast<Mesh*>(new MeshDX11);
 #endif // DX11
-        Mesh* toReturn = static_cast<Mesh*>(new Mesh);
+#ifdef VULKAN
+        // VULKAN mesh if we are VULKAN
+        Mesh* toReturn = static_cast<Mesh*>(new MeshVulkan);
+#endif // VULKAN
         // Code to load ASSIMP Model (Kulling, no date b)
 
         // Create an instance of the Importer class
@@ -199,7 +205,10 @@ namespace SQ {
         // Load DX11 buffers if we are in DX11 mode
         static_cast<MeshDX11*>(toReturn)->LoadBuffers();
 #endif // DX11
-
+#ifdef VULKAN
+        // Load VULKAN buffers if we are in VULKAN mode
+        static_cast<MeshVulkan*>(toReturn)->LoadBuffers();
+#endif // VULKAN
 
         return toReturn;
     }

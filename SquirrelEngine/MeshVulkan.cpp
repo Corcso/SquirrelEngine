@@ -2,6 +2,7 @@
 #include "MeshVulkan.h"
 
 #ifdef VULKAN
+#include "VulkanUtility.h"
 
 // Setup statics
 VkVertexInputBindingDescription SQ::MeshVulkan::vertexBindingDescription = {};
@@ -42,6 +43,57 @@ void SQ::MeshVulkan::SetupBindingAttributeDescriptions()
     vertexBindingDescription.binding = 0;
     vertexBindingDescription.stride = sizeof(Vertex);
     vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+}
+
+void SQ::MeshVulkan::LoadBuffers()
+{
+    // VERTEX BUFFER
+    // Create buffer
+    // Staging Vertex buffer
+    VkBuffer stagingVertexBuffer;
+    VkDeviceMemory stagingVertexBufferMemory;
+
+    VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+    VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        &stagingVertexBuffer, &stagingVertexBufferMemory);
+
+    // Map GPU memory to CPU memory
+    VulkanUtility::MapCopyToGPU(stagingVertexBufferMemory, vertices.data(), bufferSize);
+
+    VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        &vertexBuffer, &vertexBufferMemory);
+
+    // See below
+    VulkanUtility::CopyBufferData(stagingVertexBuffer, vertexBuffer, bufferSize);
+
+    // Dont need the stager anymore
+    VulkanUtility::DestroyBuffer(stagingVertexBuffer);
+    VulkanUtility::FreeGPUMemory(stagingVertexBufferMemory);
+
+    // INDEX BUFFER
+    bufferSize = sizeof(indicies[0]) * indicies.size();
+
+    VkBuffer stagingIndexBuffer;
+    VkDeviceMemory stagingIndexBufferMemory;
+    VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+        &stagingIndexBuffer, &stagingIndexBufferMemory);
+
+    VulkanUtility::MapCopyToGPU(stagingIndexBufferMemory, indicies.data(), bufferSize);
+
+    VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
+        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+        &indexBuffer, &indexBufferMemory);
+
+    VulkanUtility::CopyBufferData(stagingIndexBuffer, indexBuffer, bufferSize);
+
+    VulkanUtility::DestroyBuffer(stagingIndexBuffer);
+    VulkanUtility::FreeGPUMemory(stagingIndexBufferMemory);
 }
 
 #endif

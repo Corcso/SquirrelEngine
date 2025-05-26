@@ -2,14 +2,17 @@
 
 #ifdef VULKAN
 #include "SquirrelEnginePI.h"
-
+#include "VulkanUtility.h"
 #include "Graphics.h"
 
 namespace SQ {
+
     class GraphicsVulkan :
         public Graphics
     {
     public:
+        friend class VulkanUtility;
+
         virtual int Init(std::string title, int width, int height, Vec4 clearColor) final;
 
 
@@ -88,6 +91,9 @@ namespace SQ {
 
         // 0 or 1 depending on the frame we are drawing
         uint32_t currentFrame = 0;
+
+        // This render pass's image index in the swap chain
+        uint32_t thisRenderImageIndex;
     };
 }
 

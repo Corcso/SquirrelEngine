@@ -23,7 +23,21 @@ layout(location = 4) out vec3 outBitangent;
 //} li;
 
 void main() {
-    gl_Position = vec4(inPosition, 1.0);
+    mat4 proj = mat4(
+        0.41, 0.0, 0.0, 0.0,
+        0.0, 0.41, 0.0, 0.0, 
+        0.0, 0.0, 0.2, -1.0,
+        0.0, 0.0, 0.2002002002, 0.0
+    );
+
+    mat4 view = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 2.0, 
+        0.0, 0.0, 0.0, -2.0,
+        0.0, 0.0, 0.0, 1.0
+    );
+
+    gl_Position = proj * vec4(inPosition, 1.0);
     outWorldPos = inPosition;
     outNormal = inNormal;
     outTex = inTex;

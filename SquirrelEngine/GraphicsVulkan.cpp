@@ -3,6 +3,7 @@
 
 #include "GraphicsVulkan.h"
 #include "VulkanSetup.h"
+#include "MeshVulkan.h"
 
 #include "InputWindows.h"
 
@@ -188,7 +189,64 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
 void SQ::GraphicsVulkan::BeginRender()
 {
-   
+    // Wait until previous frame is finished. 
+    vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+
+    // Get image from swap chain
+    VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &thisRenderImageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        //recreateSwapChain();
+        return;
+    }
+    else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+        throw -1;
+    }
+
+    // Reset it only if we know we can draw
+    vkResetFences(device, 1, &inFlightFences[currentFrame]);
+
+    // Reset command buffer
+    vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+
+    // Record command buffer setup
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = 0; // Optional
+    beginInfo.pInheritanceInfo = nullptr; // Optional
+
+    if (vkBeginCommandBuffer(commandBuffers[currentFrame], &beginInfo) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    VkRenderPassBeginInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = renderPass;
+    renderPassInfo.framebuffer = swapChainFramebuffers[thisRenderImageIndex];
+    renderPassInfo.renderArea.offset = { 0, 0 };
+    renderPassInfo.renderArea.extent = swapChainExtent;
+
+    std::vector<VkClearValue> clearColors = { {{0.0f, 0.0f, 0.0f, 1.0f}}, {1.0f, 0} };
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearColors.size());
+    renderPassInfo.pClearValues = clearColors.data();
+
+    vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+    VkViewport viewport{};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = static_cast<float>(swapChainExtent.width);
+    viewport.height = static_cast<float>(swapChainExtent.height);
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    vkCmdSetViewport(commandBuffers[currentFrame], 0, 1, &viewport);
+
+    VkRect2D scissor{};
+    scissor.offset = { 0, 0 };
+    scissor.extent = swapChainExtent;
+    vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
 }
 
 void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
@@ -201,10 +259,72 @@ void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
 
 void SQ::GraphicsVulkan::Render(MeshNut* toRender)
 {
+    SQ::MeshVulkan* vulkanToRender = dynamic_cast<SQ::MeshVulkan*>(toRender->GetMesh().get());
+
+    VkBuffer vertexBuffers[] = { vulkanToRender->GetVertexBuffer() };
+    VkDeviceSize offsets[] = { 0 };
+    vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
+
+    vkCmdBindIndexBuffer(commandBuffers[currentFrame], vulkanToRender->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+    vkCmdDrawIndexed(commandBuffers[currentFrame], static_cast<uint32_t>(vulkanToRender->GetIndexCount()), 1, 0, 0, 0);
 }
 
 void SQ::GraphicsVulkan::EndRender()
 {
+    // Finish recording command buffer
+    vkCmdEndRenderPass(commandBuffers[currentFrame]);
+
+    if (vkEndCommandBuffer(commandBuffers[currentFrame]) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    // Now we need to submit it
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+    VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT }; // We only care about colour writing, this allows pre rasteriser to get head start
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.pWaitDstStageMask = waitStages;
+
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
+
+    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = signalSemaphores;
+
+    if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    // Now we present
+    VkPresentInfoKHR presentInfo{};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = signalSemaphores;
+
+    VkSwapchainKHR swapChains[] = { swapChain };
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = swapChains;
+    presentInfo.pImageIndices = &thisRenderImageIndex;
+
+    presentInfo.pResults = nullptr; // Optional
+
+    VkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR /* || framebufferResized*/) {
+        //framebufferResized = false;
+        //if (!toQuit) recreateSwapChain();
+    }
+    else if (result != VK_SUCCESS) {
+        throw -1;
+    }
+
+    currentFrame = (currentFrame + 1) % VULKAN_MAX_FRAMES_IN_FLIGHT;
 }
 
 void SQ::GraphicsVulkan::RegisterLightForFrame(LightNut* light)

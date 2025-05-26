@@ -9,5 +9,5 @@ layout(location = 4) in vec3 outBitangent;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = vec4(outNormal, 1.0);
+    outColor = vec4(outNormal / 0.5 + 0.5, 1.0);
 }
