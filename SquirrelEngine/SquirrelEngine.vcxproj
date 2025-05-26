@@ -177,6 +177,7 @@
     <ClInclude Include="SquirrelEngineSIMD.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="SQUtility.h" />
+    <ClInclude Include="VulkanDescriptor.h" />
     <ClInclude Include="VulkanSetup.h" />
     <ClInclude Include="VulkanUtility.h" />
     <ClInclude Include="WorldNut.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="SQTime.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="SQUtility.cpp" />
+    <ClCompile Include="VulkanDescriptor.cpp" />
     <ClCompile Include="VulkanSetup.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
     <ClCompile Include="WorldNut.cpp" />

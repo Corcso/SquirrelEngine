@@ -4,6 +4,7 @@
 #include "SquirrelEnginePI.h"
 #include "VulkanUtility.h"
 #include "Graphics.h"
+#include "VulkanDescriptor.h"
 
 namespace SQ {
 
@@ -72,11 +73,8 @@ namespace SQ {
         VkPipelineLayout pipelineLayout;
         // Render pass 
         VkRenderPass renderPass;
-        // The Descriptor Set Layout (For Uniform Variables)
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
         // Descriptor pool
         VkDescriptorPool descriptorPool;
-        std::vector<VkDescriptorSet> descriptorSets;
         // The pipeline
         VkPipeline graphicsPipeline;
         // Command pool & buffer
@@ -94,6 +92,21 @@ namespace SQ {
 
         // This render pass's image index in the swap chain
         uint32_t thisRenderImageIndex;
+
+        // Uniform Buffer Objects
+
+        // TODO Split world into its own UBO
+
+        void SetupDescriptorSets();
+
+        struct ProjectionViewWorldUBO {
+            Mat4 projection;
+            Mat4 view;
+            Mat4 world;
+        };
+        VkDescriptorSetLayout projectionViewWorldDescriptorSetLayout;
+        std::vector<VulkanDescriptor> projectionViewWorldDescriptorSets;
+        ProjectionViewWorldUBO projectionViewWorldData;
     };
 }
 

@@ -312,7 +312,7 @@ VkFormat SQ::VulkanSetup::GetDepthBufferFormat(VkPhysicalDevice physicalDevice)
     }
 }
 
-void SQ::VulkanSetup::CreateGraphicsPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent, VkPipelineLayout* pipelineLayout, VkPipeline* graphicsPipeline)
+void SQ::VulkanSetup::CreateGraphicsPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent,const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, VkPipelineLayout* pipelineLayout, VkPipeline* graphicsPipeline)
 {
     // Get shader code
     auto vertShaderCode = VulkanUtility::ReadFile("./StaticResources/VULKAN_COMPILED_vertex.spv");
@@ -449,13 +449,13 @@ void SQ::VulkanSetup::CreateGraphicsPipeline(VkDevice device, VkRenderPass rende
     // Pipeline layout, this is like your constant buffer setup bit
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0; // Optional
-    pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+    pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size(); // 
+    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data(); // 
     pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
     pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
     if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create pipeline layout!");
+        throw -1;
     }
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
@@ -481,7 +481,7 @@ void SQ::VulkanSetup::CreateGraphicsPipeline(VkDevice device, VkRenderPass rende
     pipelineInfo.basePipelineIndex = -1; // Optional
 
     if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, graphicsPipeline) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create graphics pipeline!");
+        throw -1;
     }
 
     vkDestroyShaderModule(device, fragShaderModule, nullptr);
@@ -615,6 +615,23 @@ void SQ::VulkanSetup::CreateSyncObjects(VkDevice device, std::vector<VkFence>* i
 
             throw -1;
         }
+    }
+}
+
+void SQ::VulkanSetup::CreateDescriptorPool(VkDevice device, uint32_t descriptorCount, uint32_t maxSets, VkDescriptorPool* descriptorPool)
+{
+    VkDescriptorPoolSize poolSize{};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = descriptorCount;
+
+    VkDescriptorPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.maxSets = maxSets;
+
+    if (vkCreateDescriptorPool(device, &poolInfo, nullptr, descriptorPool) != VK_SUCCESS) {
+        throw -1;
     }
 }
 

@@ -31,6 +31,9 @@
     <Filter Include="Nuts">
       <UniqueIdentifier>{aa7f1e5f-d763-4099-975b-b7d8aa08d8df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Services\Vulkan">
+      <UniqueIdentifier>{3add542b-6cb3-4538-9546-b5a216e5a14a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsDX11.h">
@@ -135,17 +138,20 @@
     <ClInclude Include="SquirrelEngineSIMD.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsVulkan.h">
-      <Filter>Services</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanUtility.h">
-      <Filter>Services</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MeshVulkan.h">
       <Filter>Resources\API Specific Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsVulkan.h">
+      <Filter>Services\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanUtility.h">
+      <Filter>Services\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanSetup.h">
+      <Filter>Services\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanDescriptor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -236,17 +242,20 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Services</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsVulkan.cpp">
-      <Filter>Services</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanUtility.cpp">
-      <Filter>Services</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanSetup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MeshVulkan.cpp">
       <Filter>Resources\API Specific Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsVulkan.cpp">
+      <Filter>Services\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSetup.cpp">
+      <Filter>Services\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanUtility.cpp">
+      <Filter>Services\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanDescriptor.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

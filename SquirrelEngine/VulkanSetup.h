@@ -26,7 +26,7 @@ namespace SQ {
 		static void CreateRenderPass(VkDevice device, VkPhysicalDevice physicalDevice, VkFormat swapChainFormat, VkRenderPass* renderPass);
 		static VkFormat GetDepthBufferFormat(VkPhysicalDevice physicalDevice);
 
-		static void CreateGraphicsPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent,
+		static void CreateGraphicsPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D swapChainExtent, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
 			VkPipelineLayout* pipelineLayout, VkPipeline* graphicsPipeline);
 
 		static void CreateDepthBuffer(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D swapChainExtent, VkImage* depthImage, VkDeviceMemory* depthImageMemory, VkImageView* depthImageView);
@@ -38,6 +38,8 @@ namespace SQ {
 		static void CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::vector<VkCommandBuffer>* commandBuffers);
 
 		static void CreateSyncObjects(VkDevice device, std::vector<VkFence>* inFlightFences, std::vector<VkSemaphore>* imageAvailableSemaphores, std::vector<VkSemaphore>* renderFinishedSemaphores);
+
+		static void CreateDescriptorPool(VkDevice device, uint32_t descriptorCount, uint32_t maxSets, VkDescriptorPool* descriptorPool);
 
 		/// <summary>
 		/// Checks if a device is suitable to render a squirrel engine game.

@@ -168,8 +168,16 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     // Setup render pass
     VulkanSetup::CreateRenderPass(device, physicalDevice, swapChainImageFormat, &renderPass);
 
+    // Setup descriptor pool
+    VulkanSetup::CreateDescriptorPool(device, VULKAN_MAX_FRAMES_IN_FLIGHT, VULKAN_MAX_FRAMES_IN_FLIGHT, &descriptorPool);
+
+    SetupDescriptorSets();
+
     // Setup pipeline
-    VulkanSetup::CreateGraphicsPipeline(device, renderPass, swapChainExtent, &pipelineLayout, &graphicsPipeline);
+    std::vector<VkDescriptorSetLayout> allDescriptorSetLayouts = {
+        projectionViewWorldDescriptorSetLayout
+    };
+    VulkanSetup::CreateGraphicsPipeline(device, renderPass, swapChainExtent, allDescriptorSetLayouts, &pipelineLayout, &graphicsPipeline);
 
     // Setup depth buffer
     VulkanSetup::CreateDepthBuffer(device, physicalDevice, swapChainExtent, &depthImage, &depthImageMemory, &depthImageView);
@@ -251,10 +259,12 @@ void SQ::GraphicsVulkan::BeginRender()
 
 void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
 {
+    projectionViewWorldData.projection = Perspective_RH_ZO(camera->GetFov(), 1, 0.01, 200);
 }
 
 void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
 {
+    projectionViewWorldData.view = camera->GetViewMatrix();
 }
 
 void SQ::GraphicsVulkan::Render(MeshNut* toRender)
@@ -266,6 +276,10 @@ void SQ::GraphicsVulkan::Render(MeshNut* toRender)
     vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
 
     vkCmdBindIndexBuffer(commandBuffers[currentFrame], vulkanToRender->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+    projectionViewWorldData.world = toRender->GetGlobalSRTWorldMatrix();
+    memcpy(projectionViewWorldDescriptorSets[currentFrame].GetMappedMemoryLocation(), &projectionViewWorldData, sizeof(ProjectionViewWorldUBO));
+    vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, projectionViewWorldDescriptorSets[currentFrame].GetDescriptorSet(), 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffers[currentFrame], static_cast<uint32_t>(vulkanToRender->GetIndexCount()), 1, 0, 0, 0);
 }
@@ -343,6 +357,33 @@ SQ::Vec2 SQ::GraphicsVulkan::GetRenderWindowSize()
 SQ::Vec2 SQ::GraphicsVulkan::GetWindowLocation()
 {
     return Vec2();
+}
+
+void SQ::GraphicsVulkan::SetupDescriptorSets()
+{
+    VkDescriptorSetLayoutBinding uboLayoutBinding{};
+    uboLayoutBinding.binding = 0;
+    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBinding.descriptorCount = 1;
+    // Only using this in vertex shader
+    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    // Not used for images
+    uboLayoutBinding.pImmutableSamplers = nullptr;
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo{};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    layoutInfo.bindingCount = 1;
+    layoutInfo.pBindings = &uboLayoutBinding;
+
+    if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &projectionViewWorldDescriptorSetLayout) != VK_SUCCESS) {
+        throw -1;
+    }
+
+    for (int i = 0; i < VULKAN_MAX_FRAMES_IN_FLIGHT; i++) {
+        projectionViewWorldDescriptorSets.push_back(VulkanDescriptor());
+        projectionViewWorldDescriptorSets[i].CreateAndAllocateBuffer(sizeof(ProjectionViewWorldUBO));
+        projectionViewWorldDescriptorSets[i].CreateDescriptorSet(device, projectionViewWorldDescriptorSetLayout, descriptorPool);
+    }
 }
 
 #endif

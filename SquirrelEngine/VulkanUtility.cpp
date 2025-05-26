@@ -123,9 +123,17 @@ void SQ::VulkanUtility::MapCopyToGPU(VkDeviceMemory memory, void* data, size_t s
 {
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
     void* mappedMemory;
-    vkMapMemory(graphicsService->device, memory, 0, size, 0, &mappedMemory);
+    vkMapMemory(graphicsService->device, memory, offset, size, flags, &mappedMemory);
     // Copy Data
     memcpy(mappedMemory, data, size);
     // Unmap Data
     vkUnmapMemory(graphicsService->device, memory);
+}
+
+void* SQ::VulkanUtility::OpenMemoryMap(VkDeviceMemory memory, size_t size, VkDeviceSize offset, VkMemoryMapFlags flags)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+    void* toReturn;
+    vkMapMemory(graphicsService->device, memory, offset, size, flags, &toReturn);
+    return toReturn;
 }

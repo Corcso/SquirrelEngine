@@ -18,6 +18,7 @@ namespace SQ {
         static void CopyBufferData(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         static void MapCopyToGPU(VkDeviceMemory memory, void* data, size_t size, VkDeviceSize offset = 0, VkMemoryMapFlags flags = 0);
+        static void* OpenMemoryMap(VkDeviceMemory memory, size_t size, VkDeviceSize offset = 0, VkMemoryMapFlags flags = 0);
 
 		static inline std::vector<char> ReadFile(const std::string& filename) {
             std::ifstream file(filename, std::ios::ate | std::ios::binary);
