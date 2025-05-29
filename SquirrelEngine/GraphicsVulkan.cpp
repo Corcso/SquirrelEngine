@@ -169,13 +169,13 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::CreateRenderPass(device, physicalDevice, swapChainImageFormat, &renderPass);
 
     // Setup descriptor pool
-    VulkanSetup::CreateDescriptorPool(device, VULKAN_MAX_FRAMES_IN_FLIGHT, VULKAN_MAX_FRAMES_IN_FLIGHT, &descriptorPool);
+    VulkanSetup::CreateDescriptorPool(device, 1, VULKAN_MAX_FRAMES_IN_FLIGHT * 100, &descriptorPool);
 
     SetupDescriptorSets();
 
     // Setup pipeline
     std::vector<VkDescriptorSetLayout> allDescriptorSetLayouts = {
-        projectionViewWorldDescriptorSetLayout
+        perObjectSetLayout
     };
     VulkanSetup::CreateGraphicsPipeline(device, renderPass, swapChainExtent, allDescriptorSetLayouts, &pipelineLayout, &graphicsPipeline);
 
@@ -191,6 +191,9 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     // Create Sync objects
     VulkanSetup::CreateSyncObjects(device, &inFlightFences, &imageAvailableSemaphores, &renderFinishedSemaphores);
+
+    // Store clear colour
+    this->clearColor = clearColor;
 
     return 0;
 }
@@ -234,7 +237,7 @@ void SQ::GraphicsVulkan::BeginRender()
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = swapChainExtent;
 
-    std::vector<VkClearValue> clearColors = { {{0.0f, 0.0f, 0.0f, 1.0f}}, {1.0f, 0} };
+    std::vector<VkClearValue> clearColors = { {{clearColor.R, clearColor.G, clearColor.B, clearColor.A}}, {1.0f, 0} };
     renderPassInfo.clearValueCount = static_cast<uint32_t>(clearColors.size());
     renderPassInfo.pClearValues = clearColors.data();
 
@@ -255,6 +258,8 @@ void SQ::GraphicsVulkan::BeginRender()
     scissor.offset = { 0, 0 };
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
+
+    thisFramesDrawCall = 0;
 }
 
 void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
@@ -265,6 +270,8 @@ void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
 void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
 {
     projectionViewWorldData.view = camera->GetViewMatrix();
+    cameraBufferData.viewMatrix = projectionViewWorldData.view;
+    cameraBufferData.cameraPosition = camera->GetPosition();
 }
 
 void SQ::GraphicsVulkan::Render(MeshNut* toRender)
@@ -277,11 +284,25 @@ void SQ::GraphicsVulkan::Render(MeshNut* toRender)
 
     vkCmdBindIndexBuffer(commandBuffers[currentFrame], vulkanToRender->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
+    if (thisFramesDrawCall >= perObjectSets[currentFrame].size()) AddAdditionalDescriptorSet(perObjectSets, perObjectSetLayout);
+
     projectionViewWorldData.world = toRender->GetGlobalSRTWorldMatrix();
-    memcpy(projectionViewWorldDescriptorSets[currentFrame].GetMappedMemoryLocation(), &projectionViewWorldData, sizeof(ProjectionViewWorldUBO));
-    vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, projectionViewWorldDescriptorSets[currentFrame].GetDescriptorSet(), 0, nullptr);
+    memcpy(perObjectSets[currentFrame][thisFramesDrawCall].GetMappedMemoryLocation(0), &projectionViewWorldData, sizeof(ProjectionViewWorldUBO));
+    
+    memcpy(perObjectSets[currentFrame][thisFramesDrawCall].GetMappedMemoryLocation(1), &cameraBufferData, sizeof(CameraBufferData));
+    //materialBufferData = static_cast<MaterialVulkan*>(toRender->GetMaterial().get())->GetBufferData();
+    if (toRender->GetMaterial().get() == nullptr) { 
+        memcpy(perObjectSets[currentFrame][thisFramesDrawCall].GetMappedMemoryLocation(2), &materialBufferData, sizeof(MaterialVulkan::MaterialVulkanData)); 
+    }
+    else {
+        memcpy(perObjectSets[currentFrame][thisFramesDrawCall].GetMappedMemoryLocation(2), static_cast<MaterialVulkan*>(toRender->GetMaterial().get())->GetBufferData(), sizeof(MaterialVulkan::MaterialVulkanData));
+    }
+    memcpy(perObjectSets[currentFrame][thisFramesDrawCall].GetMappedMemoryLocation(3), &lightBufferData, sizeof(LightsBufferData));
+    vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, perObjectSets[currentFrame][thisFramesDrawCall].GetDescriptorSet(), 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffers[currentFrame], static_cast<uint32_t>(vulkanToRender->GetIndexCount()), 1, 0, 0, 0);
+
+    thisFramesDrawCall++;
 }
 
 void SQ::GraphicsVulkan::EndRender()
@@ -314,6 +335,8 @@ void SQ::GraphicsVulkan::EndRender()
         throw -1;
     }
 
+    std::cout << "Draws this frame: " << thisFramesDrawCall << "\n";
+
     // Now we present
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -343,46 +366,106 @@ void SQ::GraphicsVulkan::EndRender()
 
 void SQ::GraphicsVulkan::RegisterLightForFrame(LightNut* light)
 {
+    // If light count is at its max (8) do nothing
+    if (lightBufferData.lightCount >= 8) return;
+
+    // Set all the lights attributes
+    lightBufferData.lights[lightBufferData.lightCount].lightPosition = light->GetGlobalPosition();
+    lightBufferData.lights[lightBufferData.lightCount].lightDirection = light->GetForward();
+    lightBufferData.lights[lightBufferData.lightCount].diffuseColor = light->GetDiffuseColor();
+    lightBufferData.lights[lightBufferData.lightCount].ambientColor = light->GetAmbientColor();
+    lightBufferData.lights[lightBufferData.lightCount].intensity = light->GetIntensity();
+    lightBufferData.lights[lightBufferData.lightCount].ambientIntensity = light->GetAmbientIntensity();
+    lightBufferData.lights[lightBufferData.lightCount].lightType = (unsigned int)light->GetLightType();
+    lightBufferData.lights[lightBufferData.lightCount].innerCutoffAngle = light->GetSpotlightInnerAngle();
+    lightBufferData.lights[lightBufferData.lightCount].outerCutoffAngle = light->GetSpotlightOuterAngle();
+    lightBufferData.lights[lightBufferData.lightCount].linearAttenuation = light->GetLinearAttenuation();
+    lightBufferData.lights[lightBufferData.lightCount].quadraticAttenuation = light->GetQuadraticAttenuation();
+
+    // Increase the light count
+    lightBufferData.lightCount++;
 }
 
 void SQ::GraphicsVulkan::ClearFrameLights()
 {
+    // Set light count to 0
+    lightBufferData.lightCount = 0;
 }
 
 SQ::Vec2 SQ::GraphicsVulkan::GetRenderWindowSize()
 {
-    return Vec2();
+    return V2(swapChainExtent.width, swapChainExtent.height);
 }
 
 SQ::Vec2 SQ::GraphicsVulkan::GetWindowLocation()
 {
-    return Vec2();
+    RECT rect = { NULL };
+    Vec2 location;
+    if (GetWindowRect(window, &rect)) {
+        location.X = rect.left;
+        location.Y = rect.top;
+    }
+
+    return location;
 }
 
 void SQ::GraphicsVulkan::SetupDescriptorSets()
 {
-    VkDescriptorSetLayoutBinding uboLayoutBinding{};
-    uboLayoutBinding.binding = 0;
-    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    uboLayoutBinding.descriptorCount = 1;
+    std::vector<VkDescriptorSetLayoutBinding> uboLayoutBindings(4);
+    uboLayoutBindings[0].binding = 0;
+    uboLayoutBindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBindings[0].descriptorCount = 1;
     // Only using this in vertex shader
-    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    uboLayoutBindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     // Not used for images
-    uboLayoutBinding.pImmutableSamplers = nullptr;
+    uboLayoutBindings[0].pImmutableSamplers = nullptr;
+
+    uboLayoutBindings[1].binding = 1;
+    uboLayoutBindings[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBindings[1].descriptorCount = 1;
+    uboLayoutBindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    uboLayoutBindings[1].pImmutableSamplers = nullptr;
+
+    uboLayoutBindings[2].binding = 2;
+    uboLayoutBindings[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBindings[2].descriptorCount = 1;
+    uboLayoutBindings[2].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    uboLayoutBindings[2].pImmutableSamplers = nullptr;
+
+    uboLayoutBindings[3].binding = 3;
+    uboLayoutBindings[3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBindings[3].descriptorCount = 1;
+    uboLayoutBindings[3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    uboLayoutBindings[3].pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 1;
-    layoutInfo.pBindings = &uboLayoutBinding;
+    layoutInfo.bindingCount = uboLayoutBindings.size();
+    layoutInfo.pBindings = uboLayoutBindings.data();
 
-    if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &projectionViewWorldDescriptorSetLayout) != VK_SUCCESS) {
+    if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &perObjectSetLayout) != VK_SUCCESS) {
         throw -1;
     }
 
     for (int i = 0; i < VULKAN_MAX_FRAMES_IN_FLIGHT; i++) {
-        projectionViewWorldDescriptorSets.push_back(VulkanDescriptor());
-        projectionViewWorldDescriptorSets[i].CreateAndAllocateBuffer(sizeof(ProjectionViewWorldUBO));
-        projectionViewWorldDescriptorSets[i].CreateDescriptorSet(device, projectionViewWorldDescriptorSetLayout, descriptorPool);
+        perObjectSets.push_back(std::vector<VulkanDescriptor>());
+        //for (int o = 0; o < 2; o++) {
+        //    //projectionViewWorldDescriptorSets[i][o].push_back(VulkanDescriptor());
+        //    projectionViewWorldDescriptorSets[i][o].CreateAndAllocateBuffer(sizeof(ProjectionViewWorldUBO));
+        //    projectionViewWorldDescriptorSets[i][o].CreateDescriptorSet(device, projectionViewWorldDescriptorSetLayout, descriptorPool);
+        //}
+    }
+}
+
+void SQ::GraphicsVulkan::AddAdditionalDescriptorSet(std::vector<std::vector<VulkanDescriptor>>& descriptorSetList, const VkDescriptorSetLayout& setLayout)
+{
+    std::vector<size_t> sizes = { sizeof(ProjectionViewWorldUBO), sizeof(CameraBufferData), sizeof(MaterialVulkan::MaterialVulkanData), sizeof(LightsBufferData) };
+
+    for (int i = 0; i < VULKAN_MAX_FRAMES_IN_FLIGHT; i++) {
+        int newSetIndex = descriptorSetList[i].size();
+        descriptorSetList[i].push_back(VulkanDescriptor());
+        descriptorSetList[i][newSetIndex].CreateAndAllocateBuffers(sizes.data(), sizes.size());
+        descriptorSetList[i][newSetIndex].CreateDescriptorSet(device, perObjectSetLayout, descriptorPool);
     }
 }
 

@@ -5,6 +5,7 @@
 #include "VulkanUtility.h"
 #include "Graphics.h"
 #include "VulkanDescriptor.h"
+#include "MaterialVulkan.h"
 
 namespace SQ {
 
@@ -90,6 +91,9 @@ namespace SQ {
         // 0 or 1 depending on the frame we are drawing
         uint32_t currentFrame = 0;
 
+        // This frame's draw call
+        uint32_t thisFramesDrawCall = 0;
+
         // This render pass's image index in the swap chain
         uint32_t thisRenderImageIndex;
 
@@ -99,14 +103,47 @@ namespace SQ {
 
         void SetupDescriptorSets();
 
+        void AddAdditionalDescriptorSet(std::vector<std::vector<VulkanDescriptor>>& descriptorSetList, const VkDescriptorSetLayout& setLayout);
+
         struct ProjectionViewWorldUBO {
-            Mat4 projection;
-            Mat4 view;
-            Mat4 world;
+            alignas(16) Mat4 projection;
+            alignas(16) Mat4 view;
+            alignas(16) Mat4 world;
         };
-        VkDescriptorSetLayout projectionViewWorldDescriptorSetLayout;
-        std::vector<VulkanDescriptor> projectionViewWorldDescriptorSets;
+        struct LightBufferData {
+            alignas(16) Vec3 lightPosition;
+
+            alignas(16) Vec3 lightDirection;
+
+            alignas(16) Vec3 diffuseColor;
+
+            alignas(16) Vec3 ambientColor;
+            alignas(4) float intensity;
+
+            alignas(4) float ambientIntensity;
+            alignas(4) unsigned int lightType;
+            alignas(4) float innerCutoffAngle;
+            alignas(4) float outerCutoffAngle;
+
+            // No need for constant attenuation, this can be edited by changing intensity. 
+            alignas(4) float linearAttenuation;
+            alignas(4) float quadraticAttenuation;
+        };
+
+        struct LightsBufferData {
+            alignas(16) LightBufferData lights[8];
+            alignas(4) unsigned int lightCount;
+        };
+        struct CameraBufferData {
+            alignas(16) Mat4 viewMatrix;
+            alignas(16) Vec3 cameraPosition;
+        };
+        VkDescriptorSetLayout perObjectSetLayout;
+        std::vector<std::vector<VulkanDescriptor>> perObjectSets;
         ProjectionViewWorldUBO projectionViewWorldData;
+        CameraBufferData cameraBufferData;
+        MaterialVulkan::MaterialVulkanData materialBufferData = { {0.8, 0.8, 0.8}, {1, 1, 1}, 128, 0.5 };
+        LightsBufferData lightBufferData;
     };
 }
 

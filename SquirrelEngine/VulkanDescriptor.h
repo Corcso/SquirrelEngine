@@ -7,21 +7,22 @@ namespace SQ {
 	class VulkanDescriptor
 	{
 	public:
-		void CreateAndAllocateBuffer(size_t size);
+		void CreateAndAllocateBuffers(size_t* sizes, uint32_t bindCount);
 
 		void CreateDescriptorSet(VkDevice device, VkDescriptorSetLayout layout, VkDescriptorPool descriptorPool);
 
 		VkDescriptorSet* GetDescriptorSet() { return &descriptorSet; }
 
-		void* GetMappedMemoryLocation() { return mappedMemoryLocation; }
+		void* GetMappedMemoryLocation(uint32_t bindingIndex) { return mappedMemoryLocation[bindingIndex]; }
 		
-		~VulkanDescriptor();
+		void CleanupDescriptor();
 	private:
 		VkDescriptorSet descriptorSet;
-		VkBuffer descriptorBuffer;
-		VkDeviceMemory descriptorBufferMemory;
-		void* mappedMemoryLocation;
-		size_t bufferSize;
+		std::vector<VkBuffer> descriptorBuffer;
+		std::vector<VkDeviceMemory> descriptorBufferMemory;
+		std::vector<void*> mappedMemoryLocation;
+		std::vector<size_t> bufferSizes;
+		uint32_t bindingCount;
 	};
 }
 #endif // VULKAN

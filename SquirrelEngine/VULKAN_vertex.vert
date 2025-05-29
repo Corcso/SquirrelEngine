@@ -25,9 +25,9 @@ layout(binding = 0) uniform UniformBufferObject {
 void main() {
 
     gl_Position = ubo.proj * ubo.view * ubo.world * vec4(inPosition, 1.0);
-    outWorldPos = inPosition;
-    outNormal = inNormal;
+    outWorldPos = (ubo.world * vec4(inPosition, 1.0)).xyz;
+    outNormal = normalize(ubo.world * vec4(inNormal, 0.0)).xyz;
     outTex = inTex;
-    outTangent = inTangent;
-    outBitangent = inBitangent;
+    outTangent = normalize(ubo.world * vec4(inTangent, 0.0)).xyz;
+    outBitangent = normalize(ubo.world * vec4(inBitangent, 0.0)).xyz;
 }

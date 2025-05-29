@@ -1,4 +1,8 @@
 #include "PCH.h"
+
+#ifdef VULKAN
+
+
 #include "VulkanUtility.h"
 #include "Services.h"
 #include "GraphicsVulkan.h"
@@ -137,3 +141,4 @@ void* SQ::VulkanUtility::OpenMemoryMap(VkDeviceMemory memory, size_t size, VkDev
     vkMapMemory(graphicsService->device, memory, offset, size, flags, &toReturn);
     return toReturn;
 }
+#endif // VULKAN

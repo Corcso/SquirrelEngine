@@ -153,6 +153,7 @@
     <ClInclude Include="LightNut.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialDX11.h" />
+    <ClInclude Include="MaterialVulkan.h" />
     <ClInclude Include="MeshVulkan.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsJolt.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="LightNut.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialDX11.cpp" />
+    <ClCompile Include="MaterialVulkan.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshDX11.cpp" />
     <ClCompile Include="MeshNut.cpp" />
@@ -235,7 +237,7 @@
       </ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="DX11BaseVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -250,7 +252,7 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DX11BaseVertex_CompiledShader.h</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,8 +262,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="VULKAN_CompileAllShaders.bat" />
-    <None Include="VULKAN_fragment.frag" />
-    <None Include="VULKAN_vertex.vert" />
+    <None Include="VULKAN_fragment.frag">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="VULKAN_vertex.vert">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
