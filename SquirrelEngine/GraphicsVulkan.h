@@ -6,6 +6,7 @@
 #include "Graphics.h"
 #include "VulkanDescriptor.h"
 #include "MaterialVulkan.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace SQ {
 
@@ -51,6 +52,7 @@ namespace SQ {
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         // Logical Device
         VkDevice device;
+        VulkanMemoryAllocator memoryAllocator;
         // Graphics queue
         VkQueue graphicsQueue;
         // Present queue

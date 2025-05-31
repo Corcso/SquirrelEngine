@@ -2,6 +2,7 @@
 
 #ifdef VULKAN
 #include "SquirrelEnginePI.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace SQ {
 	class VulkanDescriptor
@@ -19,7 +20,8 @@ namespace SQ {
 	private:
 		VkDescriptorSet descriptorSet;
 		std::vector<VkBuffer> descriptorBuffer;
-		std::vector<VkDeviceMemory> descriptorBufferMemory;
+		//std::vector<VkDeviceMemory> descriptorBufferMemory;
+		std::vector<VulkanMemoryAllocator::VulkanMemoryBlock> descriptorBufferMemory;
 		std::vector<void*> mappedMemoryLocation;
 		std::vector<size_t> bufferSizes;
 		uint32_t bindingCount;

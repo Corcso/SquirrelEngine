@@ -5,6 +5,7 @@
 #include "Mesh.h"
 
 #include "SquirrelEnginePI.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace SQ {
 	class MeshVulkan : public Mesh
@@ -21,10 +22,12 @@ namespace SQ {
 		VkBuffer GetIndexBuffer() { return indexBuffer; }
 	private:
 		VkBuffer vertexBuffer;
-		VkDeviceMemory vertexBufferMemory;
+		VulkanMemoryAllocator::VulkanMemoryBlock vertexBufferMemory;
+		//VkDeviceMemory vertexBufferMemory;
 
 		VkBuffer indexBuffer;
-		VkDeviceMemory indexBufferMemory;
+		VulkanMemoryAllocator::VulkanMemoryBlock indexBufferMemory;
+		//VkDeviceMemory indexBufferMemory;
 	};
 }
 

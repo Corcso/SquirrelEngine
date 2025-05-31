@@ -39,7 +39,8 @@ uint32_t SQ::VulkanUtility::FindMemoryTypeIndex(VkPhysicalDevice physicalDevice,
     throw -1;
 }
 
-void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory)
+//void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory)
+void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, bool isMapInstantCopy)
 {
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
 
@@ -53,7 +54,7 @@ void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferU
         throw -1;
     }
 
-    VkMemoryRequirements memRequirements;
+    /*VkMemoryRequirements memRequirements;
     vkGetBufferMemoryRequirements(graphicsService->device, *buffer, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo{};
@@ -63,9 +64,11 @@ void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferU
 
     if (vkAllocateMemory(graphicsService->device, &allocInfo, nullptr, bufferMemory) != VK_SUCCESS) {
         throw -1;
-    }
+    }*/
 
-    vkBindBufferMemory(graphicsService->device, *buffer, *bufferMemory, 0);
+    *bufferMemory = graphicsService->memoryAllocator.BindBufferToMemory(graphicsService->device, graphicsService->physicalDevice, properties, isMapInstantCopy, *buffer);
+
+//    vkBindBufferMemory(graphicsService->device, *buffer, *bufferMemory, 0);
 }
 
 void SQ::VulkanUtility::DestroyBuffer(VkBuffer buffer)
@@ -81,6 +84,12 @@ void SQ::VulkanUtility::FreeGPUMemory(VkDeviceMemory memory)
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
 
     vkFreeMemory(graphicsService->device, memory, nullptr);
+}
+
+void SQ::VulkanUtility::FreeGPUMemoryBlock(VulkanMemoryAllocator::VulkanMemoryBlock memoryBlock)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+    graphicsService->memoryAllocator.FreeMemory(graphicsService->device, memoryBlock);
 }
 
 void SQ::VulkanUtility::CopyBufferData(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
@@ -134,11 +143,31 @@ void SQ::VulkanUtility::MapCopyToGPU(VkDeviceMemory memory, void* data, size_t s
     vkUnmapMemory(graphicsService->device, memory);
 }
 
+void SQ::VulkanUtility::MapCopyBlockToGPU(VulkanMemoryAllocator::VulkanMemoryBlock memory, void* data, size_t size, VkMemoryMapFlags flags)
+{
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+    if (!memory.poolID.instantCloseMap) return;
+    void* mappedMemory;
+    vkMapMemory(graphicsService->device, graphicsService->memoryAllocator.GetBlockMemoryAllocation(memory), memory.location.offset, size, flags, &mappedMemory);
+    // Copy Data
+    memcpy(mappedMemory, data, size);
+    // Unmap Data
+    vkUnmapMemory(graphicsService->device, graphicsService->memoryAllocator.GetBlockMemoryAllocation(memory));
+}
+
 void* SQ::VulkanUtility::OpenMemoryMap(VkDeviceMemory memory, size_t size, VkDeviceSize offset, VkMemoryMapFlags flags)
 {
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
     void* toReturn;
     vkMapMemory(graphicsService->device, memory, offset, size, flags, &toReturn);
+    return toReturn;
+}
+void* SQ::VulkanUtility::OpenMemoryBlockMap(VulkanMemoryAllocator::VulkanMemoryBlock memory, size_t size, VkMemoryMapFlags flags)
+{
+    if (memory.poolID.instantCloseMap) return nullptr;
+    GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
+    void* toReturn;
+    vkMapMemory(graphicsService->device, graphicsService->memoryAllocator.GetBlockMemoryAllocation(memory), memory.location.offset, size, flags, &toReturn);
     return toReturn;
 }
 #endif // VULKAN

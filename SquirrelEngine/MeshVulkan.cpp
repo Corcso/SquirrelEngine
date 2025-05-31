@@ -51,49 +51,53 @@ void SQ::MeshVulkan::LoadBuffers()
     // Create buffer
     // Staging Vertex buffer
     VkBuffer stagingVertexBuffer;
-    VkDeviceMemory stagingVertexBufferMemory;
+    //VkDeviceMemory stagingVertexBufferMemory;
+    VulkanMemoryAllocator::VulkanMemoryBlock stagingVertexBufferMemory;
 
     VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &stagingVertexBuffer, &stagingVertexBufferMemory);
+        &stagingVertexBuffer, &stagingVertexBufferMemory, true);
 
     // Map GPU memory to CPU memory
-    VulkanUtility::MapCopyToGPU(stagingVertexBufferMemory, vertices.data(), bufferSize);
+    VulkanUtility::MapCopyBlockToGPU(stagingVertexBufferMemory, vertices.data(), bufferSize);
 
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        &vertexBuffer, &vertexBufferMemory);
+        &vertexBuffer, &vertexBufferMemory, false);
 
     // See below
     VulkanUtility::CopyBufferData(stagingVertexBuffer, vertexBuffer, bufferSize);
 
     // Dont need the stager anymore
     VulkanUtility::DestroyBuffer(stagingVertexBuffer);
-    VulkanUtility::FreeGPUMemory(stagingVertexBufferMemory);
+    //VulkanUtility::FreeGPUMemory(stagingVertexBufferMemory);
+    VulkanUtility::FreeGPUMemoryBlock(stagingVertexBufferMemory);
 
     // INDEX BUFFER
     bufferSize = sizeof(indicies[0]) * indicies.size();
 
     VkBuffer stagingIndexBuffer;
-    VkDeviceMemory stagingIndexBufferMemory;
+    VulkanMemoryAllocator::VulkanMemoryBlock stagingIndexBufferMemory;
+    //VkDeviceMemory stagingIndexBufferMemory;
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-        &stagingIndexBuffer, &stagingIndexBufferMemory);
+        &stagingIndexBuffer, &stagingIndexBufferMemory, true);
 
-    VulkanUtility::MapCopyToGPU(stagingIndexBufferMemory, indicies.data(), bufferSize);
+    VulkanUtility::MapCopyBlockToGPU(stagingIndexBufferMemory, indicies.data(), bufferSize);
 
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-        &indexBuffer, &indexBufferMemory);
+        &indexBuffer, &indexBufferMemory, false);
 
     VulkanUtility::CopyBufferData(stagingIndexBuffer, indexBuffer, bufferSize);
 
     VulkanUtility::DestroyBuffer(stagingIndexBuffer);
-    VulkanUtility::FreeGPUMemory(stagingIndexBufferMemory);
+    VulkanUtility::FreeGPUMemoryBlock(stagingIndexBufferMemory);
+    //VulkanUtility::FreeGPUMemory(stagingIndexBufferMemory);
 }
 
 #endif

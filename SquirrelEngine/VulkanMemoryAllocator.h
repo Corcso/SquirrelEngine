@@ -1,0 +1,80 @@
+#pragma once
+
+#ifdef VULKAN
+#include "SquirrelEnginePI.h"
+#include <unordered_map>
+#include <map>
+namespace SQ {
+	class VulkanMemoryAllocator
+	{
+	public:
+		struct VulkanMemoryPoolIdentifier {
+			uint32_t memoryTypeIndex;
+			uint32_t blockSize;
+			bool instantCloseMap;
+
+			bool operator==(const VulkanMemoryPoolIdentifier& other) const
+			{
+				return (memoryTypeIndex == other.memoryTypeIndex
+					&& blockSize == other.blockSize
+					&& instantCloseMap == other.instantCloseMap);
+			}
+
+			// Custom hash function for use in Map https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key
+			struct Hash {
+				std::size_t operator()(const SQ::VulkanMemoryAllocator::VulkanMemoryPoolIdentifier& k) const noexcept
+				{
+
+					// Compute individual hash values for first,
+					// second and third and combine them using XOR
+					// and bit shifting:
+
+					return ((std::hash<uint32_t>()(k.memoryTypeIndex)
+						^ (std::hash<uint32_t>()(k.blockSize) << 1)) >> 1)
+						^ (std::hash<bool>()(k.instantCloseMap) << 1);
+				}
+			};
+		};
+		
+		struct VulkanMemoryPoolLocation {
+			uint32_t poolIndex;
+			uint32_t offset;
+		};
+		struct VulkanMemoryBlock {
+			VulkanMemoryPoolIdentifier poolID;
+			VulkanMemoryPoolLocation location;
+		};
+
+		VulkanMemoryBlock BindBufferToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, bool isMapInstantCopy, VkBuffer toBind);
+		void FreeMemory(VkDevice device, VulkanMemoryBlock block);
+		/// <summary>
+		/// Returns a blocks memory allocation, please note you still need to use the offset. DO NOT free this!
+		/// </summary>
+		/// <param name="block">Block</param>
+		/// <returns>Block's memory allocation</returns>
+		VkDeviceMemory GetBlockMemoryAllocation(VulkanMemoryAllocator::VulkanMemoryBlock block);
+	private:
+		
+
+		std::unordered_map<VulkanMemoryPoolIdentifier, std::vector<VkDeviceMemory>, VulkanMemoryPoolIdentifier::Hash> memoryPools;
+		
+		std::unordered_map<VulkanMemoryPoolIdentifier, std::list<VulkanMemoryPoolLocation>, VulkanMemoryPoolIdentifier::Hash> freeMemoryLocations;
+
+		VulkanMemoryBlock FindMemoryBlock(VkDevice device, VkMemoryAllocateInfo desiredAllocation, bool isMapInstantCopy);
+
+		std::map<uint32_t, uint32_t> sizeToBlockCountPerAlloc = {
+			{128, 64},
+			{256, 64},
+			{512, 64},
+			{1024, 64},
+			{2048, 64}
+		};
+	};
+}
+template <>
+struct std::hash<SQ::VulkanMemoryAllocator::VulkanMemoryPoolIdentifier>
+{
+	
+};
+
+#endif

@@ -335,7 +335,7 @@ void SQ::GraphicsVulkan::EndRender()
         throw -1;
     }
 
-    std::cout << "Draws this frame: " << thisFramesDrawCall << "\n";
+    //std::cout << "Draws this frame: " << thisFramesDrawCall << "\n";
 
     // Now we present
     VkPresentInfoKHR presentInfo{};
