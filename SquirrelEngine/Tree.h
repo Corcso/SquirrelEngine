@@ -37,6 +37,12 @@ namespace SQ {
 		/// </summary>
 		void Quit();
 
+		/// <summary>
+		/// Returns true if we are quitting
+		/// </summary>
+		/// <returns>If the game will close this frame</returns>
+		bool IsGameClosingThisFrame() { return toQuit; }
+
 	private:
 		/// <summary>
 		/// <para>Calls Update() on nut provided and all descendants.</para>

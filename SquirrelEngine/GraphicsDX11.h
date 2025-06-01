@@ -26,6 +26,8 @@ namespace SQ {
         virtual Vec2 GetRenderWindowSize() final;
         virtual Vec2 GetWindowLocation() final;
 
+        virtual void RegisterWindowSizeChange(Vec2 newSize) final {};
+
         /// <summary>
         /// Creates a buffer on the GPU
         /// </summary>

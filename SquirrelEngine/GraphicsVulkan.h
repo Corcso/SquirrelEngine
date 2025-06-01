@@ -31,6 +31,8 @@ namespace SQ {
 
         virtual Vec2 GetRenderWindowSize() final;
         virtual Vec2 GetWindowLocation() final;
+
+        virtual void RegisterWindowSizeChange(Vec2 newSize) final;
     private:
         // Window class name must be unique
         const LPCWSTR WINDOW_CLASS_NAME = L"SquirrelEngineGame";
@@ -99,8 +101,15 @@ namespace SQ {
         // This render pass's image index in the swap chain
         uint32_t thisRenderImageIndex;
 
+        bool swapChainNeedsRecreation;
+        Vec2 newSwapChainSize;
+
+        void RecreateSwapChain();
+        void CleanupSwapChain();
+
         // Uniform Buffer Objects
 
+        // TODO proper cleanup
         // TODO Split world into its own UBO
 
         void SetupDescriptorSets();

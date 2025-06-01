@@ -4,7 +4,7 @@
 #include "GraphicsVulkan.h"
 #include "VulkanSetup.h"
 #include "MeshVulkan.h"
-
+#include "Services.h"
 #include "InputWindows.h"
 
 // For HD mouse movement (Microsoft, 2023)
@@ -207,7 +207,7 @@ void SQ::GraphicsVulkan::BeginRender()
     VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &thisRenderImageIndex);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-        //recreateSwapChain();
+        RecreateSwapChain();
         return;
     }
     else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -353,9 +353,9 @@ void SQ::GraphicsVulkan::EndRender()
 
     VkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR /* || framebufferResized*/) {
-        //framebufferResized = false;
-        //if (!toQuit) recreateSwapChain();
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR  || swapChainNeedsRecreation) {
+        swapChainNeedsRecreation = false;
+        if (!Services::GetTree()->IsGameClosingThisFrame())RecreateSwapChain();
     }
     else if (result != VK_SUCCESS) {
         throw -1;
@@ -407,6 +407,49 @@ SQ::Vec2 SQ::GraphicsVulkan::GetWindowLocation()
     }
 
     return location;
+}
+
+void SQ::GraphicsVulkan::RegisterWindowSizeChange(Vec2 newSize)
+{
+    newSwapChainSize = newSize;
+    swapChainNeedsRecreation = true;
+}
+
+void SQ::GraphicsVulkan::RecreateSwapChain()
+{
+    // If we are minimised, size is 0, freeze all main thread processing appart from the input loop (as this will see when we unminimise)
+    while (newSwapChainSize.Width == 0 || newSwapChainSize.Height == 0) {
+        SQ::Services::GetInput()->ProcessInput();
+    }
+    // Wait until nothing is going on
+    vkDeviceWaitIdle(device);
+
+    // Cleanup the swapchain
+    CleanupSwapChain();
+
+    // Make a new one
+    VulkanSetup::CreateSwapChain(device, physicalDevice, surface, newSwapChainSize.Width, newSwapChainSize.Height, &swapChainImageFormat, &swapChainExtent, &swapChainImages, &swapChain);
+    VulkanSetup::CreateImageViewsForSwapChain(device, swapChainImageFormat, swapChainImages, &swapChainImageViews);
+    VulkanSetup::CreateDepthBuffer(device, physicalDevice, swapChainExtent, &depthImage, &depthImageMemory, &depthImageView);
+    VulkanSetup::CreateFrameBuffers(device, renderPass, swapChainExtent, swapChainImageViews, depthImageView, &swapChainFramebuffers);
+}
+
+void SQ::GraphicsVulkan::CleanupSwapChain()
+{
+    // Taken from vulkan tutorial
+    vkDestroyImageView(device, depthImageView, nullptr);
+    vkDestroyImage(device, depthImage, nullptr);
+    vkFreeMemory(device, depthImageMemory, nullptr);
+
+    for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+    }
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+        vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
 
 void SQ::GraphicsVulkan::SetupDescriptorSets()
