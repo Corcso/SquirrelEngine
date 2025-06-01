@@ -102,11 +102,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WINDOWS;DX11;JOLT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WINDOWS;VULKAN;JOLT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)SquirrelEngine\Includes\Header;$(SolutionDir)SquirrelGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SquirrelEngine\Includes\Header;C:\VulkanSDK\1.4.304.1\Include;$(SolutionDir)SquirrelGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -114,7 +114,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SquirrelEngine\Includes\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.4.304.1\Lib;$(SolutionDir)SquirrelEngine\Includes\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -124,11 +124,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WINDOWS;DX11;JOLT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WINDOWS;VULKAN;JOLT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)SquirrelEngine\Includes\Header;$(SolutionDir)SquirrelGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.4.304.1\Include;$(SolutionDir)SquirrelEngine\Includes\Header;$(SolutionDir)SquirrelGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -137,7 +137,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SquirrelEngine\Includes\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.4.304.1\Lib;$(SolutionDir)SquirrelEngine\Includes\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,12 +146,15 @@
     <ClInclude Include="CollisionShape.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
+    <ClInclude Include="GraphicsVulkan.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputWindows.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="LightNut.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialDX11.h" />
+    <ClInclude Include="MaterialVulkan.h" />
+    <ClInclude Include="MeshVulkan.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsJolt.h" />
     <ClInclude Include="PhysicsNut.h" />
@@ -172,8 +175,13 @@
     <ClInclude Include="SquirrelEngine.h" />
     <ClInclude Include="SquirrelEnginePI.h" />
     <ClInclude Include="SQTime.h" />
+    <ClInclude Include="SquirrelEngineSIMD.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="SQUtility.h" />
+    <ClInclude Include="VulkanDescriptor.h" />
+    <ClInclude Include="VulkanMemoryAllocator.h" />
+    <ClInclude Include="VulkanSetup.h" />
+    <ClInclude Include="VulkanUtility.h" />
     <ClInclude Include="WorldNut.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,14 +190,17 @@
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsDX11.cpp" />
+    <ClCompile Include="GraphicsVulkan.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputWindows.cpp" />
     <ClCompile Include="LightNut.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialDX11.cpp" />
+    <ClCompile Include="MaterialVulkan.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshDX11.cpp" />
     <ClCompile Include="MeshNut.cpp" />
+    <ClCompile Include="MeshVulkan.cpp" />
     <ClCompile Include="Nut.cpp" />
     <ClCompile Include="PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -208,6 +219,10 @@
     <ClCompile Include="SQTime.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="SQUtility.cpp" />
+    <ClCompile Include="VulkanDescriptor.cpp" />
+    <ClCompile Include="VulkanMemoryAllocator.cpp" />
+    <ClCompile Include="VulkanSetup.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
     <ClCompile Include="WorldNut.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +239,7 @@
       </ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="DX11BaseVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -238,12 +254,22 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DX11BaseVertex_CompiledShader.h</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SquirrelGame\SquirrelGame.vcxproj">
       <Project>{068a1029-1835-4854-a740-6b8debc026b3}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VULKAN_CompileAllShaders.bat" />
+    <None Include="VULKAN_fragment.frag">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="VULKAN_vertex.vert">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

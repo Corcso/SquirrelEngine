@@ -1,7 +1,6 @@
 #include "PCH.h"
 #include "SquirrelEngine.h"
 
-
 #ifdef WINDOWS
 #include "InputWindows.h"
 #endif // WINDOWS
@@ -9,6 +8,10 @@
 #ifdef DX11
 #include "GraphicsDX11.h"
 #endif // DX11
+
+#ifdef VULKAN
+#include "GraphicsVulkan.h"
+#endif // VULKAN
 
 #ifdef JOLT
 #include "PhysicsJolt.h"
@@ -46,6 +49,9 @@ int main() {
 #ifdef DX11
 		SQ::Services::RegisterGraphics(new SQ::GraphicsDX11());
 #endif // DX11
+#ifdef VULKAN
+		SQ::Services::RegisterGraphics(new SQ::GraphicsVulkan());
+#endif // VULKAN
 #ifdef JOLT
 		SQ::Services::RegisterPhysics(new SQ::PhysicsJolt());
 #endif // JOLT
