@@ -28,9 +28,9 @@ namespace SQ {
 		for (int i = 0; i < bindCount; i++) {
 			VulkanUtility::CreateBufferAndAssignMemory(sizes[i], VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				&(descriptorBuffer[i]), &(descriptorBufferMemory[i]), false);
+				&(descriptorBuffer[i]), &(descriptorBufferMemory[i]), VulkanMemoryAllocator::VulkanMemoryMapUsage::OPEN);
 
-			mappedMemoryLocation[i] = VulkanUtility::OpenMemoryBlockMap(descriptorBufferMemory[i], sizes[i]);
+			mappedMemoryLocation[i] = descriptorBufferMemory[i].location.openMap; //VulkanUtility::OpenMemoryBlockMap(descriptorBufferMemory[i], sizes[i]);
 
 			bufferSizes[i] = sizes[i];
 		}

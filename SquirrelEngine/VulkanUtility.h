@@ -13,7 +13,7 @@ namespace SQ {
         static uint32_t FindMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties); 
 
         //static void CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory);
-        static void CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, bool isMapInstantCopy);
+        static void CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage mapUsage = VulkanMemoryAllocator::VulkanMemoryMapUsage::NONE);
         static void DestroyBuffer(VkBuffer buffer);
         static void FreeGPUMemory(VkDeviceMemory memory);
         static void FreeGPUMemoryBlock(VulkanMemoryAllocator::VulkanMemoryBlock memoryBlock);

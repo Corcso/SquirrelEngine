@@ -58,7 +58,7 @@ void SQ::MeshVulkan::LoadBuffers()
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &stagingVertexBuffer, &stagingVertexBufferMemory, true);
+        &stagingVertexBuffer, &stagingVertexBufferMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage::INSTANT);
 
     // Map GPU memory to CPU memory
     VulkanUtility::MapCopyBlockToGPU(stagingVertexBufferMemory, vertices.data(), bufferSize);
@@ -66,7 +66,7 @@ void SQ::MeshVulkan::LoadBuffers()
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        &vertexBuffer, &vertexBufferMemory, false);
+        &vertexBuffer, &vertexBufferMemory);
 
     // See below
     VulkanUtility::CopyBufferData(stagingVertexBuffer, vertexBuffer, bufferSize);
@@ -85,13 +85,13 @@ void SQ::MeshVulkan::LoadBuffers()
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-        &stagingIndexBuffer, &stagingIndexBufferMemory, true);
+        &stagingIndexBuffer, &stagingIndexBufferMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage::INSTANT);
 
     VulkanUtility::MapCopyBlockToGPU(stagingIndexBufferMemory, indicies.data(), bufferSize);
 
     VulkanUtility::CreateBufferAndAssignMemory(bufferSize, 
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-        &indexBuffer, &indexBufferMemory, false);
+        &indexBuffer, &indexBufferMemory);
 
     VulkanUtility::CopyBufferData(stagingIndexBuffer, indexBuffer, bufferSize);
 

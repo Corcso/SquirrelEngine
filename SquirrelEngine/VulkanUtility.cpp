@@ -40,7 +40,7 @@ uint32_t SQ::VulkanUtility::FindMemoryTypeIndex(VkPhysicalDevice physicalDevice,
 }
 
 //void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory)
-void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, bool isMapInstantCopy)
+void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage mapUsage)
 {
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
 
@@ -66,7 +66,7 @@ void SQ::VulkanUtility::CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferU
         throw -1;
     }*/
 
-    *bufferMemory = graphicsService->memoryAllocator.BindBufferToMemory(graphicsService->device, graphicsService->physicalDevice, properties, isMapInstantCopy, *buffer);
+    *bufferMemory = graphicsService->memoryAllocator.BindBufferToMemory(graphicsService->device, graphicsService->physicalDevice, properties, mapUsage, *buffer);
 
 //    vkBindBufferMemory(graphicsService->device, *buffer, *bufferMemory, 0);
 }
@@ -146,7 +146,7 @@ void SQ::VulkanUtility::MapCopyToGPU(VkDeviceMemory memory, void* data, size_t s
 void SQ::VulkanUtility::MapCopyBlockToGPU(VulkanMemoryAllocator::VulkanMemoryBlock memory, void* data, size_t size, VkMemoryMapFlags flags)
 {
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
-    if (!memory.poolID.instantCloseMap) return;
+    if (memory.poolID.mapUsage == VulkanMemoryAllocator::VulkanMemoryMapUsage::OPEN) return;
     void* mappedMemory;
     vkMapMemory(graphicsService->device, graphicsService->memoryAllocator.GetBlockMemoryAllocation(memory), memory.location.offset, size, flags, &mappedMemory);
     // Copy Data
@@ -164,10 +164,11 @@ void* SQ::VulkanUtility::OpenMemoryMap(VkDeviceMemory memory, size_t size, VkDev
 }
 void* SQ::VulkanUtility::OpenMemoryBlockMap(VulkanMemoryAllocator::VulkanMemoryBlock memory, size_t size, VkMemoryMapFlags flags)
 {
-    if (memory.poolID.instantCloseMap) return nullptr;
+    /*if (memory.poolID.instantCloseMap) return nullptr;
     GraphicsVulkan* graphicsService = dynamic_cast<GraphicsVulkan*>(Services::GetGraphics());
     void* toReturn;
     vkMapMemory(graphicsService->device, graphicsService->memoryAllocator.GetBlockMemoryAllocation(memory), memory.location.offset, size, flags, &toReturn);
-    return toReturn;
+    return toReturn;*/
+    return nullptr;
 }
 #endif // VULKAN

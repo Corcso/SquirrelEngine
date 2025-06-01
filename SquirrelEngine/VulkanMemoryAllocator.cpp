@@ -6,7 +6,7 @@
 
 #include <iostream>
 namespace SQ {
-    VulkanMemoryAllocator::VulkanMemoryBlock SQ::VulkanMemoryAllocator::BindBufferToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, bool isMapInstantCopy, VkBuffer toBind)
+    VulkanMemoryAllocator::VulkanMemoryBlock SQ::VulkanMemoryAllocator::BindBufferToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, VulkanMemoryMapUsage mapUsage, VkBuffer toBind)
     {
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(device, toBind, &memRequirements);
@@ -16,7 +16,7 @@ namespace SQ {
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = VulkanUtility::FindMemoryTypeIndex(physicalDevice, memRequirements.memoryTypeBits, properties);
 
-        VulkanMemoryBlock block = FindMemoryBlock(device, allocInfo, isMapInstantCopy);
+        VulkanMemoryBlock block = FindMemoryBlock(device, allocInfo, mapUsage);
 
         vkBindBufferMemory(device, toBind, memoryPools[block.poolID][block.location.poolIndex], block.location.offset);
 
@@ -44,7 +44,7 @@ namespace SQ {
         return memoryPools[block.poolID][block.location.poolIndex];
     }
 
-    VulkanMemoryAllocator::VulkanMemoryBlock SQ::VulkanMemoryAllocator::FindMemoryBlock(VkDevice device, VkMemoryAllocateInfo desiredAllocation, bool isMapInstantCopy)
+    VulkanMemoryAllocator::VulkanMemoryBlock SQ::VulkanMemoryAllocator::FindMemoryBlock(VkDevice device, VkMemoryAllocateInfo desiredAllocation, VulkanMemoryMapUsage mapUsage)
     {
         // Find block size
         uint32_t blockSize = 0;
@@ -58,7 +58,7 @@ namespace SQ {
 
         if (blockSize != 0) {
             // Create pool identifier
-            VulkanMemoryPoolIdentifier poolID = { desiredAllocation.memoryTypeIndex, blockSize, isMapInstantCopy };
+            VulkanMemoryPoolIdentifier poolID = { desiredAllocation.memoryTypeIndex, blockSize, mapUsage };
             // Look to see if pool exists
             if (memoryPools.find(poolID) != memoryPools.end() && memoryPools[poolID].size() != 0) {
                 // Then check if there is space
@@ -66,7 +66,7 @@ namespace SQ {
                     // Then return the free space
                     VulkanMemoryPoolLocation location = freeMemoryLocations[poolID].front();
                     freeMemoryLocations[poolID].pop_front();
-                    std::cout << "Existing block taken, Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << location.poolIndex << " Offset: " << location.offset << "\n";
+                    std::cout << "Existing block taken, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << location.poolIndex << " Offset: " << location.offset << "\n";
                     return { poolID, location };
                 }
                 //// If there isnt, make a new pool in the list (list already exists as there is at least 1 taken pool)
@@ -96,16 +96,22 @@ namespace SQ {
             if (vkAllocateMemory(device, &allocInfo, nullptr, &(memoryPools[poolID][newPoolIndex])) != VK_SUCCESS) {
                 throw - 1;
             }
+            // Open map if needed
+            char* mapBase = nullptr;
+            if (mapUsage == VulkanMemoryMapUsage::OPEN) {
+                vkMapMemory(device, memoryPools[poolID][newPoolIndex], 0, allocInfo.allocationSize, 0, reinterpret_cast<void**>(&mapBase));
+            }
             // Create free locations (appart from the first one, we are about to use it)
             for (int i = 1; i < sizeToBlockCountPerAlloc[poolID.blockSize]; i++) {
-                freeMemoryLocations[poolID].push_back({ newPoolIndex , i * blockSize });
+                void* blockMapLocation = (mapUsage == VulkanMemoryMapUsage::OPEN) ? mapBase + (i * blockSize) : nullptr;
+                freeMemoryLocations[poolID].push_back({ newPoolIndex , i * blockSize, blockMapLocation });
             }
-            std::cout << "New pool made, Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << newPoolIndex << "\n";
+            std::cout << "New pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << newPoolIndex << "\n";
             // First block of the new pool is reserved
-            return { poolID, { newPoolIndex, 0 } };
+            return { poolID, { newPoolIndex, 0, mapBase } };
         }
         // The block size we want, isnt in the list of sizes, create a 1 pool block for this as a last resort. 
-        VulkanMemoryPoolIdentifier poolID = { desiredAllocation.memoryTypeIndex, desiredAllocation.allocationSize, isMapInstantCopy };
+        VulkanMemoryPoolIdentifier poolID = { desiredAllocation.memoryTypeIndex, desiredAllocation.allocationSize, mapUsage };
         // There is any chance a pool of this exact size also exists, so treat this as an extra pool
         uint32_t newPoolIndex = memoryPools[poolID].size();
         memoryPools[poolID].push_back(nullptr);
@@ -116,10 +122,16 @@ namespace SQ {
         if (vkAllocateMemory(device, &allocInfo, nullptr, &(memoryPools[poolID][newPoolIndex])) != VK_SUCCESS) {
             throw - 1;
         }
+        // Open map if needed
+        void* mapBase = nullptr;
+        if (mapUsage == VulkanMemoryMapUsage::OPEN) {
+            vkMapMemory(device, memoryPools[poolID][newPoolIndex], 0, allocInfo.allocationSize, 0, &mapBase);
+        }
         // No free locations for this, were making a 1 block pool, just its own allocation. 
         // First block of the new pool is reserved
-        return { poolID, { newPoolIndex, 0 } };
-        std::cout << "New custom pool made, Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << " Index: " << newPoolIndex << "\n";
+        std::cout << "New custom pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << " Index: " << newPoolIndex << "\n";
+        return { poolID, { newPoolIndex, 0, mapBase} };
+        
     }
 }
 
