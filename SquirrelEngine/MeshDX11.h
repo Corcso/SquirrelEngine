@@ -1,4 +1,5 @@
 #pragma once
+#ifdef DX11
 #include "Mesh.h"
 
 #include "SquirrelEnginePI.h"
@@ -33,3 +34,4 @@ namespace SQ {
     };
 }
 
+#endif

@@ -68,5 +68,12 @@ namespace SQ {
 		/// </summary>
 		/// <returns>Gets the window location on the users screen. </returns>
 		virtual Vec2 GetWindowLocation() = 0;
+
+		/// <summary>
+		/// <para>For internal use only</para>
+		/// <para>Informs the graphics service the swap chain size needs to change. </para>
+		/// </summary>
+		/// <param name="newSize">New size of the window render area.</param>
+		virtual void RegisterWindowSizeChange(Vec2 newSize) = 0;
 	};
 }

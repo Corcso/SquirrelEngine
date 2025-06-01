@@ -35,12 +35,25 @@
 	#include "imgui_impl_dx11.h"
 #endif // DX11
 
+#ifdef VULKAN
+#define VK_USE_PLATFORM_WIN32_KHR
+#include <vulkan/vulkan.h>
+#pragma comment(lib, "vulkan-1.lib")
+#endif
+
 	// Jolt Physics
 	// (Rouwe, no date a)
 
 #ifdef JOLT
+	#define JPH_USE_AVX2
+	#define JPH_USE_AVX
+	#define JPH_USE_SSE4_1
+	#define JPH_USE_SSE4_2
+	#define JPH_USE_LZCNT
+	#define JPH_USE_TZCNT
+	#define JPH_USE_F16C
+	#define JPH_USE_FMADD
 	#ifdef _DEBUG
-		#define JPH_DEBUG_RENDERER 
 		#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 		#define JPH_PROFILE_ENABLED
 		#define JPH_OBJECT_STREAM
@@ -48,7 +61,6 @@
 	#else
 		#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 		#define JPH_OBJECT_STREAM
-		#define JPH_DEBUG_RENDERER 
 		#define JPH_PROFILE_ENABLED
 		#pragma comment(lib, "Jolt_Release.lib")
 	#endif

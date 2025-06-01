@@ -38,7 +38,15 @@ namespace SQ {
 		/// </summary>
 		void Quit();
 
+
 		void SetResourceInspector(std::shared_ptr<Resource> resource);
+
+		/// <summary>
+		/// Returns true if we are quitting
+		/// </summary>
+		/// <returns>If the game will close this frame</returns>
+		bool IsGameClosingThisFrame() { return toQuit; }
+
 
 	private:
 		/// <summary>

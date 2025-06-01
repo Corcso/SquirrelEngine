@@ -361,6 +361,14 @@ Input::Key::INVALID_KEY
             }
             break;
         }
+        case WM_SIZE:
+        {
+            Vec2 newSize;
+            newSize.Width = LOWORD(lParam);
+            newSize.Height = HIWORD(lParam);
+            Services::GetGraphics()->RegisterWindowSizeChange(newSize);
+        }
+        break;
         case WM_PAINT:
         {
             hDC = BeginPaint(hwnd, &paintStruct);
