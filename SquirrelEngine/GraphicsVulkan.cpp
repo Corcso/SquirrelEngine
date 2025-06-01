@@ -237,7 +237,7 @@ void SQ::GraphicsVulkan::BeginRender()
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
-
+    
     // Wait until previous frame is finished. 
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -345,6 +345,9 @@ void SQ::GraphicsVulkan::Render(MeshNut* toRender)
 
 void SQ::GraphicsVulkan::EndRender()
 {
+    memoryAllocator.RenderMemoryUsageStat();
+    ImGui::ShowDemoWindow();
+
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
 

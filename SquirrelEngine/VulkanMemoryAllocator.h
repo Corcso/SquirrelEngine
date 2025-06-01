@@ -59,6 +59,8 @@ namespace SQ {
 		/// <param name="block">Block</param>
 		/// <returns>Block's memory allocation</returns>
 		VkDeviceMemory GetBlockMemoryAllocation(VulkanMemoryAllocator::VulkanMemoryBlock block);
+
+		void RenderMemoryUsageStat();
 	private:
 		
 
