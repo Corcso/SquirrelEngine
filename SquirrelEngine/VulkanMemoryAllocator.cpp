@@ -23,6 +23,22 @@ namespace SQ {
         return block;
     }
 
+    VulkanMemoryAllocator::VulkanMemoryBlock VulkanMemoryAllocator::BindImageToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, VulkanMemoryMapUsage mapUsage, VkImage toBind)
+    {
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(device, toBind, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = VulkanUtility::FindMemoryTypeIndex(physicalDevice, memRequirements.memoryTypeBits, properties);
+        
+        VulkanMemoryBlock block = FindMemoryBlock(device, allocInfo, mapUsage);
+
+        vkBindImageMemory(device, toBind, memoryPools[block.poolID][block.location.poolIndex], block.location.offset);
+        return block;
+    }
+
     void VulkanMemoryAllocator::FreeMemory(VkDevice device, VulkanMemoryBlock block)
     {
         // If our block size is standard treat it differerantly 

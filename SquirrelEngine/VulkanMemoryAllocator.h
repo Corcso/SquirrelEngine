@@ -52,6 +52,7 @@ namespace SQ {
 		};
 
 		VulkanMemoryBlock BindBufferToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, VulkanMemoryMapUsage mapUsage, VkBuffer toBind);
+		VulkanMemoryBlock BindImageToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, VulkanMemoryMapUsage mapUsage, VkImage toBind);
 		void FreeMemory(VkDevice device, VulkanMemoryBlock block);
 		/// <summary>
 		/// Returns a blocks memory allocation, please note you still need to use the offset. DO NOT free this!

@@ -14,6 +14,7 @@ namespace SQ {
 
         //static void CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* bufferMemory);
         static void CreateBufferAndAssignMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer* buffer, VulkanMemoryAllocator::VulkanMemoryBlock* bufferMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage mapUsage = VulkanMemoryAllocator::VulkanMemoryMapUsage::NONE);
+        static void CreateImageAndAssignMemory(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VulkanMemoryAllocator::VulkanMemoryBlock* imageMemory, VulkanMemoryAllocator::VulkanMemoryMapUsage mapUsage = VulkanMemoryAllocator::VulkanMemoryMapUsage::NONE);
         static void DestroyBuffer(VkBuffer buffer);
         static void FreeGPUMemory(VkDeviceMemory memory);
         static void FreeGPUMemoryBlock(VulkanMemoryAllocator::VulkanMemoryBlock memoryBlock);
