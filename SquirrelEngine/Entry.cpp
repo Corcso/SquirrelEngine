@@ -83,7 +83,12 @@ int main() {
 		SQ::Services::GetInput()->UnlockMouse();
 
 		// Begin game loop
+#ifdef SQ_EDITOR
+		SQ::Services::GetTree()->RunEditorLoop();
+#else
 		SQ::Services::GetTree()->RunLoop();
+#endif // SQ_EDITOR
+		
 
 		SQ::Services::GetGraphics()->Shutdown();
 

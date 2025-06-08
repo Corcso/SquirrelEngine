@@ -641,6 +641,81 @@ void SQ::VulkanSetup::CreateDescriptorPool(VkDevice device, uint32_t descriptorC
     }
 }
 
+void SQ::VulkanSetup::CreateEditorViewport(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D editorViewportExtent, VkFormat swapChainFormat, VkImageView depthImageView, VkRenderPass renderPass, VkImage* editorImage, VkImageView* editorImageView, VkFramebuffer* editorFrameBuffer, VkSampler* editorSampler, VulkanMemoryAllocator::VulkanMemoryBlock* editorImageMemory)
+{
+    // Create image
+    VulkanUtility::CreateImageAndAssignMemory(editorViewportExtent.width, editorViewportExtent.height, swapChainFormat, 
+        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, editorImage, editorImageMemory);
+
+    // Create Image view
+    VkImageViewCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    createInfo.image = *editorImage;
+
+    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    createInfo.format = swapChainFormat;
+
+    // Set default mapping for each channel
+    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+    // Images purpose and part to be accessed
+    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    createInfo.subresourceRange.baseMipLevel = 0;
+    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.baseArrayLayer = 0;
+    createInfo.subresourceRange.layerCount = 1;
+
+    if (vkCreateImageView(device, &createInfo, nullptr, editorImageView) != VK_SUCCESS) {
+        throw - 1;
+    }
+
+    // Create Frame Buffer
+    VkImageView attachments[] = {
+            *editorImageView, depthImageView
+    };
+
+    VkFramebufferCreateInfo framebufferInfo{};
+    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebufferInfo.renderPass = renderPass;
+    framebufferInfo.attachmentCount = 2;
+    framebufferInfo.pAttachments = attachments;
+    framebufferInfo.width = editorViewportExtent.width;
+    framebufferInfo.height = editorViewportExtent.height;
+    framebufferInfo.layers = 1;
+
+    if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, editorFrameBuffer) != VK_SUCCESS) {
+        throw - 1;
+    }
+
+    // Create Sampler
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.anisotropyEnable = VK_FALSE;
+    samplerInfo.maxAnisotropy = 0;
+    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+
+    if (vkCreateSampler(device, &samplerInfo, nullptr, editorSampler) != VK_SUCCESS) {
+        throw -1;
+    }
+
+}
+
 bool SQ::VulkanSetup::CheckDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     // Properties, like name, types etc. 

@@ -227,6 +227,11 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     init_info.Allocator = VK_NULL_HANDLE;
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info);
+
+    VkExtent2D editorViewportExtent = {800, 800};
+
+    VulkanSetup::CreateEditorViewport(device, physicalDevice, editorViewportExtent, swapChainImageFormat, depthImageView, renderPass,
+        &editorViewport, &editorViewportImageView, &editorViewportFrameBuffer, &editorViewportSampler, &editorViewportMemory);
 #endif // SQ_EDITOR
     return 0;
 }

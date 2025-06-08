@@ -58,6 +58,64 @@ namespace SQ {
 			// Render scene
 			Render(&rootNut);
 
+			// End render and display results
+			Services::GetGraphics()->EndRender();
+
+			// Clear lights list
+			Services::GetGraphics()->ClearFrameLights();
+
+			// Update input, setting pressed keys down etc. 
+			SQ::Services::GetInput()->Update();
+
+			// Destroy any queued for destruction nuts
+			DestroyQueued(&rootNut);
+
+			// Get frame end time, used for delta time and target FPS
+			GetTime()->FrameEnd();
+
+			// Wait until target FPS reached if processing frame too fast. 
+			GetTime()->WaitForTargetFPS();
+		}
+
+		// Delete all nuts 
+		FreeAllNuts(&rootNut);
+	}
+
+	void Tree::RunEditorLoop()
+	{
+		// Until we should quit
+		while (!toQuit) {
+			// Get start time (used for target FPS waiting)
+			GetTime()->FrameStart();
+
+			// Process all input
+			SQ::Services::GetInput()->ProcessInput();
+
+			// Run physics updates
+			//GetPhysics()->Update();
+
+			//// Run update then late update on all nuts
+			//Update(&rootNut);
+			//LateUpdate(&rootNut);
+
+			// Begin graphics render
+			Services::GetGraphics()->BeginRender();
+
+			// Get active camera
+			CameraNut* activeCamera = GetActiveCamera();
+			bool usingTempCamera = false;
+			if (activeCamera == nullptr) { activeCamera = new CameraNut; usingTempCamera = true; activeCamera->SetFov(70); }
+			// Set camera information
+			Services::GetGraphics()->UpdateProjectionMatrix(activeCamera);
+			Services::GetGraphics()->SetupCameraForFrame(activeCamera);
+			if (usingTempCamera) delete activeCamera;
+
+			// Register all scene lights
+			RegisterLights(&rootNut);
+
+			// Render scene
+			Render(&rootNut);
+
 #ifdef SQ_EDITOR
 			// Debug UI for Demo
 			// TODO MOVE THIS

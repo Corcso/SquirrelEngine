@@ -18,6 +18,11 @@ namespace SQ {
 		/// <para>Engine call only!</para>
 		/// </summary>
 		void RunLoop();
+
+		/// <summary>
+		/// Runs a special game loop for the editor.
+		/// </summary>
+		void RunEditorLoop();
 		
 		/// <summary>
 		/// <para>Gets the active camera. </para>

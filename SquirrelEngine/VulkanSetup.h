@@ -2,6 +2,7 @@
 
 #ifdef VULKAN
 #include "SquirrelEnginePI.h"
+#include "VulkanMemoryAllocator.h"
 
 constexpr int VULKAN_MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -40,6 +41,10 @@ namespace SQ {
 		static void CreateSyncObjects(VkDevice device, std::vector<VkFence>* inFlightFences, std::vector<VkSemaphore>* imageAvailableSemaphores, std::vector<VkSemaphore>* renderFinishedSemaphores);
 
 		static void CreateDescriptorPool(VkDevice device, uint32_t descriptorCount, uint32_t maxSets, VkDescriptorPool* descriptorPool);
+
+		static void CreateEditorViewport(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D editorViewportExtent, 
+			VkFormat swapChainFormat, VkImageView depthImageView, VkRenderPass renderPass, VkImage* editorImage, VkImageView* editorImageView, VkFramebuffer* editorFrameBuffer, 
+			VkSampler* editorSampler, VulkanMemoryAllocator::VulkanMemoryBlock* editorImageMemory);
 
 		/// <summary>
 		/// Checks if a device is suitable to render a squirrel engine game.
