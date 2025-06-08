@@ -233,7 +233,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::CreateEditorViewport(device, physicalDevice, editorViewportExtent, swapChainImageFormat, renderPass,
         &editorViewport, &editorViewportImageView, &editorViewportFrameBuffer, &editorViewportSampler, &editorViewportMemory,
         &editorDepthImage, &editorDepthImageView, &editorDepthImageMemory);
-    std::cout << "FOR REF IMAGE: " << editorViewport << " VIEW: " << editorViewportImageView << "\n";
+    
     editorViewportDescriptorSet = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(editorViewportSampler, editorViewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
 #endif // SQ_EDITOR
     return 0;
@@ -528,7 +528,13 @@ void SQ::GraphicsVulkan::BeginEditorRender()
     scissor.extent = editorViewportExtent;
     vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
 
-//    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+    ImGui::BeginMainMenuBar();
+    if (ImGui::BeginMenu("Test"))
+    {
+        ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
     thisFramesDrawCall = 0;
 #endif // SQ_EDITOR
