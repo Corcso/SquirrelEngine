@@ -147,6 +147,8 @@ namespace SQ {
         /// <returns>Quadratic attenuation</returns>
         float GetQuadraticAttenuation();
 
+        virtual void ImGuiRenderMyInspector() override;
+
         virtual ~LightNut() {}
 
     private:

@@ -85,6 +85,12 @@ namespace SQ {
 
 		return owner;
 	}
+
+	void Nut::ImGuiRenderMyInspector()
+	{
+		ImGui::Text(name.c_str());
+	}
+
 	void Nut::NewChildAdded(bool myChild, Nut* newChild)
 	{
 		// Send up the tree, myChild is always false for any recusrive call of this. 

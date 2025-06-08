@@ -17,4 +17,14 @@ namespace SQ {
 #endif // VULKAN
         return nullptr;
     }
+    void Material::ImGuiRenderMyInspector()
+    {
+        Resource::ImGuiRenderMyInspector();
+        if (ImGui::TreeNodeEx("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+            ImGui::Text("Material is only a interface, all data is stored in the platform specific resources.");
+
+            ImGui::TreePop();
+        }
+    }
 }

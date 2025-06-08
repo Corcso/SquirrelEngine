@@ -17,6 +17,8 @@ namespace SQ {
 		/// <returns></returns>
 		virtual int Init(std::string title, int width, int height, Vec4 clearColor) = 0;
 
+		virtual void Shutdown() = 0;
+
 		/// <summary>
 		/// Function to setup the beginning of a render
 		/// </summary>

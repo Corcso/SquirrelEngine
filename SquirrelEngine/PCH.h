@@ -13,8 +13,14 @@
 
 // Include pool allocator
 #include "PoolAllocator.h"
+
+
+// ImGui
+#include "imgui.h"
+
 #include <cstdarg>
 #include <thread>
 
 // Include nessicary SIMD (if any)
 #include "SquirrelEngineSIMD.h"
+

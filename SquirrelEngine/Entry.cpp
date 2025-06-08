@@ -85,6 +85,8 @@ int main() {
 		// Begin game loop
 		SQ::Services::GetTree()->RunLoop();
 
+		SQ::Services::GetGraphics()->Shutdown();
+
 		return 0;
 	}
 	catch (int error) {

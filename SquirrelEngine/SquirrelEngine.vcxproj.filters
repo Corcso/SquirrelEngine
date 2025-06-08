@@ -31,6 +31,9 @@
     <Filter Include="Nuts">
       <UniqueIdentifier>{aa7f1e5f-d763-4099-975b-b7d8aa08d8df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{1c4abae8-53ae-41d1-8050-143ad7e1e444}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Services\Vulkan">
       <UniqueIdentifier>{3add542b-6cb3-4538-9546-b5a216e5a14a}</UniqueIdentifier>
     </Filter>
@@ -135,6 +138,33 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_dx11.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_win32.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_stdlib.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="SquirrelEngineSIMD.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -158,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="VulkanMemoryAllocator.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_vulkan.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +281,30 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Services</Filter>
     </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_dx11.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_win32.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_stdlib.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="MeshVulkan.cpp">
       <Filter>Resources\API Specific Resources</Filter>
     </ClCompile>
@@ -269,6 +326,9 @@
     <ClCompile Include="VulkanMemoryAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="imgui_impl_vulkan.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DX11BasePixel.hlsl">
@@ -277,6 +337,16 @@
     <FxCompile Include="DX11BaseVertex.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.natstepfilter">
+      <Filter>ImGui</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="imgui.natvis">
+      <Filter>ImGui</Filter>
+    </Natvis>
   </ItemGroup>
   <ItemGroup>
     <None Include="VULKAN_vertex.vert">

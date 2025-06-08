@@ -54,5 +54,7 @@ namespace SQ {
 		virtual Vec3 GetLinearVelocity(PhysicsNut*) = 0;
 		virtual Vec3 GetAngularVelocity(PhysicsNut*) = 0;
 
+		virtual void ImGuiRenderDebugInfo() = 0;
+
 	};
 }

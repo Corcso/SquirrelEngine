@@ -17,7 +17,7 @@ namespace SQ {
         friend class VulkanUtility;
 
         virtual int Init(std::string title, int width, int height, Vec4 clearColor) final;
-
+        virtual void Shutdown() final;
 
         virtual void BeginRender() final;
         virtual void UpdateProjectionMatrix(CameraNut* camera) final;
@@ -34,6 +34,17 @@ namespace SQ {
 
         virtual void RegisterWindowSizeChange(Vec2 newSize) final;
     private:
+
+        //For imgui
+        // 
+        static void check_vk_result(VkResult err)
+        {
+            if (err == VK_SUCCESS)
+                return;
+            fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+            if (err < 0)
+                abort();
+        }
         // Window class name must be unique
         const LPCWSTR WINDOW_CLASS_NAME = L"SquirrelEngineGame";
 

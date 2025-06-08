@@ -10,6 +10,9 @@
 
 #ifdef WINDOWS
 	#include <Windows.h>
+	// ImGui for win32
+	#include "imgui_impl_win32.h"
+
 #endif // WINDOWS
 
 #ifdef DX11
@@ -17,7 +20,7 @@
 	#include <d3d11.h>
 	#include <DirectXMath.h>
 	#include <wrl.h>
-
+	
 	// Link library dependencies
 	#pragma comment(lib, "d3d11.lib")
 	//#pragma comment(lib, "dxgi.lib") I've commented these out only going to comment them in when I think I need them
@@ -27,12 +30,16 @@
 	// Define ComPtr as Microsoft::WRL::ComPtr for ease of use.
 	template <typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	// Imgui for DX11
+	#include "imgui_impl_dx11.h"
 #endif // DX11
 
 #ifdef VULKAN
 #define VK_USE_PLATFORM_WIN32_KHR
 #include <vulkan/vulkan.h>
 #pragma comment(lib, "vulkan-1.lib")
+#include "imgui_impl_vulkan.h"
 #endif
 
 	// Jolt Physics

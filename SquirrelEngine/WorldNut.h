@@ -200,6 +200,8 @@ namespace SQ {
         /// <returns></returns>
         Mat4 GetParentGlobalSRTWorldMatrix();
 
+        virtual void ImGuiRenderMyInspector() override;
+
         virtual ~WorldNut() override {}
     private:
 

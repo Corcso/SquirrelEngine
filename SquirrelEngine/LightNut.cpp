@@ -126,4 +126,29 @@ namespace SQ {
 	{
 		return quadraticAttenuation;
 	}
+	void LightNut::ImGuiRenderMyInspector()
+	{
+		WorldNut::ImGuiRenderMyInspector();
+		if (ImGui::TreeNodeEx("LightNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+			//ImGui::BeginDisabled();
+			ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&diffuseColor));
+			ImGui::DragFloat("Intensity", &intensity);
+			ImGui::ColorEdit3("Ambient Color", reinterpret_cast<float*>(&ambientColor));
+			ImGui::DragFloat("Ambient Intensity", &ambientIntensity);
+
+			const char* items[] = { "DIRECTIONAL", "POINT", "SPOT"};
+			ImGui::Combo("combo", reinterpret_cast<int*>(&type), items, IM_ARRAYSIZE(items));
+
+			if (type == LightType::SPOT) {
+				ImGui::DragFloat("Inner Cutoff", &spotInnerAngle);
+				ImGui::DragFloat("Outer Cutoff", &spotOuterAngle);
+			}
+
+			ImGui::DragFloat("Linear Attenuation", &linearAttenuation);
+			ImGui::DragFloat("Quadratic Attenuation", &quadraticAttenuation);
+
+			//ImGui::EndDisabled();
+			ImGui::TreePop();
+		}
+	}
 }

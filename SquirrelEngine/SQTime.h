@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include "Tree.h"
+
 namespace SQ {
 	/// <summary>
 	/// <para>Time Service</para>
@@ -32,7 +33,7 @@ namespace SQ {
 		/// <returns>Delta Time</returns>
 		float TimeSinceStart();
 
-		
+		void ImGuiRenderDebugInfo();
 	private:
 		
 		/// <summary>
@@ -61,6 +62,8 @@ namespace SQ {
 		std::chrono::time_point<std::chrono::high_resolution_clock> timePointSecondLastFrame;
 
 		int targetFPS;
+
+		std::vector<float> frameTimeHistory;
 	};
 
 }

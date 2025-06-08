@@ -65,4 +65,16 @@ namespace SQ {
     {
         isActiveCamera = false;
     }
+    void CameraNut::ImGuiRenderMyInspector()
+    {
+        WorldNut::ImGuiRenderMyInspector();
+        if (ImGui::TreeNodeEx("CameraNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+            //ImGui::BeginDisabled();
+            ImGui::Checkbox("Is Active", &isActiveCamera);
+            ImGui::DragFloat("FOV", &FOV);
+
+            //ImGui::EndDisabled();
+            ImGui::TreePop();
+        }
+    }
 }

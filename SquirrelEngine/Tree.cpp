@@ -58,6 +58,32 @@ namespace SQ {
 			// Render scene
 			Render(&rootNut);
 
+			// Debug UI for Demo
+			ImGui::Begin("Info");
+			Services::GetPoolAllocationService()->ImGuiPoolUsageRender();
+			Services::GetTime()->ImGuiRenderDebugInfo();
+			Services::GetResourceManager()->ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Scene");
+			ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Physics");
+			Services::GetPhysics()->ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Input");
+			Services::GetInput()->ImGuiRenderDebugInfo();
+			ImGui::End();
+			ImGui::Begin("Inspector");
+			if (currentInspectorTarget != nullptr) {
+				currentInspectorTarget->ImGuiRenderMyInspector();
+			}
+			ImGui::End();
+			ImGui::Begin("Resource");
+			if (currentResourceInspectorTarget != nullptr) {
+				currentResourceInspectorTarget->ImGuiRenderMyInspector();
+			}
+			ImGui::End();
+
 			// End render and display results
 			Services::GetGraphics()->EndRender();
 
@@ -110,6 +136,11 @@ namespace SQ {
 	void Tree::Quit()
 	{
 		toQuit = true;
+	}
+
+	void Tree::SetResourceInspector(std::shared_ptr<Resource> resource)
+	{
+		currentResourceInspectorTarget = resource;
 	}
 
 	void Tree::Update(Nut* nut)
@@ -179,6 +210,8 @@ namespace SQ {
 		// If queued to go, gain ownership, and then let it fall out of scope
 		if (nut->IsQueuedForDestruction()) {
 			UniquePoolPtr<Nut> finalOwner = nut->TakeOwnership();
+			// If we are opening this nut with the inspector, close the inspector.
+			if (currentInspectorTarget == finalOwner.get()) currentInspectorTarget = nullptr;
 			return true;
 		}
 		return false;
@@ -200,4 +233,25 @@ namespace SQ {
 		}
 		return false;
 	}
+	void Tree::ImGuiRenderDebugInfo()
+	{
+		ImGui::SetNextItemOpen(true);
+		ImGuiRenderTreeNut(&rootNut);
+	}
+	void Tree::ImGuiRenderTreeNut(Nut* nut)
+	{
+		ImGui::PushID(nut);
+		if (ImGui::TreeNodeEx(nut->name.c_str(), ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button("Open In Inspector")) {
+				currentInspectorTarget = nut;
+			}
+			unsigned int childCount = nut->GetChildCount();
+			for (unsigned int c = 0; c < childCount; ++c) {
+				ImGuiRenderTreeNut(nut->GetNthChild(c));
+			}
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+
 }

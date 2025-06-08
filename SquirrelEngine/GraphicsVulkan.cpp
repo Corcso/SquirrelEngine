@@ -70,6 +70,17 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
     //---------------------
 
+    // Im gui init
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(window);
+
     // Begin Vulkan Setup
 
     // >>> Create instance
@@ -195,11 +206,38 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     // Store clear colour
     this->clearColor = clearColor;
 
+    ImGui_ImplVulkan_InitInfo init_info = {};
+    //init_info.ApiVersion = VK_API_VERSION_1_3;              // Pass in your value of VkApplicationInfo::apiVersion, otherwise will default to header version.
+    init_info.Instance = instance;
+    init_info.PhysicalDevice = physicalDevice;
+    init_info.Device = device;
+    init_info.QueueFamily = indices.graphicsFamily;
+    init_info.Queue = graphicsQueue;
+    init_info.PipelineCache = VK_NULL_HANDLE;
+    init_info.DescriptorPool = descriptorPool;
+    init_info.RenderPass = renderPass;
+    init_info.Subpass = 0;
+    init_info.MinImageCount = 2;
+    init_info.ImageCount = swapChainImages.size();
+    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    init_info.Allocator = VK_NULL_HANDLE;
+    init_info.CheckVkResultFn = check_vk_result;
+    ImGui_ImplVulkan_Init(&init_info);
+
     return 0;
+}
+
+void SQ::GraphicsVulkan::Shutdown()
+{
 }
 
 void SQ::GraphicsVulkan::BeginRender()
 {
+    // Start the Dear ImGui frame
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    
     // Wait until previous frame is finished. 
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -307,6 +345,12 @@ void SQ::GraphicsVulkan::Render(MeshNut* toRender)
 
 void SQ::GraphicsVulkan::EndRender()
 {
+    memoryAllocator.RenderMemoryUsageStat();
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
+
     // Finish recording command buffer
     vkCmdEndRenderPass(commandBuffers[currentFrame]);
 

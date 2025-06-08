@@ -23,6 +23,22 @@ namespace SQ {
         return block;
     }
 
+    VulkanMemoryAllocator::VulkanMemoryBlock VulkanMemoryAllocator::BindImageToMemory(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags properties, VulkanMemoryMapUsage mapUsage, VkImage toBind)
+    {
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(device, toBind, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = VulkanUtility::FindMemoryTypeIndex(physicalDevice, memRequirements.memoryTypeBits, properties);
+        
+        VulkanMemoryBlock block = FindMemoryBlock(device, allocInfo, mapUsage);
+
+        vkBindImageMemory(device, toBind, memoryPools[block.poolID][block.location.poolIndex], block.location.offset);
+        return block;
+    }
+
     void VulkanMemoryAllocator::FreeMemory(VkDevice device, VulkanMemoryBlock block)
     {
         // If our block size is standard treat it differerantly 
@@ -42,6 +58,45 @@ namespace SQ {
     VkDeviceMemory VulkanMemoryAllocator::GetBlockMemoryAllocation(VulkanMemoryAllocator::VulkanMemoryBlock block)
     {
         return memoryPools[block.poolID][block.location.poolIndex];
+    }
+
+    void VulkanMemoryAllocator::RenderMemoryUsageStat()
+    {
+        ImGui::Begin("Vulkan VRAM Alloc");
+
+        for (auto& poolList : memoryPools) {
+            std::string poolNodeName = std::to_string(poolList.first.blockSize) + "B Type:" + std::to_string(poolList.first.memoryTypeIndex) + " Map Type: " + std::to_string((int)poolList.first.mapUsage);
+            if (ImGui::TreeNodeEx(poolNodeName.c_str(), ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen)) {
+                
+                uint32_t totalBlocksInUse = 0;
+                uint32_t totalBlocks = 0;
+                for (int i = 0; i < poolList.second.size(); i++) {
+                    if (sizeToBlockCountPerAlloc.find(poolList.first.blockSize) != sizeToBlockCountPerAlloc.end()) {
+                        // Check how full the pool is
+                        uint32_t poolMaxBlocks = sizeToBlockCountPerAlloc[poolList.first.blockSize];
+                        uint32_t takenBlocks = poolMaxBlocks;
+                        for (auto& location : freeMemoryLocations[poolList.first]) {
+                            if (location.poolIndex == i) takenBlocks--;
+                        }
+                        ImGui::ProgressBar((float)takenBlocks / (float)poolMaxBlocks);
+                        totalBlocksInUse += takenBlocks;
+                        totalBlocks += poolMaxBlocks;
+                    }
+                    else {
+                        ImGui::ProgressBar(1);
+                        totalBlocksInUse++;
+                        totalBlocks++;
+                    }
+                }
+                if (poolList.second.size() == 0) ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "All Pools Closed");
+
+                else { ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), std::string("Total VRAM Usage: " + std::to_string(totalBlocksInUse * poolList.first.blockSize) + "B(In Use) / " + std::to_string(totalBlocks * poolList.first.blockSize) + "B(Reserved)").c_str()); }
+
+                ImGui::TreePop();
+            }
+        }
+
+        ImGui::End();
     }
 
     VulkanMemoryAllocator::VulkanMemoryBlock SQ::VulkanMemoryAllocator::FindMemoryBlock(VkDevice device, VkMemoryAllocateInfo desiredAllocation, VulkanMemoryMapUsage mapUsage)

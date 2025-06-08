@@ -52,6 +52,8 @@ namespace SQ {
         /// </summary>
         void SetDeactivatedCamera();
 
+        virtual void ImGuiRenderMyInspector() override;
+
     private:
         bool isActiveCamera;
         float FOV;

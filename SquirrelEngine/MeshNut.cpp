@@ -45,4 +45,19 @@ namespace SQ {
 	{
 		return material;
 	}
+	void MeshNut::ImGuiRenderMyInspector()
+	{
+		WorldNut::ImGuiRenderMyInspector();
+		if (ImGui::TreeNodeEx("MeshNut", ImGuiTreeNodeFlags_DefaultOpen)) {
+			
+			if (ImGui::Button("Open Mesh Resource")) {
+				Services::GetTree()->SetResourceInspector(mesh);
+			}
+			if (ImGui::Button("Open Material Resource")) {
+				Services::GetTree()->SetResourceInspector(material);
+			}
+
+			ImGui::TreePop();
+		}
+	}
 }

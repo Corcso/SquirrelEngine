@@ -67,6 +67,7 @@ namespace SQ {
         /// <returns>Smoothness</returns>
         virtual float GetSmoothness() = 0;
 
+        virtual void ImGuiRenderMyInspector() override;
     };
     
 }

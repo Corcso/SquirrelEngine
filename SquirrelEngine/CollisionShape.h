@@ -105,6 +105,8 @@ namespace SQ {
         /// </summary>
         /// <param name="nut"></param>
         void RemoveNut(PhysicsNut* nut);
+
+        virtual void ImGuiRenderMyInspector() override;
     public:
         Type type;
         Vec3 boxHalfDimensions;

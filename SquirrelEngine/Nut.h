@@ -139,6 +139,8 @@ namespace SQ {
 		/// <returns>True if ready has been called. False if not.</returns>
 		bool HasReadyBeenCalled() { return hasReadyBeenCalled; }
 
+		virtual void ImGuiRenderMyInspector();
+
 		virtual ~Nut() {}
 	protected:
 		/// <summary>

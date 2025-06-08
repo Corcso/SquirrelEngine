@@ -241,6 +241,8 @@ namespace SQ {
 		/// <param name="mouseMovement">New mouse movement</param>
 		void SetMouseMovement(Vec2 mouseMovement);
 
+		void ImGuiRenderDebugInfo();
+
 	protected:
 		bool isMouseLocked;
 

@@ -101,4 +101,24 @@ namespace SQ {
 	{
 		activeOnTheseNuts.erase(nut);
 	}
+	void CollisionShape::ImGuiRenderMyInspector()
+	{
+		Resource::ImGuiRenderMyInspector();
+		if (ImGui::TreeNodeEx("CollisionShape", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::BeginDisabled();
+			
+			const char* items[] = { "BOX", "CAPSULE", "SPHERE" };
+			ImGui::Combo("combo", reinterpret_cast<int*>(&type), items, IM_ARRAYSIZE(items));
+
+			if(type == Type::BOX) ImGui::DragFloat3("Box Half Dimentions", reinterpret_cast<float*>(&boxHalfDimensions));
+			if (type == Type::CAPSULE) {
+				ImGui::DragFloat("Capsule Half Height", &capsuleHalfHeight);
+				ImGui::DragFloat("Capsule Radius", &capsuleRadius);
+			}
+			if (type == Type::SPHERE) { ImGui::DragFloat("Sphere Radius", &sphereRadius); }
+			
+			ImGui::EndDisabled();
+			ImGui::TreePop();
+		}
+	}
 }
