@@ -192,6 +192,9 @@
     <ClInclude Include="imgui_impl_vulkan.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="EditorCameraNut.h">
+      <Filter>Nuts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -328,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="imgui_impl_vulkan.cpp">
       <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCameraNut.cpp">
+      <Filter>Nuts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

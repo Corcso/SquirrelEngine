@@ -6,6 +6,12 @@
 #include "ResourceManager.h"
 #include "FPVCamera.h"
 #include "ShelledNut.h"
+
+#ifdef SQ_EDITOR
+#include "EditorCameraNut.h"
+#endif // SQ_EDITOR
+
+
 namespace SQ {
 	Tree::Tree()
 	{
@@ -21,6 +27,14 @@ namespace SQ {
 		// Set as a child of root, need to get observer to call function as ownership is lost. 
 		Nut* temp = sceneReady.get();
 		temp->SetParent(&rootNut, std::move(sceneReady));
+
+#ifdef SQ_EDITOR
+		// Create editor camera if needed
+		UniquePoolPtr<Nut> editorCamera = Services::GetPoolAllocationService()->MakeUniquePoolPtr<EditorCameraNut>().DynamicUniquePoolPtrCast<Nut>();
+		Nut* observer = editorCamera.get();
+		observer->SetParent(&rootNut, std::move(editorCamera));
+		observer->name = "SQINTERNAL_EDITORCAMERA";
+#endif // SQ_EDITOR
 	}
 
 	void Tree::RunLoop()
@@ -102,10 +116,11 @@ namespace SQ {
 			Services::GetGraphics()->BeginEditorRender();
 
 			// Get active camera
-			CameraNut* activeCamera = GetActiveCamera();
+			CameraNut* activeCamera = GetRootNut()->GetNut<CameraNut>("SQINTERNAL_EDITORCAMERA");
 			bool usingTempCamera = false;
 			if (activeCamera == nullptr) { activeCamera = new CameraNut; usingTempCamera = true; activeCamera->SetFov(70); }
 			// Set camera information
+			activeCamera->Update();
 			Services::GetGraphics()->UpdateProjectionMatrix(activeCamera);
 			Services::GetGraphics()->SetupCameraForFrame(activeCamera);
 			if (usingTempCamera) delete activeCamera;
