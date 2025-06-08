@@ -604,11 +604,13 @@ void SQ::GraphicsVulkan::EndEditorRender()
 
     memoryAllocator.RenderMemoryUsageStat();
     ImGui::ShowDemoWindow();
-    ImGui::Begin("Viewport");
-
-    ImGui::Image(editorViewportDescriptorSet, ImVec2(800, 800));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
+    float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    ImGui::Image(editorViewportDescriptorSet, ImVec2(squareImageLength, squareImageLength));
 
     ImGui::End();
+    ImGui::PopStyleVar();
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
 
