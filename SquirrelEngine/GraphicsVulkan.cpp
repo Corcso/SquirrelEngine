@@ -70,6 +70,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
     //---------------------
 
+#ifdef SQ_EDITOR
     // Im gui init
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -80,6 +81,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(window);
+#endif // SQ_EDITOR
 
     // Begin Vulkan Setup
 
@@ -205,7 +207,9 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
 
     // Store clear colour
     this->clearColor = clearColor;
-
+    
+#ifdef SQ_EDITOR
+    // Editor only ImGui Setup
     ImGui_ImplVulkan_InitInfo init_info = {};
     //init_info.ApiVersion = VK_API_VERSION_1_3;              // Pass in your value of VkApplicationInfo::apiVersion, otherwise will default to header version.
     init_info.Instance = instance;
@@ -223,7 +227,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     init_info.Allocator = VK_NULL_HANDLE;
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info);
-
+#endif // SQ_EDITOR
     return 0;
 }
 
@@ -233,10 +237,12 @@ void SQ::GraphicsVulkan::Shutdown()
 
 void SQ::GraphicsVulkan::BeginRender()
 {
+#ifdef SQ_EDITOR
     // Start the Dear ImGui frame
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+#endif // SQ_EDITOR
     
     // Wait until previous frame is finished. 
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -345,12 +351,13 @@ void SQ::GraphicsVulkan::Render(MeshNut* toRender)
 
 void SQ::GraphicsVulkan::EndRender()
 {
+#ifdef SQ_EDITOR
     memoryAllocator.RenderMemoryUsageStat();
     ImGui::ShowDemoWindow();
 
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
-
+#endif // SQ_EDITOR
     // Finish recording command buffer
     vkCmdEndRenderPass(commandBuffers[currentFrame]);
 

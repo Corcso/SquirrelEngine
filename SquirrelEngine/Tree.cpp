@@ -58,7 +58,9 @@ namespace SQ {
 			// Render scene
 			Render(&rootNut);
 
+#ifdef SQ_EDITOR
 			// Debug UI for Demo
+			// TODO MOVE THIS
 			ImGui::Begin("Info");
 			Services::GetPoolAllocationService()->ImGuiPoolUsageRender();
 			Services::GetTime()->ImGuiRenderDebugInfo();
@@ -83,6 +85,7 @@ namespace SQ {
 				currentResourceInspectorTarget->ImGuiRenderMyInspector();
 			}
 			ImGui::End();
+#endif // SQ_EDITOR
 
 			// End render and display results
 			Services::GetGraphics()->EndRender();
