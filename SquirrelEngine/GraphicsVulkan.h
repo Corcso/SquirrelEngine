@@ -33,6 +33,9 @@ namespace SQ {
         virtual Vec2 GetWindowLocation() final;
 
         virtual void RegisterWindowSizeChange(Vec2 newSize) final;
+
+        virtual void BeginEditorRender() final;
+        virtual void EndEditorRender() final;
     private:
 
 #ifdef SQ_EDITOR
@@ -53,6 +56,11 @@ namespace SQ {
         VkFramebuffer editorViewportFrameBuffer;
         VkSampler editorViewportSampler;
         VkExtent2D editorViewportExtent;
+
+        VkImage editorDepthImage;
+        VkDeviceMemory editorDepthImageMemory;
+        VkImageView editorDepthImageView;
+        ImTextureID editorViewportDescriptorSet;
 
 
 

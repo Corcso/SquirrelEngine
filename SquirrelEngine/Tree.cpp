@@ -99,7 +99,7 @@ namespace SQ {
 			//LateUpdate(&rootNut);
 
 			// Begin graphics render
-			Services::GetGraphics()->BeginRender();
+			Services::GetGraphics()->BeginEditorRender();
 
 			// Get active camera
 			CameraNut* activeCamera = GetActiveCamera();
@@ -146,7 +146,7 @@ namespace SQ {
 #endif // SQ_EDITOR
 
 			// End render and display results
-			Services::GetGraphics()->EndRender();
+			Services::GetGraphics()->EndEditorRender();
 
 			// Clear lights list
 			Services::GetGraphics()->ClearFrameLights();

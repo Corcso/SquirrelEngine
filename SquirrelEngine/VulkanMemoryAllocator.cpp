@@ -121,7 +121,7 @@ namespace SQ {
                     // Then return the free space
                     VulkanMemoryPoolLocation location = freeMemoryLocations[poolID].front();
                     freeMemoryLocations[poolID].pop_front();
-                    std::cout << "Existing block taken, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << location.poolIndex << " Offset: " << location.offset << "\n";
+                    //std::cout << "Existing block taken, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << location.poolIndex << " Offset: " << location.offset << "\n";
                     return { poolID, location };
                 }
                 //// If there isnt, make a new pool in the list (list already exists as there is at least 1 taken pool)
@@ -161,7 +161,7 @@ namespace SQ {
                 void* blockMapLocation = (mapUsage == VulkanMemoryMapUsage::OPEN) ? mapBase + (i * blockSize) : nullptr;
                 freeMemoryLocations[poolID].push_back({ newPoolIndex , i * blockSize, blockMapLocation });
             }
-            std::cout << "New pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << newPoolIndex << "\n";
+            //std::cout << "New pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << "*" << sizeToBlockCountPerAlloc[poolID.blockSize] << " Index: " << newPoolIndex << "\n";
             // First block of the new pool is reserved
             return { poolID, { newPoolIndex, 0, mapBase } };
         }
@@ -184,7 +184,7 @@ namespace SQ {
         }
         // No free locations for this, were making a 1 block pool, just its own allocation. 
         // First block of the new pool is reserved
-        std::cout << "New custom pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << " Index: " << newPoolIndex << "\n";
+        //std::cout << "New custom pool made, Map Usage:" << (int)poolID.mapUsage << " Memory Index:" << poolID.memoryTypeIndex << " Size: " << poolID.blockSize << " Index: " << newPoolIndex << "\n";
         return { poolID, { newPoolIndex, 0, mapBase} };
         
     }

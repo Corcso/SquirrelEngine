@@ -75,5 +75,8 @@ namespace SQ {
 		/// </summary>
 		/// <param name="newSize">New size of the window render area.</param>
 		virtual void RegisterWindowSizeChange(Vec2 newSize) = 0;
+
+		virtual void BeginEditorRender() = 0;
+		virtual void EndEditorRender() = 0;
 	};
 }

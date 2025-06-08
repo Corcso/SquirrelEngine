@@ -641,7 +641,10 @@ void SQ::VulkanSetup::CreateDescriptorPool(VkDevice device, uint32_t descriptorC
     }
 }
 
-void SQ::VulkanSetup::CreateEditorViewport(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D editorViewportExtent, VkFormat swapChainFormat, VkImageView depthImageView, VkRenderPass renderPass, VkImage* editorImage, VkImageView* editorImageView, VkFramebuffer* editorFrameBuffer, VkSampler* editorSampler, VulkanMemoryAllocator::VulkanMemoryBlock* editorImageMemory)
+void SQ::VulkanSetup::CreateEditorViewport(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D editorViewportExtent,
+    VkFormat swapChainFormat, VkRenderPass renderPass, VkImage* editorImage, VkImageView* editorImageView, VkFramebuffer* editorFrameBuffer,
+    VkSampler* editorSampler, VulkanMemoryAllocator::VulkanMemoryBlock* editorImageMemory,
+    VkImage* depthImage, VkImageView* depthImageView, VkDeviceMemory* depthImageMemory)
 {
     // Create image
     VulkanUtility::CreateImageAndAssignMemory(editorViewportExtent.width, editorViewportExtent.height, swapChainFormat, 
@@ -673,9 +676,12 @@ void SQ::VulkanSetup::CreateEditorViewport(VkDevice device, VkPhysicalDevice phy
         throw - 1;
     }
 
+    // Create depth image
+    CreateDepthBuffer(device, physicalDevice, editorViewportExtent, depthImage, depthImageMemory, depthImageView);
+
     // Create Frame Buffer
     VkImageView attachments[] = {
-            *editorImageView, depthImageView
+            *editorImageView, *depthImageView
     };
 
     VkFramebufferCreateInfo framebufferInfo{};
