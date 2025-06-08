@@ -233,7 +233,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::CreateEditorViewport(device, physicalDevice, editorViewportExtent, swapChainImageFormat, renderPass,
         &editorViewport, &editorViewportImageView, &editorViewportFrameBuffer, &editorViewportSampler, &editorViewportMemory,
         &editorDepthImage, &editorDepthImageView, &editorDepthImageMemory);
-
+    std::cout << "FOR REF IMAGE: " << editorViewport << " VIEW: " << editorViewportImageView << "\n";
     editorViewportDescriptorSet = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(editorViewportSampler, editorViewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
 #endif // SQ_EDITOR
     return 0;
@@ -468,8 +468,6 @@ void SQ::GraphicsVulkan::BeginEditorRender()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    std::cout << "FRAME\n";
-
 
     // Wait until previous frame is finished. 
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -530,6 +528,8 @@ void SQ::GraphicsVulkan::BeginEditorRender()
     scissor.extent = editorViewportExtent;
     vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
 
+//    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+
     thisFramesDrawCall = 0;
 #endif // SQ_EDITOR
 }
@@ -539,6 +539,33 @@ void SQ::GraphicsVulkan::EndEditorRender()
 #ifdef SQ_EDITOR
     // Finish recording command buffer
     vkCmdEndRenderPass(commandBuffers[currentFrame]);
+
+    // Wait for viewport to be available for rendering
+    // TODO learn more about this!
+    VkImageMemoryBarrier barrier{};
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = editorViewport;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
+    barrier.srcAccessMask = 0; // TODO
+    barrier.dstAccessMask = 0; // TODO
+
+    vkCmdPipelineBarrier(
+        commandBuffers[currentFrame],
+        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT /* TODO */, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT /* TODO */,
+        0,
+        0, nullptr,
+        0, nullptr,
+        1, &barrier
+    );
+
 
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -567,11 +594,15 @@ void SQ::GraphicsVulkan::EndEditorRender()
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
 
-
+    
 
     memoryAllocator.RenderMemoryUsageStat();
     ImGui::ShowDemoWindow();
+    ImGui::Begin("Viewport");
+
     ImGui::Image(editorViewportDescriptorSet, ImVec2(800, 800));
+
+    ImGui::End();
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
 
