@@ -25,6 +25,13 @@ namespace SQ {
         Mat4 GetViewMatrix();
 
         /// <summary>
+        /// <para>Returns the View Matrix of this camera.</para>
+        /// <para>Right Handed</para>
+        /// </summary>
+        /// <returns>View Matrix of Camera</returns>
+        Mat4 GetViewMatrixRH();
+
+        /// <summary>
         /// Sets the camera's FOV
         /// </summary>
         /// <param name="FOV">Field of view in degrees</param>

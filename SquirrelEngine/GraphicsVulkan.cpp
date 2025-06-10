@@ -314,7 +314,8 @@ void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
 
 void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
 {
-    projectionViewWorldData.view = camera->GetViewMatrix();
+    Mat4 viewMatrix = camera->GetViewMatrixRH();
+    projectionViewWorldData.view = viewMatrix;
     cameraBufferData.viewMatrix = projectionViewWorldData.view;
     cameraBufferData.cameraPosition = camera->GetPosition();
 }
