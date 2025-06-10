@@ -16,7 +16,9 @@
 
 
 // ImGui
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
+#include "ImGuizmo.h"
 
 #include <cstdarg>
 #include <thread>

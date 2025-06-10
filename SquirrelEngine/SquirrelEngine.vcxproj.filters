@@ -195,6 +195,9 @@
     <ClInclude Include="EditorCameraNut.h">
       <Filter>Nuts</Filter>
     </ClInclude>
+    <ClInclude Include="ImGuizmo.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -334,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="EditorCameraNut.cpp">
       <Filter>Nuts</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuizmo.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

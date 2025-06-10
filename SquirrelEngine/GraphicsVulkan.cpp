@@ -468,6 +468,7 @@ void SQ::GraphicsVulkan::BeginEditorRender()
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 
 
     // Wait until previous frame is finished. 
@@ -609,7 +610,7 @@ void SQ::GraphicsVulkan::EndEditorRender()
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
     float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     ImGui::Image(editorViewportDescriptorSet, ImVec2(squareImageLength, squareImageLength));
-
+    ImGuizmo::SetRect(ImGui::GetWindowContentRegionMin().x + ImGui::GetWindowPos().x, ImGui::GetWindowContentRegionMin().y + ImGui::GetWindowPos().y, squareImageLength, squareImageLength);
     ImGui::End();
     ImGui::PopStyleVar();
     ImGui::Render();
