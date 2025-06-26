@@ -38,6 +38,21 @@ namespace SQ {
         void SetEulerAngles(Vec3 eulerRotation);
 
         /// <summary>
+        /// Sets the Global Euler Angle Rotation of the WorldNut
+        /// Uses global pitch yaw and roll axes
+        /// </summary>
+        /// <param name="position">Global Euler Angle Rotatio</param>
+        void SetGlobalEulerAngles(Vec3 eulerRotation);
+
+        /// <summary>
+        /// Sets the Global Quaternion Rotation of the WorldNut
+        /// </summary>
+        /// <param name="position">Global Quaternion Rotation</param>
+        void SetGlobalQuaternion(Quat quaternionRotation);
+
+        void SetGlobalScale(Vec3 scale);
+
+        /// <summary>
         /// Sets the local quaternion rotation
         /// </summary>
         /// <param name="quaternionRotation">Local quaternion rotation</param>

@@ -310,6 +310,10 @@ void SQ::GraphicsVulkan::BeginRender()
 void SQ::GraphicsVulkan::UpdateProjectionMatrix(CameraNut* camera)
 {
     projectionViewWorldData.projection = Perspective_RH_ZO(camera->GetFov(), 1, 0.01, 200);
+
+#ifdef SQ_EDITOR
+    LHProjMatrixForGizmo = Perspective_LH_ZO(camera->GetFov(), 1, 0.01, 200); 
+#endif // SQ_EDITOR
 }
 
 void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
@@ -318,6 +322,9 @@ void SQ::GraphicsVulkan::SetupCameraForFrame(CameraNut* camera)
     projectionViewWorldData.view = viewMatrix;
     cameraBufferData.viewMatrix = projectionViewWorldData.view;
     cameraBufferData.cameraPosition = camera->GetPosition();
+#ifdef SQ_EDITOR
+    LHViewMatrixForGizmo = camera->GetViewMatrix();
+#endif // SQ_EDITOR
 }
 
 void SQ::GraphicsVulkan::Render(MeshNut* toRender)
@@ -610,7 +617,30 @@ void SQ::GraphicsVulkan::EndEditorRender()
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
     float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     ImGui::Image(editorViewportDescriptorSet, ImVec2(squareImageLength, squareImageLength));
-    ImGuizmo::SetRect(ImGui::GetWindowContentRegionMin().x + ImGui::GetWindowPos().x, ImGui::GetWindowContentRegionMin().y + ImGui::GetWindowPos().y, squareImageLength, squareImageLength);
+    // Gizmo Render
+    if (openGizmoWorldNut != nullptr) {
+        ImGuizmo::SetRect(ImGui::GetWindowContentRegionMin().x + ImGui::GetWindowPos().x, ImGui::GetWindowContentRegionMin().y + ImGui::GetWindowPos().y, squareImageLength, squareImageLength);
+        ImGuizmo::SetDrawlist();
+        ImGuizmo::PushID(openGizmoWorldNut);
+        Mat4 world = openGizmoWorldNut->GetGlobalSRTWorldMatrix();
+        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), ImGuizmo::OPERATION::ROTATE, ImGuizmo::MODE::WORLD, &(world[0][0]));
+        Vec3 newPosition, newRotation, newScale;
+        ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newRotation.X, &newScale.X);
+        openGizmoWorldNut->SetGlobalPosition(newPosition);
+        Vec3 tempScale = V3(
+            Len(world.Columns[0]),
+            Len(world.Columns[1]),
+            Len(world.Columns[2]));
+        Mat4 rotationOnly = M4D(1);
+        rotationOnly[0] = world[0] / newScale.X;
+        rotationOnly[1] = world[1] / newScale.Y;
+        rotationOnly[2] = world[2] / newScale.Z;
+        rotationOnly[3] = V4(0, 0, 0, 1);
+        //openGizmoWorldNut->SetGlobalEulerAngles(newRotation * DegToRad);
+        openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
+        openGizmoWorldNut->SetGlobalScale(newScale);
+        ImGuizmo::PopID();
+    }
     ImGui::End();
     ImGui::PopStyleVar();
     ImGui::Render();
@@ -672,6 +702,11 @@ void SQ::GraphicsVulkan::EndEditorRender()
 
     currentFrame = (currentFrame + 1) % VULKAN_MAX_FRAMES_IN_FLIGHT;
 #endif // SQ_EDITOR
+}
+
+void SQ::GraphicsVulkan::SetGizmoWorldNut(WorldNut* gizmoWorldNut)
+{
+    openGizmoWorldNut = gizmoWorldNut;
 }
 
 void SQ::GraphicsVulkan::RecreateSwapChain()

@@ -152,16 +152,9 @@ namespace SQ {
 			if (currentInspectorTarget != nullptr) {
 				currentInspectorTarget->ImGuiRenderMyInspector();
 				if (dynamic_cast<WorldNut*>(currentInspectorTarget) != nullptr) {
-					Mat4 proj = Perspective_LH_ZO(activeCamera->GetFov(), 1, 0.01, 200);
-					Mat4 view = activeCamera->GetViewMatrix();
-					Mat4 world = dynamic_cast<WorldNut*>(currentInspectorTarget)->GetGlobalSRTWorldMatrix() * Scale(V3(2,2,2));
-
-					ImGuizmo::Manipulate(&(view[0][0]), &(proj[0][0]), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD ,&(world[0][0]));
-					world = world * Scale(V3(0.5f, 0.5f, 0.5f));
-					Vec3 newPosition, newRotation, newScale;
-					ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newRotation.X, &newScale.X);
-					dynamic_cast<WorldNut*>(currentInspectorTarget)->SetGlobalPosition(newPosition);
+					Services::GetGraphics()->SetGizmoWorldNut(dynamic_cast<WorldNut*>(currentInspectorTarget));
 				}
+				else Services::GetGraphics()->SetGizmoWorldNut(nullptr);
 			}
 			ImGui::End();
 			ImGui::Begin("Resource");

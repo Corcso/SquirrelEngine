@@ -36,6 +36,7 @@ namespace SQ {
 
         virtual void BeginEditorRender() final;
         virtual void EndEditorRender() final;
+        virtual void SetGizmoWorldNut(WorldNut* gizmoWorldNut) final;
     private:
 
 #ifdef SQ_EDITOR
@@ -62,8 +63,9 @@ namespace SQ {
         VkImageView editorDepthImageView;
         ImTextureID editorViewportDescriptorSet;
 
-
-
+        WorldNut* openGizmoWorldNut;
+        Mat4 LHViewMatrixForGizmo;
+        Mat4 LHProjMatrixForGizmo;
 
 
 #endif // SQ_EDITOR

@@ -52,7 +52,7 @@ namespace SQ {
 
     void WorldNut::SetGlobalPosition(Vec3 position)
     {
-        Mat4 translationLocally = Translate(position) * InvGeneralM4(SRTWorldMatrixParent);
+        Mat4 translationLocally = InvGeneralM4(SRTWorldMatrixParent) * Translate(position);
         this->position = V3(translationLocally.Columns[3].X, translationLocally.Columns[3].Y, translationLocally.Columns[3].Z);
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
@@ -61,6 +61,40 @@ namespace SQ {
     {
         rotation = MulQ(MulQ(QFromAxisAngle_LH(V3(1, 0, 0), eulerRotation.X), QFromAxisAngle_LH(V3(0, 1, 0), eulerRotation.Y)), QFromAxisAngle_LH(V3(0, 0, 1), eulerRotation.Z));
 
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::SetGlobalEulerAngles(Vec3 eulerRotation)
+    {
+        Mat4 rotationLocally = InvGeneralM4(SRTWorldMatrixParent) *
+            QToM4(MulQ(MulQ(QFromAxisAngle_LH(V3(1, 0, 0), eulerRotation.X), QFromAxisAngle_LH(V3(0, 1, 0), eulerRotation.Y)), QFromAxisAngle_LH(V3(0, 0, 1), eulerRotation.Z)));
+        this->rotation = M4ToQ_RH(rotationLocally);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::SetGlobalQuaternion(Quat quaternionRotation)
+    {
+        Mat4 rotationLocally = InvGeneralM4(SRTWorldMatrixParent) * QToM4(quaternionRotation);
+        /*Vec3 tempScale = V3(
+            Len(rotationLocally.Columns[0]),
+            Len(rotationLocally.Columns[1]),
+            Len(rotationLocally.Columns[2]));
+        Mat4 rotationOnly = M4D(1);
+        rotationOnly[0] = rotationLocally[0] / tempScale.X;
+        rotationOnly[1] = rotationLocally[1] / tempScale.Y;
+        rotationOnly[2] = rotationLocally[2] / tempScale.Z;
+        rotationOnly[3] = V4(0, 0, 0, 1);*/
+        this->rotation = M4ToQ_RH(rotationLocally);
+        UpdateTransforms(this, SRTWorldMatrixParent);
+    }
+
+    void WorldNut::SetGlobalScale(Vec3 scale)
+    {
+        Mat4 translationLocally = InvGeneralM4(SRTWorldMatrixParent) * Scale(scale);
+        this->scale = V3(
+            Len(translationLocally.Columns[0]),
+            Len(translationLocally.Columns[1]), 
+            Len(translationLocally.Columns[2]));
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
 
