@@ -2458,6 +2458,104 @@ static inline Mat4 QToM4(Quat Left)
 
     return Result;
 }
+// Adapted from GLM Decompose
+static inline Vec3 SRTTransformToScale(Mat4 M) {
+    Vec3 result = V3(0, 0, 0);
+
+    // Get 3x3
+    Mat3 N;
+    N.Columns[0] = DivV3F(M.Columns[0].XYZ, M.Columns[3][3]);
+    N.Columns[1] = DivV3F(M.Columns[1].XYZ, M.Columns[3][3]);
+    N.Columns[2] = DivV3F(M.Columns[2].XYZ, M.Columns[3][3]);
+
+   // N = TransposeM3(N); // Might not be needed but doesnt fix it
+
+
+    // Get X scale
+    result.X = LenV3(N.Columns[0]);
+
+    // Normalize first col
+    N.Columns[0] = NormV3(N.Columns[0]);
+
+    // Get XY Shear (Partial)
+    float ShXY = DotV3(N.Columns[0], N.Columns[1]);
+
+    // Orghoganize 2nd col
+    N.Columns[1] = SubV3(N.Columns[1] , MulV3F(N.Columns[0], ShXY));
+
+    // Get Y scale
+    result.Y = LenV3(N.Columns[1]);
+
+    // Normalize 2nd col
+    N.Columns[1] = NormV3(N.Columns[1]);
+
+    // Get other shears
+    float ShXZ = DotV3(N.Columns[0], N.Columns[2]);
+    N.Columns[2] = SubV3(N.Columns[2], MulV3F(N.Columns[0], ShXZ));
+    float ShYZ = DotV3(N.Columns[1], N.Columns[2]);
+
+    // Orthoganize 3rd Col
+    
+    N.Columns[2] = SubV3(N.Columns[2] , MulV3F(N.Columns[1], ShYZ));
+
+    // Get Z Scale
+    result.Z = LenV3(N.Columns[2]);
+
+    return result;
+}
+static inline Mat4 SRTTransformToRotation(Mat4 M) {
+    Mat4 result = M4D(1);
+    Vec3 scale;
+
+    // Get 3x3
+    Mat3 N;
+    N.Columns[0] = DivV3F(M.Columns[0].XYZ, M.Columns[3][3]);
+    N.Columns[1] = DivV3F(M.Columns[1].XYZ, M.Columns[3][3]);
+    N.Columns[2] = DivV3F(M.Columns[2].XYZ, M.Columns[3][3]);
+
+    //N = TransposeM3(N);
+
+    // Get X scale
+    scale.X = LenV3(N.Columns[0]);
+
+    // Normalize first col
+    N.Columns[0] = NormV3(N.Columns[0]);
+
+    // Get XY Shear (Partial)
+    float ShXY = DotV3(N.Columns[0], N.Columns[1]);
+
+    // Orghoganize 2nd col
+    N.Columns[1] = SubV3(N.Columns[1], MulV3F(N.Columns[0], ShXY));
+
+    // Get Y scale
+    scale.Y = LenV3(N.Columns[1]);
+
+    // Normalize 2nd col
+    N.Columns[1] = NormV3(N.Columns[1]);
+
+    // Get other shears
+    float ShXZ = DotV3(N.Columns[0], N.Columns[2]);
+    N.Columns[2] = SubV3(N.Columns[2], MulV3F(N.Columns[0], ShXZ));
+    float ShYZ = DotV3(N.Columns[1], N.Columns[2]);
+
+    // Orthoganize 3rd Col
+    
+    N.Columns[2] = SubV3(N.Columns[2], MulV3F(N.Columns[1], ShYZ));
+
+    // Get Z Scale
+    scale.Z = LenV3(N.Columns[2]);
+
+    // Normalize 3rd col
+    N.Columns[2] = NormV3(N.Columns[2]);
+
+    //N = TransposeM3(N);
+
+    result.Columns[0] = V4(N.Columns[0][0], N.Columns[0][1], N.Columns[0][2], 0);
+    result.Columns[1] = V4(N.Columns[1][0], N.Columns[1][1], N.Columns[1][2], 0);
+    result.Columns[2] = V4(N.Columns[2][0], N.Columns[2][1], N.Columns[2][2], 0);
+
+    return result;
+}
 
 // This method taken from Mike Day at Insomniac Games.
 // https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2015/01/matrix-to-quat.pdf

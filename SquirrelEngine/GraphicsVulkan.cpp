@@ -623,22 +623,37 @@ void SQ::GraphicsVulkan::EndEditorRender()
         ImGuizmo::SetDrawlist();
         ImGuizmo::PushID(openGizmoWorldNut);
         Mat4 world = openGizmoWorldNut->GetGlobalSRTWorldMatrix();
-        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), ImGuizmo::OPERATION::ROTATE, ImGuizmo::MODE::WORLD, &(world[0][0]));
-        Vec3 newPosition, newRotation, newScale;
-        ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newRotation.X, &newScale.X);
+
+        Mat4 delta;
+
+        std::cout << "Before 2 " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
+
+        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), ImGuizmo::OPERATION::ROTATE, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
+        Vec3 newPosition, newScale;
+
+        
+        ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newScale.X, &newScale.X);
         openGizmoWorldNut->SetGlobalPosition(newPosition);
-        Vec3 tempScale = V3(
-            Len(world.Columns[0]),
-            Len(world.Columns[1]),
-            Len(world.Columns[2]));
-        Mat4 rotationOnly = M4D(1);
-        rotationOnly[0] = world[0] / newScale.X;
-        rotationOnly[1] = world[1] / newScale.Y;
-        rotationOnly[2] = world[2] / newScale.Z;
-        rotationOnly[3] = V4(0, 0, 0, 1);
-        //openGizmoWorldNut->SetGlobalEulerAngles(newRotation * DegToRad);
+
+        newScale = SRTTransformToScale(world);
+        Mat4 rotationOnly = SRTTransformToRotation(world);
+        
+        std::cout << "Before " << newScale[0] << " " << newScale[1] << " " << newScale[2] << " ";
         openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
+        std::cout << "After " << 
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " << 
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " << 
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
         openGizmoWorldNut->SetGlobalScale(newScale);
+        std::cout << "After2 " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
+            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << "\n";
+        // CORMAC FROM PAST HERE
+        // STORE SCALE LIKE WORLD MATRIX STACK IN WORLD NUTS AND THEN FORCE THE SCALE WHEN EXTRACTING ROTATIONS <- Last ditch effort
         ImGuizmo::PopID();
     }
     ImGui::End();
