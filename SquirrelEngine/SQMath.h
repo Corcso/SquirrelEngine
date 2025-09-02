@@ -108,7 +108,7 @@ Removal of from Variable names and addition to SQ namespace. For Squirrel Engine
 #ifdef DX11
 #include <DirectXMath.h>
 #endif // DX11
-
+#include <iostream>
 namespace SQ{
 
 #ifndef HANDMADE_MATH_H
@@ -2467,8 +2467,7 @@ static inline Vec3 SRTTransformToScale(Mat4 M) {
     N.Columns[0] = DivV3F(M.Columns[0].XYZ, M.Columns[3][3]);
     N.Columns[1] = DivV3F(M.Columns[1].XYZ, M.Columns[3][3]);
     N.Columns[2] = DivV3F(M.Columns[2].XYZ, M.Columns[3][3]);
-
-   // N = TransposeM3(N); // Might not be needed but doesnt fix it
+    //N = TransposeM3(N); // Might not be needed but doesnt fix it
 
 
     // Get X scale
@@ -2501,6 +2500,18 @@ static inline Vec3 SRTTransformToScale(Mat4 M) {
     // Get Z Scale
     result.Z = LenV3(N.Columns[2]);
 
+    // Normalize 3rd col
+    N.Columns[2] = NormV3(N.Columns[2]);
+
+    Vec3 Pdum3 = Cross(N.Columns[1], N.Columns[2]);
+    if (DotV3(N.Columns[0], Pdum3) < 0) {
+        for (int i = 0; i < 3; i++)
+        {
+            result[i] *= -1;
+            N.Columns[i] = MulV3F(N.Columns[i], -1);
+        }
+    }
+
     return result;
 }
 static inline Mat4 SRTTransformToRotation(Mat4 M) {
@@ -2514,6 +2525,8 @@ static inline Mat4 SRTTransformToRotation(Mat4 M) {
     N.Columns[2] = DivV3F(M.Columns[2].XYZ, M.Columns[3][3]);
 
     //N = TransposeM3(N);
+
+    std::cout << "MATHINN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
 
     // Get X scale
     scale.X = LenV3(N.Columns[0]);
@@ -2553,6 +2566,8 @@ static inline Mat4 SRTTransformToRotation(Mat4 M) {
     result.Columns[0] = V4(N.Columns[0][0], N.Columns[0][1], N.Columns[0][2], 0);
     result.Columns[1] = V4(N.Columns[1][0], N.Columns[1][1], N.Columns[1][2], 0);
     result.Columns[2] = V4(N.Columns[2][0], N.Columns[2][1], N.Columns[2][2], 0);
+
+    std::cout << "MATHOUTN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
 
     return result;
 }
