@@ -87,10 +87,10 @@ namespace SQ {
         
 
         Mat4 rotationLocally = SRTTransformToRotation(  InvGeneralM4(SRTWorldMatrixParent) * QToM4(quaternionRotation));
-        std::cout << "Interior 1 " << SRTTransformToScale(rotationLocally).X << " " << SRTTransformToScale(rotationLocally).Y << " " << SRTTransformToScale(rotationLocally).Z << " ";
+        //std::cout << "Interior 1 " << SRTTransformToScale(rotationLocally).X << " " << SRTTransformToScale(rotationLocally).Y << " " << SRTTransformToScale(rotationLocally).Z << " ";
         this->rotation = M4ToQ_RH(rotationLocally);
-        Mat4 test = QToM4(this->rotation);
-        std::cout << "Interior 2 " << SRTTransformToScale(test).X << " " << SRTTransformToScale(test).Y << " " << SRTTransformToScale(test).Z << " ";
+        //Mat4 test = QToM4(this->rotation);
+        //std::cout << "Interior 2 " << SRTTransformToScale(test).X << " " << SRTTransformToScale(test).Y << " " << SRTTransformToScale(test).Z << " ";
 
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
@@ -98,7 +98,7 @@ namespace SQ {
     void WorldNut::SetGlobalScale(Vec3 scale)
     {
         Mat4 translationLocally =  InvGeneralM4(SRTWorldMatrixParent) * Scale(scale);
-        std::cout << "\nPPINV\n" << SRTWorldMatrixParent[0][0] << " " << SRTWorldMatrixParent[0][1] << " " << SRTWorldMatrixParent[0][2] << " " << SRTWorldMatrixParent[0][3] << "\n";
+        /*std::cout << "\nPPINV\n" << SRTWorldMatrixParent[0][0] << " " << SRTWorldMatrixParent[0][1] << " " << SRTWorldMatrixParent[0][2] << " " << SRTWorldMatrixParent[0][3] << "\n";
         std::cout << SRTWorldMatrixParent[1][0] << " " << SRTWorldMatrixParent[1][1] << " " << SRTWorldMatrixParent[1][2] << " " << SRTWorldMatrixParent[1][3] << "\n";
         std::cout << SRTWorldMatrixParent[2][0] << " " << SRTWorldMatrixParent[2][1] << " " << SRTWorldMatrixParent[2][2] << " " << SRTWorldMatrixParent[2][3] << "\n";
         std::cout << SRTWorldMatrixParent[3][0] << " " << SRTWorldMatrixParent[3][1] << " " << SRTWorldMatrixParent[3][2] << " " << SRTWorldMatrixParent[3][3] << "\n";
@@ -110,7 +110,7 @@ namespace SQ {
         std::cout << "\nSCONLYMAT\n" << translationLocally[0][0] << " " << translationLocally[0][1] << " " << translationLocally[0][2] << " " << translationLocally[0][3] << "\n";
         std::cout << translationLocally[1][0] << " " << translationLocally[1][1] << " " << translationLocally[1][2] << " " << translationLocally[1][3] << "\n";
         std::cout << translationLocally[2][0] << " " << translationLocally[2][1] << " " << translationLocally[2][2] << " " << translationLocally[2][3] << "\n";
-        std::cout << translationLocally[3][0] << " " << translationLocally[3][1] << " " << translationLocally[3][2] << " " << translationLocally[3][3] << "\n";
+        std::cout << translationLocally[3][0] << " " << translationLocally[3][1] << " " << translationLocally[3][2] << " " << translationLocally[3][3] << "\n";*/
         this->scale = SRTTransformToScale(translationLocally);
         UpdateTransforms(this, SRTWorldMatrixParent);
     }
@@ -326,10 +326,10 @@ namespace SQ {
         Mat4 rotationMatrix = QToM4(rotation);
 
         SRTWorldMatrixLocal = translateMatrix * rotationMatrix * scaleMatrix;
-        std::cout << "LOCAL " << SRTTransformToScale(SRTWorldMatrixLocal).X << " " << SRTTransformToScale(SRTWorldMatrixLocal).Y << " " << SRTTransformToScale(SRTWorldMatrixLocal).Z << " ";
+        //std::cout << "LOCAL " << SRTTransformToScale(SRTWorldMatrixLocal).X << " " << SRTTransformToScale(SRTWorldMatrixLocal).Y << " " << SRTTransformToScale(SRTWorldMatrixLocal).Z << " ";
         SRTWorldMatrixGlobal = SRTWorldMatrixParent * SRTWorldMatrixLocal;
 
-        std::cout << "PARE " << SRTTransformToScale(SRTWorldMatrixParent).X << " " << SRTTransformToScale(SRTWorldMatrixParent).Y << " " << SRTTransformToScale(SRTWorldMatrixParent).Z << " ";
+       /* std::cout << "PARE " << SRTTransformToScale(SRTWorldMatrixParent).X << " " << SRTTransformToScale(SRTWorldMatrixParent).Y << " " << SRTTransformToScale(SRTWorldMatrixParent).Z << " ";
         std::cout << "GLOB " << SRTTransformToScale(SRTWorldMatrixGlobal).X << " " << SRTTransformToScale(SRTWorldMatrixGlobal).Y << " " << SRTTransformToScale(SRTWorldMatrixGlobal).Z << " ";
         std::cout << "\nMULTY\n" << SRTWorldMatrixParent[0][0] << " " << SRTWorldMatrixParent[0][1] << " " << SRTWorldMatrixParent[0][2] << " " << SRTWorldMatrixParent[0][3] << " * "
             << SRTWorldMatrixLocal[0][0] << " " << SRTWorldMatrixLocal[0][1] << " " << SRTWorldMatrixLocal[0][2] << " " << SRTWorldMatrixLocal[0][3] << " =\t"
@@ -342,7 +342,7 @@ namespace SQ {
             << SRTWorldMatrixGlobal[2][0] << " " << SRTWorldMatrixGlobal[2][1] << " " << SRTWorldMatrixGlobal[2][2] << " " << SRTWorldMatrixGlobal[2][3] << "\n";
         std::cout << SRTWorldMatrixParent[3][0] << " " << SRTWorldMatrixParent[3][1] << " " << SRTWorldMatrixParent[3][2] << " " << SRTWorldMatrixParent[3][3] << " * "
             << SRTWorldMatrixLocal[3][0] << " " << SRTWorldMatrixLocal[3][1] << " " << SRTWorldMatrixLocal[3][2] << " " << SRTWorldMatrixLocal[3][3] << " =\t"
-            << SRTWorldMatrixGlobal[3][0] << " " << SRTWorldMatrixGlobal[3][1] << " " << SRTWorldMatrixGlobal[3][2] << " " << SRTWorldMatrixGlobal[3][3] << "\n";
+            << SRTWorldMatrixGlobal[3][0] << " " << SRTWorldMatrixGlobal[3][1] << " " << SRTWorldMatrixGlobal[3][2] << " " << SRTWorldMatrixGlobal[3][3] << "\n";*/
     }
     void WorldNut::UpdateTransforms(Nut* nut, Mat4 WorldMatrixSoFar)
     {

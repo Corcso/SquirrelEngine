@@ -66,6 +66,7 @@ namespace SQ {
         WorldNut* openGizmoWorldNut;
         Mat4 LHViewMatrixForGizmo;
         Mat4 LHProjMatrixForGizmo;
+        ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 
 #endif // SQ_EDITOR

@@ -616,59 +616,68 @@ void SQ::GraphicsVulkan::EndEditorRender()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
     float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    // Set operation for Guizmo, we do here as the buttons which change it 
+    if (ImGui::Button("T")) {
+        currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("R")) {
+        currentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("S")) {
+        currentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+    }
+    ImGui::BeginChild("ViewportInterior", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y),0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+    // Render viewport
     ImGui::Image(editorViewportDescriptorSet, ImVec2(squareImageLength, squareImageLength));
+    
     // Gizmo Render
     if (openGizmoWorldNut != nullptr) {
+        // Setup Guizmo window
         ImGuizmo::SetRect(ImGui::GetWindowContentRegionMin().x + ImGui::GetWindowPos().x, ImGui::GetWindowContentRegionMin().y + ImGui::GetWindowPos().y, squareImageLength, squareImageLength);
         ImGuizmo::SetDrawlist();
         ImGuizmo::PushID(openGizmoWorldNut);
-        Mat4 world = openGizmoWorldNut->GetGlobalSRTWorldMatrix();
 
+        // Get world matrix to edit, and delta matrix of changes
+        Mat4 world = openGizmoWorldNut->GetGlobalSRTWorldMatrix();
         Mat4 delta;
 
-        //std::cout << "Before 2 " <<
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
-        ImGuizmo::OPERATION currentOperation = ImGuizmo::OPERATION::SCALE;
-        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), currentOperation, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
+        
+
+        // Maniuplate the world matrix by delta in that operation
+        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), currentGizmoOperation, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
+
+        // Only if there is changes
         if (!(delta[0][0] == 1 && delta[0][1] == 0 && delta[0][2] == 0 && delta[0][3] == 0 &&
             delta[1][0] == 0 && delta[1][1] == 1 && delta[1][2] == 0 && delta[1][3] == 0 &&
             delta[2][0] == 0 && delta[2][1] == 0 && delta[2][2] == 1 && delta[2][3] == 0 &&
             delta[3][0] == 0 && delta[3][1] == 0 && delta[3][2] == 0 && delta[3][3] == 1)) {
             
-            /*if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
-                Mat4 rotationBefore = QToM4(openGizmoWorldNut->GetRotation());
+            // Handle rotation 
+            if (currentGizmoOperation == ImGuizmo::OPERATION::ROTATE) {
+                /*Mat4 rotationBefore = QToM4(openGizmoWorldNut->GetRotation());
                 Mat4 rotationAfter = rotationBefore * delta;
-                openGizmoWorldNut->SetRotation(M4ToQ_RH(rotationAfter));
-            }*/
+                openGizmoWorldNut->SetRotation(M4ToQ_RH(rotationAfter));*/
+                Mat4 rotationOnly = SRTTransformToRotation(world);
+                openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
+            }
+            // Handle scale
+            // Please note this is bugged and will very slightly offset scale when things are skewed, should not be noticible its just compounding if doing every frame
+            else if (currentGizmoOperation == ImGuizmo::OPERATION::SCALE) {
+                Vec3 newScale = SRTTransformToScale(world);
+                openGizmoWorldNut->SetGlobalScale(newScale);
+            }
+            // Handle position
+            else if (currentGizmoOperation == ImGuizmo::OPERATION::TRANSLATE) {
+                Vec3 newPosition = SRTTransformToTranslate(world);
+                openGizmoWorldNut->SetGlobalPosition(newPosition);
+            }
 
-
-             Vec3 newPosition, newScale;
-
-
-            //ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newScale.X, &newScale.X);
-            //openGizmoWorldNut->SetGlobalPosition(newPosition);
-
-            newScale = SRTTransformToScale(world);
-            Mat4 rotationOnly = SRTTransformToRotation(world);
-
-            std::cout << "Before " << newScale[0] << " " << newScale[1] << " " << newScale[2] << " ";
-            //openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
-            //std::cout << "After " << 
-            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " << 
-            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " << 
-            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
-            openGizmoWorldNut->SetGlobalScale(newScale);
-            std::cout << "After2 " <<
-                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
-                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
-                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << "\n";
         }
-        // CORMAC FROM PAST HERE
-        // STORE SCALE LIKE WORLD MATRIX STACK IN WORLD NUTS AND THEN FORCE THE SCALE WHEN EXTRACTING ROTATIONS <- Last ditch effort
         ImGuizmo::PopID();
     }
+    ImGui::EndChild();
     ImGui::End();
     ImGui::PopStyleVar();
     ImGui::Render();

@@ -2526,7 +2526,7 @@ static inline Mat4 SRTTransformToRotation(Mat4 M) {
 
     //N = TransposeM3(N);
 
-    std::cout << "MATHINN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
+    //std::cout << "MATHINN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
 
     // Get X scale
     scale.X = LenV3(N.Columns[0]);
@@ -2567,9 +2567,13 @@ static inline Mat4 SRTTransformToRotation(Mat4 M) {
     result.Columns[1] = V4(N.Columns[1][0], N.Columns[1][1], N.Columns[1][2], 0);
     result.Columns[2] = V4(N.Columns[2][0], N.Columns[2][1], N.Columns[2][2], 0);
 
-    std::cout << "MATHOUTN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
+    //std::cout << "MATHOUTN:\nC1\t" << N.Columns[0][0] << " " << N.Columns[0][1] << " " << N.Columns[0][2] << "\nC2\t" << N.Columns[1][0] << " " << N.Columns[1][1] << " " << N.Columns[1][2] << "\nC3\t" << N.Columns[2][0] << " " << N.Columns[2][1] << " " << N.Columns[2][2] << "\n";
 
     return result;
+}
+
+static inline Vec3 SRTTransformToTranslate(Mat4 M) {
+    return V3(M[3][0], M[3][1], M[3][2]);
 }
 
 // This method taken from Mike Day at Insomniac Games.

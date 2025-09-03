@@ -324,7 +324,6 @@ namespace SQ {
 		if (ImGui::TreeNodeEx(nut->name.c_str(), ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::Button("Open In Inspector")) {
 				currentInspectorTarget = nut;
-				std::cout << "---------------- NEW OPEN ------------------- \n\n\n\n\n\n\n\n\n ---------------------------\n";
 			}
 			unsigned int childCount = nut->GetChildCount();
 			for (unsigned int c = 0; c < childCount; ++c) {
