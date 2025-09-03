@@ -630,28 +630,41 @@ void SQ::GraphicsVulkan::EndEditorRender()
         //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
         //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
         //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
+        ImGuizmo::OPERATION currentOperation = ImGuizmo::OPERATION::SCALE;
+        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), currentOperation, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
+        if (true || !(delta[0][0] == 1 && delta[0][1] == 0 && delta[0][2] == 0 && delta[0][3] == 0 &&
+            delta[1][0] == 0 && delta[1][1] == 1 && delta[1][2] == 0 && delta[1][3] == 0 &&
+            delta[2][0] == 0 && delta[2][1] == 0 && delta[2][2] == 1 && delta[2][3] == 0 &&
+            delta[3][0] == 0 && delta[3][1] == 0 && delta[3][2] == 0 && delta[3][3] == 1)) {
+            
+            /*if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
+                Mat4 rotationBefore = QToM4(openGizmoWorldNut->GetRotation());
+                Mat4 rotationAfter = rotationBefore * delta;
+                openGizmoWorldNut->SetRotation(M4ToQ_RH(rotationAfter));
+            }*/
 
-        //ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), ImGuizmo::OPERATION::SCALE, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
-        Vec3 newPosition, newScale;
 
-        
-        //ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newScale.X, &newScale.X);
-        //openGizmoWorldNut->SetGlobalPosition(newPosition);
+             Vec3 newPosition, newScale;
 
-        newScale = SRTTransformToScale(world);
-        //Mat4 rotationOnly = SRTTransformToRotation(world);
-        
-        std::cout << "Before " << newScale[0] << " " << newScale[1] << " " << newScale[2] << " ";
-        //openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
-        //std::cout << "After " << 
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " << 
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " << 
-        //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
-        openGizmoWorldNut->SetGlobalScale(newScale);
-        std::cout << "After2 " <<
-            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
-            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
-            SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << "\n";
+
+            //ImGuizmo::DecomposeMatrixToComponents(&(world[0][0]), &newPosition.X, &newScale.X, &newScale.X);
+            //openGizmoWorldNut->SetGlobalPosition(newPosition);
+
+            newScale = SRTTransformToScale(world);
+            Mat4 rotationOnly = SRTTransformToRotation(world);
+
+            std::cout << "Before " << newScale[0] << " " << newScale[1] << " " << newScale[2] << " ";
+            //openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
+            //std::cout << "After " << 
+            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " << 
+            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " << 
+            //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
+            openGizmoWorldNut->SetGlobalScale(newScale);
+            std::cout << "After2 " <<
+                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[0] << " " <<
+                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[1] << " " <<
+                SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << "\n";
+        }
         // CORMAC FROM PAST HERE
         // STORE SCALE LIKE WORLD MATRIX STACK IN WORLD NUTS AND THEN FORCE THE SCALE WHEN EXTRACTING ROTATIONS <- Last ditch effort
         ImGuizmo::PopID();

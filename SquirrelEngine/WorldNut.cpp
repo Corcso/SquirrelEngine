@@ -86,7 +86,7 @@ namespace SQ {
 
         
 
-        Mat4 rotationLocally = SRTTransformToRotation(QToM4(quaternionRotation) * InvGeneralM4(SRTWorldMatrixParent));
+        Mat4 rotationLocally = SRTTransformToRotation(  InvGeneralM4(SRTWorldMatrixParent) * QToM4(quaternionRotation));
         std::cout << "Interior 1 " << SRTTransformToScale(rotationLocally).X << " " << SRTTransformToScale(rotationLocally).Y << " " << SRTTransformToScale(rotationLocally).Z << " ";
         this->rotation = M4ToQ_RH(rotationLocally);
         Mat4 test = QToM4(this->rotation);
@@ -97,7 +97,7 @@ namespace SQ {
 
     void WorldNut::SetGlobalScale(Vec3 scale)
     {
-        Mat4 translationLocally =  Scale(scale) * InvGeneralM4(SRTWorldMatrixParent);
+        Mat4 translationLocally =  InvGeneralM4(SRTWorldMatrixParent) * Scale(scale);
         std::cout << "\nPPINV\n" << SRTWorldMatrixParent[0][0] << " " << SRTWorldMatrixParent[0][1] << " " << SRTWorldMatrixParent[0][2] << " " << SRTWorldMatrixParent[0][3] << "\n";
         std::cout << SRTWorldMatrixParent[1][0] << " " << SRTWorldMatrixParent[1][1] << " " << SRTWorldMatrixParent[1][2] << " " << SRTWorldMatrixParent[1][3] << "\n";
         std::cout << SRTWorldMatrixParent[2][0] << " " << SRTWorldMatrixParent[2][1] << " " << SRTWorldMatrixParent[2][2] << " " << SRTWorldMatrixParent[2][3] << "\n";
