@@ -28,6 +28,18 @@ namespace SQ {
 		return owner;
 	}
 
+	nlohmann::json MeshNut::Serialize(nlohmann::json serializedDataToWorkOn)
+	{
+		if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "MeshNut"; // TODO Make this only 1 place 
+
+		// Work on my data
+		serializedDataToWorkOn["mesh"] = Services::GetResourceManager()->GetPath(mesh);
+		serializedDataToWorkOn["material"] = Services::GetResourceManager()->GetPath(material);
+
+		// Call my parent to do their bit and return their result
+		return WorldNut::Serialize(serializedDataToWorkOn);
+	}
+
 	void SQ::MeshNut::SetMesh(std::shared_ptr<Mesh> mesh)
 	{
 		this->mesh = mesh;

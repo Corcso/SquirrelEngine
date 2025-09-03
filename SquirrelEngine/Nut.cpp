@@ -1,6 +1,8 @@
 #include "PCH.h"
 #include "Nut.h"
 #include "Services.h"
+#include "SerializationTypeDictionary.h"
+
 namespace SQ {
 	void Nut::SetParent(Nut* newParent, UniquePoolPtr<Nut> currentOwnership)
 	{
@@ -84,6 +86,20 @@ namespace SQ {
 		else throw 17;
 
 		return owner;
+	}
+
+	nlohmann::json Nut::Serialize(nlohmann::json serializedDataToWorkOn)
+	{
+		if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "Nut"; // TODO Make this only 1 place 
+
+		// Work on my data
+		serializedDataToWorkOn["name"] = name;
+		serializedDataToWorkOn["children"] = nlohmann::json::array();
+		for (UniquePoolPtr<Nut>& child : children) {
+			serializedDataToWorkOn["children"].push_back(child->Serialize());
+		}
+
+		return serializedDataToWorkOn;
 	}
 
 	void Nut::ImGuiRenderMyInspector()

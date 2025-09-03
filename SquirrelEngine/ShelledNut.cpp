@@ -75,4 +75,8 @@ namespace SQ {
 		// Return, moving ownership to the callee.
 		return std::move(newNut);
 	}
+
+	void ShelledNut::PackageTree(WeakPoolPtr<Nut> root) {
+		jsonData = root->Serialize();
+	}
 }

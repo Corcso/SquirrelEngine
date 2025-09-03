@@ -32,6 +32,17 @@ SQ::UniquePoolPtr<SQ::Nut> Enemy::Deserialize(Nut* deserializeInto, nlohmann::js
     return owner;
 }
 
+nlohmann::json Enemy::Serialize(nlohmann::json serializedDataToWorkOn)
+{
+    if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "Enemy"; // TODO Make this only 1 place 
+
+    // Work on my data
+    serializedDataToWorkOn["speed"] = speed;
+
+    // Call my parent to do their bit and return their result
+    return PhysicsNut::Serialize(serializedDataToWorkOn);
+}
+
 void Enemy::Ready()
 {
     // Call base ready (required)

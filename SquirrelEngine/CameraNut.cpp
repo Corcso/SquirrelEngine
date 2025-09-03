@@ -36,6 +36,17 @@ namespace SQ {
         // Return owner
         return owner;
     }
+    nlohmann::json CameraNut::Serialize(nlohmann::json serializedDataToWorkOn)
+    {
+        if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "CameraNut"; // TODO Make this only 1 place 
+
+        // Work on my data
+        serializedDataToWorkOn["fov"] = FOV;
+        serializedDataToWorkOn["isActive"] = isActiveCamera;
+
+        // Call my parent to do their bit and return their result
+        return WorldNut::Serialize(serializedDataToWorkOn);
+    }
     Mat4 SQ::CameraNut::GetViewMatrix()
     {
         return LookAt_LH(GetGlobalPosition(), GetGlobalPosition() + GetForward(), GetUp());

@@ -28,6 +28,16 @@ SQ::UniquePoolPtr<SQ::Nut> Bullet::Deserialize(Nut* deserializeInto, nlohmann::j
     return owner;
 }
 
+nlohmann::json Bullet::Serialize(nlohmann::json serializedDataToWorkOn)
+{
+    if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "Bullet"; // TODO Make this only 1 place 
+
+    // Work on my data
+
+    // Call my parent to do their bit and return their result
+    return PhysicsNut::Serialize(serializedDataToWorkOn);
+}
+
 void Bullet::Ready()
 {
     // Call base ready (required)

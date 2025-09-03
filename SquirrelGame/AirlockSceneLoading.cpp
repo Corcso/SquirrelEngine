@@ -29,6 +29,16 @@ SQ::UniquePoolPtr<SQ::Nut> AirlockSceneLoading::Deserialize(Nut* deserializeInto
     return owner;
 }
 
+nlohmann::json AirlockSceneLoading::Serialize(nlohmann::json serializedDataToWorkOn)
+{
+    if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "AirlockSceneLoading"; // TODO Make this only 1 place 
+
+    // Work on my data
+
+    // Call my parent to do their bit and return their result
+    return Nut::Serialize(serializedDataToWorkOn);
+}
+
 void AirlockSceneLoading::Ready()
 {
     // Call base ready (required)

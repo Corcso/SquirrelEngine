@@ -28,6 +28,16 @@ SQ::UniquePoolPtr<SQ::Nut> Player::Deserialize(Nut* deserializeInto, nlohmann::j
     return owner;
 }
 
+nlohmann::json Player::Serialize(nlohmann::json serializedDataToWorkOn)
+{
+    if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "Player"; // TODO Make this only 1 place 
+
+    // Work on my data
+
+    // Call my parent to do their bit and return their result
+    return PhysicsNut::Serialize(serializedDataToWorkOn);
+}
+
 void Player::Ready()
 {
     // Call base ready (required)

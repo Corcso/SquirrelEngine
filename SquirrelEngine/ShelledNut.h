@@ -47,6 +47,13 @@ namespace SQ {
         /// <param name="data">Data to deserialize</param>
         /// <param name="promiseToActOn">Promise to act upon</param>
         static void InstantiateMultithreadWorkFunction(nlohmann::json data, std::shared_ptr<ShelledNut::InstantiatePromise> promiseToActOn);
+        
+        /// <summary>
+        /// Packages the given root nut and its children into this shelled nut. 
+        /// Will replace what is currently stored in the shelled nut
+        /// </summary>
+        /// <param name="root">Root nut to start from</param>
+        void PackageTree(WeakPoolPtr<Nut> root);
     private:
         /// <summary>
         /// Private instantiate function which is recursive per child. 

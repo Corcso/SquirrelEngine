@@ -47,6 +47,19 @@ namespace SQ {
 			}
 		}
 
+		/// <summary>
+		/// Returns the path when given a loaded resource. 
+		/// </summary>
+		/// <param name="target">The loaded resource</param>
+		/// <returns>File path of loaded resource, "" if not found.</returns>
+		std::string GetPath(std::shared_ptr<Resource> target) {
+			for (auto pair : resources) {
+				std::shared_ptr<Resource> thisItemLock = pair.second.lock();
+				if (target.get() == thisItemLock.get()) return pair.first;
+			}
+			return "";
+		}
+
 		void ImGuiRenderDebugInfo();
 
 	private:

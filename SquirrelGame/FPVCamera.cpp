@@ -31,6 +31,16 @@ UniquePoolPtr<Nut> FPVCamera::Deserialize(Nut* deserializeInto, nlohmann::json s
     return owner;
 }
 
+nlohmann::json FPVCamera::Serialize(nlohmann::json serializedDataToWorkOn)
+{
+    if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "FPVCamera"; // TODO Make this only 1 place 
+
+    // Work on my data
+
+    // Call my parent to do their bit and return their result
+    return CameraNut::Serialize(serializedDataToWorkOn);
+}
+
 void FPVCamera::Ready()
 {
 	CameraNut::Ready();

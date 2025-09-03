@@ -53,6 +53,24 @@ namespace SQ {
 		// Return toWorkOn
 		return owner;
 	}
+	nlohmann::json LightNut::Serialize(nlohmann::json serializedDataToWorkOn)
+	{
+		if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "LightNut"; // TODO Make this only 1 place 
+
+		// Work on my data
+		serializedDataToWorkOn["diffuseColor"] = { diffuseColor.X, diffuseColor.Y, diffuseColor.Z };
+		serializedDataToWorkOn["ambientColor"] = { ambientColor.X, ambientColor.Y, ambientColor.Z };
+		serializedDataToWorkOn["intensity"] = intensity;
+		serializedDataToWorkOn["ambientIntensity"] = ambientIntensity;
+		serializedDataToWorkOn["lightType"] = (type == LightType::DIRECTIONAL) ? "directional" : ((type == LightType::POINT) ? "point" : "spot");
+		serializedDataToWorkOn["spotlightInnerAngle"] = spotInnerAngle;
+		serializedDataToWorkOn["spotlightOuterAngle"] = spotOuterAngle;
+		serializedDataToWorkOn["linearAttenuation"] = linearAttenuation;
+		serializedDataToWorkOn["quadraticAttenuation"] = quadraticAttenuation;
+
+		// Call my parent to do their bit and return their result
+		return WorldNut::Serialize(serializedDataToWorkOn);
+	}
 	void LightNut::SetDiffuseColor(Vec3 diffuseColor)
 	{
 		this->diffuseColor = diffuseColor;

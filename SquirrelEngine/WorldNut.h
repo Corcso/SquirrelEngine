@@ -13,6 +13,7 @@ namespace SQ {
         WorldNut();
 
         static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
+        virtual nlohmann::json Serialize(nlohmann::json serializedDataToWorkOn = nlohmann::json()) override;
 
         virtual void Ready() override { Nut::Ready(); }
         virtual void Update() override { Nut::Update(); }

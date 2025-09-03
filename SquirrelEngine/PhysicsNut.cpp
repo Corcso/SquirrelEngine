@@ -41,6 +41,20 @@ namespace SQ {
         return owner;
     }
 
+    nlohmann::json PhysicsNut::Serialize(nlohmann::json serializedDataToWorkOn)
+    {
+        if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "PhysicsNut"; // TODO Make this only 1 place 
+
+        // Work on my data
+        serializedDataToWorkOn["static"] = isStatic;
+        serializedDataToWorkOn["elasticity"] = elasticity;
+        serializedDataToWorkOn["density"] = density;
+        serializedDataToWorkOn["collisionShape"] = Services::GetResourceManager()->GetPath(shape);
+
+        // Call my parent to do their bit and return their result
+        return WorldNut::Serialize(serializedDataToWorkOn);
+    }
+
     void PhysicsNut::Ready()
     {
         // Call base ready and register body with physics engine

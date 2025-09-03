@@ -133,6 +133,8 @@ namespace SQ {
 		/// <returns>Pointer to nut which was deserialized.</returns>
 		static UniquePoolPtr<Nut> Deserialize(Nut* deserializeInto, nlohmann::json serializedData);
 
+		virtual nlohmann::json Serialize(nlohmann::json serializedDataToWorkOn = nlohmann::json());
+
 		/// <summary>
 		/// Check for if ready has been called. 
 		/// </summary>

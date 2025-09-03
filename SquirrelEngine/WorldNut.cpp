@@ -43,6 +43,19 @@ namespace SQ {
         return owner;
     }
 
+    nlohmann::json WorldNut::Serialize(nlohmann::json serializedDataToWorkOn)
+    {
+        if (!serializedDataToWorkOn.contains("type")) serializedDataToWorkOn["type"] = "WorldNut"; // TODO Make this only 1 place 
+
+        // Work on my data
+        serializedDataToWorkOn["position"] = {position.X, position.Y, position.Z};
+        serializedDataToWorkOn["eulerAngles"] = { 0, 0, 0 };
+        serializedDataToWorkOn["scale"] = { scale.X, scale.Y, scale.Z };
+
+        // Call my parent to do their bit and return their result
+        return Nut::Serialize(serializedDataToWorkOn);
+    }
+
     void WorldNut::SetPosition(Vec3 position)
     {
         this->position = position;
