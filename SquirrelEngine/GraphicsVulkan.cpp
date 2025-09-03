@@ -632,7 +632,7 @@ void SQ::GraphicsVulkan::EndEditorRender()
         //    SRTTransformToScale(openGizmoWorldNut->GetGlobalSRTWorldMatrix())[2] << " ";
         ImGuizmo::OPERATION currentOperation = ImGuizmo::OPERATION::SCALE;
         ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), currentOperation, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
-        if (true || !(delta[0][0] == 1 && delta[0][1] == 0 && delta[0][2] == 0 && delta[0][3] == 0 &&
+        if (!(delta[0][0] == 1 && delta[0][1] == 0 && delta[0][2] == 0 && delta[0][3] == 0 &&
             delta[1][0] == 0 && delta[1][1] == 1 && delta[1][2] == 0 && delta[1][3] == 0 &&
             delta[2][0] == 0 && delta[2][1] == 0 && delta[2][2] == 1 && delta[2][3] == 0 &&
             delta[3][0] == 0 && delta[3][1] == 0 && delta[3][2] == 0 && delta[3][3] == 1)) {

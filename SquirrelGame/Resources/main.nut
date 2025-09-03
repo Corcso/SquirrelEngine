@@ -1,6 +1,9 @@
 {
-  "type": "Nut",
+  "type": "WorldNut",
   "name": "Scene",
+  "position": [0, 0, 0],
+  "eulerAngles": [0, 0, 0],
+  "scale": [1,1,1],
   "children": [
 	{
       "type": "Player",
