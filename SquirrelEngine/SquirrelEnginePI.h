@@ -40,6 +40,8 @@
 #include <vulkan/vulkan.h>
 #pragma comment(lib, "vulkan-1.lib")
 #include "imgui_impl_vulkan.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #endif
 
 	// Jolt Physics
