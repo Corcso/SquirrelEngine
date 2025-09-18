@@ -205,6 +205,8 @@
     <ClInclude Include="EditorCameraNut.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="ImageVulkan.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="ImGuizmo.h" />
@@ -246,6 +248,7 @@
     <ClInclude Include="SquirrelEnginePI.h" />
     <ClInclude Include="SQTime.h" />
     <ClInclude Include="SquirrelEngineSIMD.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="SQUtility.h" />
     <ClInclude Include="VulkanDescriptor.h" />
@@ -261,6 +264,8 @@
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsDX11.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ImageVulkan.cpp" />
     <ClCompile Include="imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">NotUsing</PrecompiledHeader>
@@ -336,6 +341,7 @@
     <ClCompile Include="Services.cpp" />
     <ClCompile Include="ShelledNut.cpp" />
     <ClCompile Include="SQTime.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="SQUtility.cpp" />
     <ClCompile Include="VulkanDescriptor.cpp" />

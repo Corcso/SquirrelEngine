@@ -8,6 +8,8 @@ namespace SQ {
     {
     public:
         static ImageVulkan* Load(std::string path);
+
+        virtual ~ImageVulkan() override;
     private:
 
         VkImage image;
