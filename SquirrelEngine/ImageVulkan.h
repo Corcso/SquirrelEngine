@@ -2,6 +2,7 @@
 #ifdef VULKAN
 #include "Image.h"
 #include "SquirrelEnginePI.h"
+#include "VulkanMemoryAllocator.h"
 namespace SQ {
     class ImageVulkan :
         public Image

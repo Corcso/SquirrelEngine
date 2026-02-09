@@ -2,6 +2,10 @@
 #include "ImageVulkan.h"
 #ifdef VULKAN
 #include "VulkanUtility.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 namespace SQ {
     ImageVulkan* SQ::ImageVulkan::Load(std::string path)
     {
