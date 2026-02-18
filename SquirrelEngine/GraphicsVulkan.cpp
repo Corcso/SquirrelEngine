@@ -743,8 +743,11 @@ void SQ::GraphicsVulkan::EndEditorRender()
 
 void SQ::GraphicsVulkan::SetGizmoWorldNut(WorldNut* gizmoWorldNut)
 {
+#ifdef SQ_EDITOR
     openGizmoWorldNut = gizmoWorldNut;
+#endif // SQ_EDITOR
 }
+
 
 void SQ::GraphicsVulkan::RecreateSwapChain()
 {
