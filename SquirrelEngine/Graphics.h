@@ -78,6 +78,5 @@ namespace SQ {
 
 		virtual void BeginEditorRender() = 0;
 		virtual void EndEditorRender() = 0;
-		virtual void SetGizmoWorldNut(WorldNut* gizmoWorldNut) = 0;
 	};
 }

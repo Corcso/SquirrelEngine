@@ -152,9 +152,9 @@ namespace SQ {
 			if (currentInspectorTarget != nullptr) {
 				currentInspectorTarget->ImGuiRenderMyInspector();
 				if (dynamic_cast<WorldNut*>(currentInspectorTarget) != nullptr) {
-					Services::GetGraphics()->SetGizmoWorldNut(dynamic_cast<WorldNut*>(currentInspectorTarget));
+					Services::GetEditorService()->SetGizmoWorldNut(dynamic_cast<WorldNut*>(currentInspectorTarget));
 				}
-				else Services::GetGraphics()->SetGizmoWorldNut(nullptr);
+				else Services::GetEditorService()->SetGizmoWorldNut(nullptr);
 			}
 			ImGui::End();
 			ImGui::Begin("Resource");

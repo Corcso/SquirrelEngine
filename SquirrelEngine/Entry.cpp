@@ -62,6 +62,8 @@ int main() {
 		SQ::Services::RegisterTime(new SQ::Time());
 		SQ::Services::RegisterPoolAllocationService(new SQ::PoolAllocationService());
 
+		SQ::Services::RegisterEditorService(new SQ::EditorService());
+
 		// INITIALISE SERVICES order does matter
 
 		// Init Graphics
@@ -79,6 +81,9 @@ int main() {
 
 		// There is no init for input
 
+		// Init Editor
+		SQ::Services::GetEditorService()->Init();
+
 		// Default mouse to be unlocked
 		SQ::Services::GetInput()->UnlockMouse();
 
@@ -91,6 +96,7 @@ int main() {
 		
 
 		SQ::Services::GetGraphics()->Shutdown();
+		SQ::Services::GetEditorService()->Shutdown();
 
 		return 0;
 	}

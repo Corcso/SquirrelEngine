@@ -207,6 +207,9 @@
     <ClInclude Include="ImageVulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditorService.h">
+      <Filter>Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -358,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="ImageVulkan.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorService.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

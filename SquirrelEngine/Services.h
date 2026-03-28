@@ -7,6 +7,7 @@
 #include "PoolAllocationService.h"
 #include "SQTime.h"
 #include "Physics.h"
+#include "EditorService.h"
 
 
 namespace SQ {
@@ -74,6 +75,14 @@ namespace SQ {
 		}
 
 		/// <summary>
+		/// Retrieves the editor service. 
+		/// </summary>
+		/// <returns>A pointer to the editor service.</returns>
+		static EditorService* GetEditorService() {
+			return editorService.get();
+		}
+
+		/// <summary>
 		/// Registers the graphics service with the service locator. 
 		/// Does nothing if a graphics service is already registered. 
 		/// </summary>
@@ -136,6 +145,15 @@ namespace SQ {
 			if (physicsService.get() == nullptr) physicsService.reset(physicsServicePointer);
 		}
 
+		/// <summary>
+		/// Registers the editor service with the service locator.
+		/// Does nothing if a editor service is already registered.
+		/// </summary>
+		/// <param name="editorServicePointer"></param>
+		static void RegisterEditorService(EditorService* editorServicePointer) {
+			if (editorService.get() == nullptr) editorService.reset(editorServicePointer);
+		}
+
 	private:
 		static std::unique_ptr<Graphics> graphicsService;
 		static std::unique_ptr<Input> inputService;
@@ -144,6 +162,7 @@ namespace SQ {
 		static std::unique_ptr<PoolAllocationService> poolAllocationService;
 		static std::unique_ptr<Time> timeService;
 		static std::unique_ptr<Physics> physicsService;
+		static std::unique_ptr<EditorService> editorService;
 	};
 
 	// QUICK ACCESS GLOBAL FUNCTIONS
@@ -202,5 +221,13 @@ namespace SQ {
 	/// <returns>A pointer to the physics service.</returns>
 	static Physics* GetPhysics() {
 		return Services::GetPhysics();
+	}
+
+	/// <summary>
+	/// Retrieves the editor service. 
+	/// </summary>
+	/// <returns>A pointer to the editor service.</returns>
+	static EditorService* GetEditorService() {
+		return Services::GetEditorService();
 	}
 }

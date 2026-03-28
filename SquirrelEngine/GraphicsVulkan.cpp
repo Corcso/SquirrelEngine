@@ -7,6 +7,7 @@
 #include "Services.h"
 #include "InputWindows.h"
 
+
 // For HD mouse movement (Microsoft, 2023)
 #include <hidusage.h>
 
@@ -618,35 +619,35 @@ void SQ::GraphicsVulkan::EndEditorRender()
     float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     // Set operation for Guizmo, we do here as the buttons which change it 
     if (ImGui::Button("T")) {
-        currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+        GetEditorService()->SetCurrentMovementOperation(ImGuizmo::OPERATION::TRANSLATE);
     }
     ImGui::SameLine();
     if (ImGui::Button("R")) {
-        currentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+        GetEditorService()->SetCurrentMovementOperation(ImGuizmo::OPERATION::ROTATE);
     }
     ImGui::SameLine();
     if (ImGui::Button("S")) {
-        currentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+        GetEditorService()->SetCurrentMovementOperation(ImGuizmo::OPERATION::SCALE);
     }
     ImGui::BeginChild("ViewportInterior", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y),0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
     // Render viewport
     ImGui::Image(editorViewportDescriptorSet, ImVec2(squareImageLength, squareImageLength));
     
     // Gizmo Render
-    if (openGizmoWorldNut != nullptr) {
+    if (GetEditorService()->GetCurrentlySelectedWorldNut() != nullptr) {
         // Setup Guizmo window
         ImGuizmo::SetRect(ImGui::GetWindowContentRegionMin().x + ImGui::GetWindowPos().x, ImGui::GetWindowContentRegionMin().y + ImGui::GetWindowPos().y, squareImageLength, squareImageLength);
         ImGuizmo::SetDrawlist();
-        ImGuizmo::PushID(openGizmoWorldNut);
+        ImGuizmo::PushID(GetEditorService()->GetCurrentlySelectedWorldNut());
 
         // Get world matrix to edit, and delta matrix of changes
-        Mat4 world = openGizmoWorldNut->GetGlobalSRTWorldMatrix();
+        Mat4 world = GetEditorService()->GetCurrentlySelectedWorldNut()->GetGlobalSRTWorldMatrix();
         Mat4 delta;
 
         
 
         // Maniuplate the world matrix by delta in that operation
-        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), currentGizmoOperation, ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
+        ImGuizmo::Manipulate(&(LHViewMatrixForGizmo[0][0]), &(LHProjMatrixForGizmo[0][0]), GetEditorService()->GetCurrentMovementOperation(), ImGuizmo::MODE::WORLD, &(world[0][0]), &(delta[0][0]));
 
         // Only if there is changes
         if (!(delta[0][0] == 1 && delta[0][1] == 0 && delta[0][2] == 0 && delta[0][3] == 0 &&
@@ -655,23 +656,23 @@ void SQ::GraphicsVulkan::EndEditorRender()
             delta[3][0] == 0 && delta[3][1] == 0 && delta[3][2] == 0 && delta[3][3] == 1)) {
             
             // Handle rotation 
-            if (currentGizmoOperation == ImGuizmo::OPERATION::ROTATE) {
+            if (GetEditorService()->GetCurrentMovementOperation() == ImGuizmo::OPERATION::ROTATE) {
                 /*Mat4 rotationBefore = QToM4(openGizmoWorldNut->GetRotation());
                 Mat4 rotationAfter = rotationBefore * delta;
                 openGizmoWorldNut->SetRotation(M4ToQ_RH(rotationAfter));*/
                 Mat4 rotationOnly = SRTTransformToRotation(world);
-                openGizmoWorldNut->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
+                GetEditorService()->GetCurrentlySelectedWorldNut()->SetGlobalQuaternion(M4ToQ_RH(rotationOnly));
             }
             // Handle scale
             // Please note this is bugged and will very slightly offset scale when things are skewed, should not be noticible its just compounding if doing every frame
-            else if (currentGizmoOperation == ImGuizmo::OPERATION::SCALE) {
+            else if (GetEditorService()->GetCurrentMovementOperation() == ImGuizmo::OPERATION::SCALE) {
                 Vec3 newScale = SRTTransformToScale(world);
-                openGizmoWorldNut->SetGlobalScale(newScale);
+                GetEditorService()->GetCurrentlySelectedWorldNut()->SetGlobalScale(newScale);
             }
             // Handle position
-            else if (currentGizmoOperation == ImGuizmo::OPERATION::TRANSLATE) {
+            else if (GetEditorService()->GetCurrentMovementOperation() == ImGuizmo::OPERATION::TRANSLATE) {
                 Vec3 newPosition = SRTTransformToTranslate(world);
-                openGizmoWorldNut->SetGlobalPosition(newPosition);
+                GetEditorService()->GetCurrentlySelectedWorldNut()->SetGlobalPosition(newPosition);
             }
 
         }
@@ -740,14 +741,6 @@ void SQ::GraphicsVulkan::EndEditorRender()
     currentFrame = (currentFrame + 1) % VULKAN_MAX_FRAMES_IN_FLIGHT;
 #endif // SQ_EDITOR
 }
-
-void SQ::GraphicsVulkan::SetGizmoWorldNut(WorldNut* gizmoWorldNut)
-{
-#ifdef SQ_EDITOR
-    openGizmoWorldNut = gizmoWorldNut;
-#endif // SQ_EDITOR
-}
-
 
 void SQ::GraphicsVulkan::RecreateSwapChain()
 {
