@@ -52,7 +52,10 @@ namespace SQ {
 		/// <returns>If the game will close this frame</returns>
 		bool IsGameClosingThisFrame() { return toQuit; }
 
-
+		/// <summary>
+		/// Render the Scene Tree, For Editor
+		/// </summary>
+		void ImGuiRenderDebugInfo();
 	private:
 		/// <summary>
 		/// <para>Calls Update() on nut provided and all descendants.</para>
@@ -110,9 +113,8 @@ namespace SQ {
 		/// </summary>
 		bool toQuit;
 
-		void ImGuiRenderDebugInfo();
+		
 		void ImGuiRenderTreeNut(Nut* nut);
-		Nut* currentInspectorTarget = &rootNut;
 		std::shared_ptr<Resource> currentResourceInspectorTarget;
 	};
 }

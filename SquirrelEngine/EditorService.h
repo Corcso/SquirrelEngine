@@ -10,6 +10,11 @@ namespace SQ {
 
 		void Shutdown();
 
+		void RenderFullEditorGUI();
+
+		void SetOpenInspectorNut(Nut* nut);
+		Nut* GetOpenInspectorNut() { return currentInspectorTarget; }
+
 		void SetGizmoWorldNut(WorldNut* gizmoWorldNut);
 		WorldNut* GetCurrentlySelectedWorldNut() { return openGizmoWorldNut; }
 
@@ -18,5 +23,6 @@ namespace SQ {
 	private:
 		ImGuizmo::OPERATION currentGizmoOperation;
 		WorldNut* openGizmoWorldNut;
+		Nut* currentInspectorTarget;
 	};
 }

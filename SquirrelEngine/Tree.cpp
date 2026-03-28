@@ -132,36 +132,7 @@ namespace SQ {
 			Render(&rootNut);
 
 #ifdef SQ_EDITOR
-			// Debug UI for Demo
-			// TODO MOVE THIS
-			ImGui::Begin("Info");
-			Services::GetPoolAllocationService()->ImGuiPoolUsageRender();
-			Services::GetTime()->ImGuiRenderDebugInfo();
-			Services::GetResourceManager()->ImGuiRenderDebugInfo();
-			ImGui::End();
-			ImGui::Begin("Scene");
-			ImGuiRenderDebugInfo();
-			ImGui::End();
-			ImGui::Begin("Physics");
-			Services::GetPhysics()->ImGuiRenderDebugInfo();
-			ImGui::End();
-			ImGui::Begin("Input");
-			Services::GetInput()->ImGuiRenderDebugInfo();
-			ImGui::End();
-			ImGui::Begin("Inspector");
-			if (currentInspectorTarget != nullptr) {
-				currentInspectorTarget->ImGuiRenderMyInspector();
-				if (dynamic_cast<WorldNut*>(currentInspectorTarget) != nullptr) {
-					Services::GetEditorService()->SetGizmoWorldNut(dynamic_cast<WorldNut*>(currentInspectorTarget));
-				}
-				else Services::GetEditorService()->SetGizmoWorldNut(nullptr);
-			}
-			ImGui::End();
-			ImGui::Begin("Resource");
-			if (currentResourceInspectorTarget != nullptr) {
-				currentResourceInspectorTarget->ImGuiRenderMyInspector();
-			}
-			ImGui::End();
+			GetEditorService()->RenderFullEditorGUI();
 #endif // SQ_EDITOR
 
 			// End render and display results
@@ -291,7 +262,7 @@ namespace SQ {
 		if (nut->IsQueuedForDestruction()) {
 			UniquePoolPtr<Nut> finalOwner = nut->TakeOwnership();
 			// If we are opening this nut with the inspector, close the inspector.
-			if (currentInspectorTarget == finalOwner.get()) currentInspectorTarget = nullptr;
+			if (GetEditorService()->GetOpenInspectorNut() == finalOwner.get()) GetEditorService()->SetOpenInspectorNut(nullptr);
 			return true;
 		}
 		return false;
@@ -330,7 +301,7 @@ namespace SQ {
 		ImGui::PushID(nut);
 		if (ImGui::TreeNodeEx(nut->name.c_str(), ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::Button("Open In Inspector")) {
-				currentInspectorTarget = nut;
+				GetEditorService()->SetOpenInspectorNut(nut);
 			}
 			unsigned int childCount = nut->GetChildCount();
 			for (unsigned int c = 0; c < childCount; ++c) {
