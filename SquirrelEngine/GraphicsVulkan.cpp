@@ -183,7 +183,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::CreateRenderPass(device, physicalDevice, swapChainImageFormat, &renderPass);
 
     // Setup descriptor pool
-    VulkanSetup::CreateDescriptorPool(device, 1, VULKAN_MAX_FRAMES_IN_FLIGHT * 100, &descriptorPool);
+    VulkanSetup::CreateDescriptorPool(device, 100, VULKAN_MAX_FRAMES_IN_FLIGHT * 100, &descriptorPool);
 
     SetupDescriptorSets();
 

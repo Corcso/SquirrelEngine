@@ -630,14 +630,20 @@ void SQ::VulkanSetup::CreateSyncObjects(VkDevice device, uint32_t swapChainImage
 
 void SQ::VulkanSetup::CreateDescriptorPool(VkDevice device, uint32_t descriptorCount, uint32_t maxSets, VkDescriptorPool* descriptorPool)
 {
-    VkDescriptorPoolSize poolSize{};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = descriptorCount;
+    VkDescriptorPoolSize poolSizeUniform{};
+    poolSizeUniform.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizeUniform.descriptorCount = descriptorCount;
+
+    VkDescriptorPoolSize poolSizeCIS{};
+    poolSizeCIS.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizeCIS.descriptorCount = descriptorCount;
+
+    VkDescriptorPoolSize poolSizeArray[2] = { poolSizeUniform, poolSizeCIS };
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.poolSizeCount = 2;
+    poolInfo.pPoolSizes = poolSizeArray;
     poolInfo.maxSets = maxSets;
 
     if (vkCreateDescriptorPool(device, &poolInfo, nullptr, descriptorPool) != VK_SUCCESS) {
