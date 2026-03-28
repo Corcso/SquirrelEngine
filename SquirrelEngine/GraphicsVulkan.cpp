@@ -204,7 +204,7 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     VulkanSetup::CreateCommandBuffers(device, commandPool, &commandBuffers);
 
     // Create Sync objects
-    VulkanSetup::CreateSyncObjects(device, &inFlightFences, &imageAvailableSemaphores, &renderFinishedSemaphores);
+    VulkanSetup::CreateSyncObjects(device, swapChainImages.size(), &inFlightFences, &imageAvailableSemaphores, &renderFinishedSemaphores);
 
     // Store clear colour
     this->clearColor = clearColor;
@@ -381,7 +381,7 @@ void SQ::GraphicsVulkan::EndRender()
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
 
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[thisRenderImageIndex] };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
@@ -704,7 +704,7 @@ void SQ::GraphicsVulkan::EndEditorRender()
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
 
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[thisRenderImageIndex] };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
