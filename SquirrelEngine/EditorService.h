@@ -11,6 +11,7 @@ namespace SQ {
 		void Shutdown();
 
 		void RenderFullEditorGUI();
+		void RenderViewportGUI(Mat4 LHViewMatrix, Mat4 LHProjMatrix, ImTextureID viewportImage);
 
 		void SetOpenInspectorNut(Nut* nut);
 		Nut* GetOpenInspectorNut() { return currentInspectorTarget; }
