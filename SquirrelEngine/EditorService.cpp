@@ -28,25 +28,31 @@ namespace SQ {
     void EditorService::RenderTopMenuBar()
     {
         ImGui::BeginMainMenuBar();
+        if (ImGui::BeginMenu(ICON_LC_SQUIRREL))
+        {
+            ImGui::Text("Thanks for trying out Squirrel Engine");
+            ImGui::Text("- Cormac");
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("New")) {
+            if (ImGui::MenuItem(ICON_LC_PACKAGE_PLUS " New")) {
                 imguielement_newSceneName[0] = '\0'; // Clear String
                 imguielement_openCreateNewScenePopup = true;
             }
 
-            if (ImGui::MenuItem("Save")) {
+            if (ImGui::MenuItem(ICON_LC_SAVE " Save")) {
                 if (openScenePath == "") {
                     imguielement_newScenePath[0] = '\0'; // Clear String
                     imguielement_openSaveNewScenePopup = true;
                 }
                 else SaveCurrentScene();
             }
-            if (ImGui::MenuItem("Save As")) {
+            if (ImGui::MenuItem(ICON_LC_SAVE " Save As")) {
                 imguielement_newScenePath[0] = '\0'; // Clear String
                 imguielement_openSaveNewScenePopup = true;
             }
-            if (ImGui::MenuItem("Load")) {
+            if (ImGui::MenuItem(ICON_LC_FOLDER_OPEN " Load")) {
                 LoadNewSceneFromFile(GetInput()->OpenSystemFileDialogue());
             }
             ImGui::EndMenu();
@@ -140,15 +146,15 @@ namespace SQ {
         ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
         float squareImageLength = MIN(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
         // Set operation for Guizmo, we do here as the buttons which change it 
-        if (ImGui::Button("T")) {
+        if (ImGui::Button(ICON_LC_MOVE_3D)) {
             SetCurrentMovementOperation(ImGuizmo::OPERATION::TRANSLATE);
         }
         ImGui::SameLine();
-        if (ImGui::Button("R")) {
+        if (ImGui::Button(ICON_LC_ROTATE_3D)) {
             SetCurrentMovementOperation(ImGuizmo::OPERATION::ROTATE);
         }
         ImGui::SameLine();
-        if (ImGui::Button("S")) {
+        if (ImGui::Button(ICON_LC_SCALE_3D)) {
             SetCurrentMovementOperation(ImGuizmo::OPERATION::SCALE);
         }
         ImGui::BeginChild("ViewportInterior", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);

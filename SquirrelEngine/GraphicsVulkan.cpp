@@ -229,6 +229,16 @@ int SQ::GraphicsVulkan::Init(std::string title, int width, int height, Vec4 clea
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info);
 
+    // Setup Lucide Icons
+    io.Fonts->AddFontDefault();
+    static const ImWchar icons_ranges[] = { ICON_MIN_LC, ICON_MAX_LC, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    icons_config.GlyphMinAdvanceX = 13.0f;
+    icons_config.GlyphOffset = ImVec2(0, 3);
+    io.Fonts->AddFontFromFileTTF("./StaticResources/" FONT_ICON_FILE_NAME_LC, 13.0f, &icons_config, icons_ranges);
+
     editorViewportExtent = {800, 800};
 
     VulkanSetup::CreateEditorViewport(device, physicalDevice, editorViewportExtent, swapChainImageFormat, renderPass,
