@@ -31,5 +31,14 @@ namespace SQ {
 		std::string openSceneName;
 
 		void LoadNewSceneFromFile(std::string scenePath);
+		void CreateNewScene();
+		void SaveCurrentScene();
+
+		// ImGui Elements
+		bool imguielement_openCreateNewScenePopup;
+		char imguielement_newSceneName[64];
+
+		bool imguielement_openSaveNewScenePopup;
+		char imguielement_newScenePath[64];
 	};
 }

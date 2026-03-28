@@ -30,8 +30,21 @@ namespace SQ {
         ImGui::BeginMainMenuBar();
         if (ImGui::BeginMenu("File"))
         {
+            if (ImGui::MenuItem("New")) {
+                imguielement_newSceneName[0] = '\0'; // Clear String
+                imguielement_openCreateNewScenePopup = true;
+            }
+
             if (ImGui::MenuItem("Save")) {
-                std::cout << GetTree()->GetRootNut()->GetNut(openSceneName)->Serialize();
+                if (openScenePath == "") {
+                    imguielement_newScenePath[0] = '\0'; // Clear String
+                    imguielement_openSaveNewScenePopup = true;
+                }
+                else SaveCurrentScene();
+            }
+            if (ImGui::MenuItem("Save As")) {
+                imguielement_newScenePath[0] = '\0'; // Clear String
+                imguielement_openSaveNewScenePopup = true;
             }
             if (ImGui::MenuItem("Load")) {
                 LoadNewSceneFromFile(GetInput()->OpenSystemFileDialogue());
@@ -39,6 +52,57 @@ namespace SQ {
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
+        // == CREATE NEW SCENE POPUP ==
+        if (imguielement_openCreateNewScenePopup) {
+            ImGui::OpenPopup("EditorCreateNewScene");
+            imguielement_openCreateNewScenePopup = false;
+        }
+        // Always center this window when appearing
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorCreateNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Please enter a name for the new scene.");
+            ImGui::Separator();
+
+            ImGui::InputText("Scene Name", imguielement_newSceneName, 64);
+
+            if (ImGui::Button("Create", ImVec2(120, 0))) { 
+                CreateNewScene(); 
+                ImGui::CloseCurrentPopup(); 
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
+        // == SAVE NEW SCENE POPUP ==
+        if (imguielement_openSaveNewScenePopup) {
+            ImGui::OpenPopup("EditorSaveNewScene");
+            imguielement_openSaveNewScenePopup = false;
+        }
+        // Always center this window when appearing
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorSaveNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Enter a scene path, relative to ./Resources/ (.nut not needed)");
+            ImGui::Text("Please note, if that scene already exists, it will be overwritten.");
+            ImGui::Separator();
+
+            ImGui::InputText("Scene Path", imguielement_newScenePath, 64);
+
+            if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newScenePath[0] != '\0') {
+                openScenePath = "./Resources/" + std::string(imguielement_newScenePath) + ".nut";
+                SaveCurrentScene(); 
+                ImGui::CloseCurrentPopup(); 
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
     }
 
     void EditorService::RenderFullEditorGUI()
@@ -186,5 +250,31 @@ namespace SQ {
         // Set as a child of root, need to get observer to call function as ownership is lost. 
         Nut* temp = sceneReady.get();
         temp->SetParent(GetTree()->GetRootNut(), std::move(sceneReady));
+    }
+    void EditorService::CreateNewScene()
+    {
+        // Mark Old Scene for deletion
+        GetTree()->GetRootNut()->GetNut(openSceneName)->QueueDestroy();
+
+        // Stop all inspections
+        openGizmoWorldNut = nullptr;
+        currentInspectorTarget = nullptr;
+
+        // Create a new 3D Node with the name chosen
+        openScenePath = "";
+        openSceneName = imguielement_newSceneName;
+
+        UniquePoolPtr<WorldNut> sceneReady = GetPoolAllocationService()->MakeUniquePoolPtr<WorldNut>();
+        // Set as a child of root, need to get observer to call function as ownership is lost. 
+        sceneReady->name = openSceneName;
+        WorldNut* temp = sceneReady.get();
+        temp->SetParent(GetTree()->GetRootNut(), std::move(sceneReady.DynamicUniquePoolPtrCast<Nut>()));
+    }
+    void EditorService::SaveCurrentScene()
+    {
+        nlohmann::json data = GetTree()->GetRootNut()->GetNut(openSceneName)->Serialize();
+        std::ofstream o(openScenePath);
+        o << std::setw(4) << data << std::endl;
+        o.close();
     }
 }
