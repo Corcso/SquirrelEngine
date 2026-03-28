@@ -243,6 +243,8 @@ namespace SQ {
 
 		void ImGuiRenderDebugInfo();
 
+		virtual std::string OpenSystemFileDialogue() = 0;
+
 	protected:
 		bool isMouseLocked;
 

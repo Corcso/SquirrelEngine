@@ -284,18 +284,13 @@ namespace SQ {
 		}
 		return false;
 	}
-	void Tree::ImGuiRenderDebugInfo()
+
+	void Tree::ImGuiRenderDebugInfo(Nut* from)
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Save")) {
-				std::cout << rootNut.Serialize();
-			}
-			ImGui::EndMenu();
-		}
 		ImGui::SetNextItemOpen(true);
-		ImGuiRenderTreeNut(&rootNut);
+		ImGuiRenderTreeNut(from);
 	}
+
 	void Tree::ImGuiRenderTreeNut(Nut* nut)
 	{
 		ImGui::PushID(nut);

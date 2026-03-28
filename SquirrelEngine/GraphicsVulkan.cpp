@@ -538,12 +538,7 @@ void SQ::GraphicsVulkan::BeginEditorRender()
     scissor.extent = editorViewportExtent;
     vkCmdSetScissor(commandBuffers[currentFrame], 0, 1, &scissor);
 
-    ImGui::BeginMainMenuBar();
-    if (ImGui::BeginMenu("Test"))
-    {
-        ImGui::EndMenu();
-    }
-    ImGui::EndMainMenuBar();
+    GetEditorService()->RenderTopMenuBar();
     ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
     thisFramesDrawCall = 0;

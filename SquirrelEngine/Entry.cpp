@@ -82,7 +82,7 @@ int main() {
 		// There is no init for input
 
 		// Init Editor
-		SQ::Services::GetEditorService()->Init();
+		SQ::Services::GetEditorService()->Init(options["On Load Nut"]);
 
 		// Default mouse to be unlocked
 		SQ::Services::GetInput()->UnlockMouse();

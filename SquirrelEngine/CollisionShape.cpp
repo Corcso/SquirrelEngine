@@ -4,6 +4,8 @@
 #include "PhysicsNut.h"
 #include "Services.h"
 
+#include <direct.h>
+
 namespace SQ {
     CollisionShape* SQ::CollisionShape::Load(std::string path)
     {
@@ -12,7 +14,15 @@ namespace SQ {
 
 		// Load File into json data then close file
 		std::ifstream file(path, std::istream::in);
-		if (!file.is_open()) return nullptr;
+		if (!file.is_open()) {
+			if (file.fail()) {
+				// Print a more detailed error message
+				char errorString[512];
+				strerror_s(errorString, 512, errno);
+				std::cerr << "\x1B[41mFailed to load: " << path << " Error details: " << errorString << "\033[0m\n";
+			}
+			return nullptr;
+		};
 
 		nlohmann::json jsonData = nlohmann::json::parse(file);
 

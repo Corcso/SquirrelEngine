@@ -425,5 +425,35 @@ Input::Key::INVALID_KEY
         if(isMouseLocked) ShowCursor(true);// Only do this on a toggle, it works like a counter. https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showcursor
         isMouseLocked = false;
     }
+    std::string InputWindows::OpenSystemFileDialogue()
+    {
+        OPENFILENAME ofn;       // common dialog box structure
+        wchar_t szFile[256];    // buffer for file name
+        HANDLE hf;              // file handle
+
+        // https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-common-dialog-boxes?redirectedfrom=MSDN#open_file
+        // Initialize OPENFILENAME
+        ZeroMemory(&ofn, sizeof(ofn));
+        ofn.lStructSize = sizeof(ofn);
+        ofn.hwndOwner = GetConsoleWindow(); // TODO Make this better?
+        ofn.lpstrFile = szFile;
+        // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+        // use the contents of szFile to initialize itself.
+        ofn.lpstrFile[0] = '\0';
+        ofn.nMaxFile = sizeof(szFile);
+        ofn.lpstrFilter = L"All\0*.*\0Text\0*.Nut\0";
+        ofn.nFilterIndex = 1;
+        ofn.lpstrFileTitle = NULL;
+        ofn.nMaxFileTitle = 0;
+        ofn.lpstrInitialDir = NULL;
+        ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR; // OFN_NOCHANGEDIR means keep Working Dir the same
+
+        // Display the Open dialog box. 
+
+        if (GetOpenFileName(&ofn) == TRUE) {
+            std::wstring filePath = std::wstring(ofn.lpstrFile);
+            return std::string(filePath.begin(), filePath.end());
+        }
+    }
 }
 #endif //WINDOWS

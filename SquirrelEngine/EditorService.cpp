@@ -1,18 +1,47 @@
 #include "PCH.h"
 #include "EditorService.h"
 #include "Services.h"
+#include <fstream>
+#include "ShelledNut.h"
 
 namespace SQ {
-	int EditorService::Init() {
+	int EditorService::Init(std::string initialNutPath) {
 		currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 		openGizmoWorldNut = nullptr;
+        currentInspectorTarget = nullptr;
+
+        // Set initial path and name of the scene loaded
+        openScenePath = initialNutPath;
+        
+        std::ifstream file(initialNutPath, std::istream::in);
+        if (!file.is_open()) throw - 1;
+
+        openSceneName = nlohmann::json::parse(file)["name"];
+
+        file.close();
 
 		return 0;
 	}
 
 	void EditorService::Shutdown() {}
 
-	void EditorService::RenderFullEditorGUI()
+    void EditorService::RenderTopMenuBar()
+    {
+        ImGui::BeginMainMenuBar();
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Save")) {
+                std::cout << GetTree()->GetRootNut()->GetNut(openSceneName)->Serialize();
+            }
+            if (ImGui::MenuItem("Load")) {
+                LoadNewSceneFromFile(GetInput()->OpenSystemFileDialogue());
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+    void EditorService::RenderFullEditorGUI()
 	{
 		ImGui::Begin("Info");
 		Services::GetPoolAllocationService()->ImGuiPoolUsageRender();
@@ -20,7 +49,7 @@ namespace SQ {
 		Services::GetResourceManager()->ImGuiRenderDebugInfo();
 		ImGui::End();
 		ImGui::Begin("Scene");
-		Services::GetTree()->ImGuiRenderDebugInfo();
+		Services::GetTree()->ImGuiRenderDebugInfo(GetTree()->GetRootNut()->GetNut(openSceneName));
 		ImGui::End();
 		ImGui::Begin("Physics");
 		Services::GetPhysics()->ImGuiRenderDebugInfo();
@@ -130,4 +159,32 @@ namespace SQ {
 	{
 		currentGizmoOperation = operation;
 	}
+    void EditorService::LoadNewSceneFromFile(std::string scenePath)
+    {
+        // Mark Old Scene for deletion
+        GetTree()->GetRootNut()->GetNut(openSceneName)->QueueDestroy();
+
+        // Stop all inspections
+        openGizmoWorldNut = nullptr;
+        currentInspectorTarget = nullptr;
+
+        openScenePath = scenePath;
+
+        std::ifstream file(scenePath, std::istream::in);
+        if (!file.is_open()) {
+            openScenePath = "";
+            openSceneName = "";
+            return;
+        }
+
+        openSceneName = nlohmann::json::parse(file)["name"];
+
+        file.close();
+
+        std::shared_ptr<ShelledNut> newScene = Services::GetResourceManager()->Retrieve<ShelledNut>(scenePath);
+        UniquePoolPtr<Nut> sceneReady = newScene->Instantiate();
+        // Set as a child of root, need to get observer to call function as ownership is lost. 
+        Nut* temp = sceneReady.get();
+        temp->SetParent(GetTree()->GetRootNut(), std::move(sceneReady));
+    }
 }

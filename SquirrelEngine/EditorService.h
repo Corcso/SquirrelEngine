@@ -6,10 +6,11 @@ namespace SQ {
 	{
 	public:
 
-		int Init();
+		int Init(std::string initialNutPath);
 
 		void Shutdown();
 
+		void RenderTopMenuBar();
 		void RenderFullEditorGUI();
 		void RenderViewportGUI(Mat4 LHViewMatrix, Mat4 LHProjMatrix, ImTextureID viewportImage);
 
@@ -25,5 +26,10 @@ namespace SQ {
 		ImGuizmo::OPERATION currentGizmoOperation;
 		WorldNut* openGizmoWorldNut;
 		Nut* currentInspectorTarget;
+
+		std::string openScenePath;
+		std::string openSceneName;
+
+		void LoadNewSceneFromFile(std::string scenePath);
 	};
 }

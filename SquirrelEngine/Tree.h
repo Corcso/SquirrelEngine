@@ -55,7 +55,7 @@ namespace SQ {
 		/// <summary>
 		/// Render the Scene Tree, For Editor
 		/// </summary>
-		void ImGuiRenderDebugInfo();
+		void ImGuiRenderDebugInfo(Nut* from);
 	private:
 		/// <summary>
 		/// <para>Calls Update() on nut provided and all descendants.</para>

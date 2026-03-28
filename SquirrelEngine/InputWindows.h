@@ -28,6 +28,8 @@ namespace SQ {
 
         virtual void LockMouse() final;
         virtual void UnlockMouse() final;
+
+        virtual std::string OpenSystemFileDialogue() final;
     private:
         /// <summary>
         /// A lookup table converting windows virtual key codes into Squirrel Engine Keys
