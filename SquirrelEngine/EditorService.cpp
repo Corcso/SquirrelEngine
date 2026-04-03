@@ -4,6 +4,8 @@
 #include <fstream>
 #include "ShelledNut.h"
 
+#include "SerializationTypeDictionary.h"
+
 namespace SQ {
 	int EditorService::Init(std::string initialNutPath) {
 		currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -34,7 +36,7 @@ namespace SQ {
             ImGui::Text("- Cormac");
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("File"))
+        if (ImGui::BeginMenu("Scene"))
         {
             if (ImGui::MenuItem(ICON_LC_PACKAGE_PLUS " New")) {
                 imguielement_newSceneName[0] = '\0'; // Clear String
@@ -52,63 +54,38 @@ namespace SQ {
                 imguielement_newScenePath[0] = '\0'; // Clear String
                 imguielement_openSaveNewScenePopup = true;
             }
-            if (ImGui::MenuItem(ICON_LC_FOLDER_OPEN " Load")) {
+            if (ImGui::MenuItem(ICON_LC_PACKAGE_OPEN " Load")) {
                 LoadNewSceneFromFile(GetInput()->OpenSystemFileDialogue());
             }
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("Resource"))
+        {
+            if (ImGui::MenuItem(ICON_LC_SQUARE_PLUS " New")) {
+                imguielement_newResourceName[0] = '\0'; // Clear String
+                imguielement_openCreateNewResourcePopup = true;
+            }
+
+            if (ImGui::MenuItem(ICON_LC_SAVE " Save")) {
+                if (openResourcePath == "") {
+                    imguielement_newResourcePath[0] = '\0'; // Clear String
+                    imguielement_openSaveNewResourcePopup = true;
+                }
+                else SaveCurrentResource();
+            }
+            if (ImGui::MenuItem(ICON_LC_SAVE " Save As")) {
+                imguielement_newResourcePath[0] = '\0'; // Clear String
+                imguielement_openSaveNewResourcePopup = true;
+            }
+            if (ImGui::MenuItem(ICON_LC_SQUARE_ARROW_UP " Load")) {
+                LoadResourceFromFile(GetInput()->OpenSystemFileDialogue());
+            }
+            ImGui::EndMenu();
+        }
         ImGui::EndMainMenuBar();
-        // == CREATE NEW SCENE POPUP ==
-        if (imguielement_openCreateNewScenePopup) {
-            ImGui::OpenPopup("EditorCreateNewScene");
-            imguielement_openCreateNewScenePopup = false;
-        }
-        // Always center this window when appearing
-        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-        if (ImGui::BeginPopupModal("EditorCreateNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Please enter a name for the new scene.");
-            ImGui::Separator();
-
-            ImGui::InputText("Scene Name", imguielement_newSceneName, 64);
-
-            if (ImGui::Button("Create", ImVec2(120, 0))) { 
-                CreateNewScene(); 
-                ImGui::CloseCurrentPopup(); 
-            }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-            ImGui::EndPopup();
-        }
-        // == SAVE NEW SCENE POPUP ==
-        if (imguielement_openSaveNewScenePopup) {
-            ImGui::OpenPopup("EditorSaveNewScene");
-            imguielement_openSaveNewScenePopup = false;
-        }
-        // Always center this window when appearing
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-        if (ImGui::BeginPopupModal("EditorSaveNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Enter a scene path, relative to ./Resources/ (.nut not needed)");
-            ImGui::Text("Please note, if that scene already exists, it will be overwritten.");
-            ImGui::Separator();
-
-            ImGui::InputText("Scene Path", imguielement_newScenePath, 64);
-
-            if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newScenePath[0] != '\0') {
-                openScenePath = "./Resources/" + std::string(imguielement_newScenePath) + ".nut";
-                SaveCurrentScene(); 
-                ImGui::CloseCurrentPopup(); 
-            }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-            ImGui::EndPopup();
-        }
+        DisplayScenePopups();
+        DisplayResourcePopups();
     }
 
     void EditorService::RenderFullEditorGUI()
@@ -136,13 +113,14 @@ namespace SQ {
 
         fileBrowser.Render();
         if (fileBrowser.GetObjectToOpenNext() != "") {
-            LoadNewSceneFromFile(fileBrowser.GetObjectToOpenNext());
+            if (fileBrowser.ObjectToOpenIsScene()) LoadNewSceneFromFile(fileBrowser.GetObjectToOpenNext());
+            else LoadResourceFromFile(fileBrowser.GetObjectToOpenNext());
         }
-        /*ImGui::Begin("Resource");
-		if (currentResourceInspectorTarget != nullptr) {
-			currentResourceInspectorTarget->ImGuiRenderMyInspector();
+        ImGui::Begin("Resource");
+		if (openResource.get() != nullptr) {
+            openResource->ImGuiRenderMyInspector();
 		}
-		ImGui::End();*/
+		ImGui::End();
 	}
 
 	void EditorService::RenderViewportGUI(Mat4 LHViewMatrix, Mat4 LHProjMatrix, ImTextureID viewportImage)
@@ -287,5 +265,134 @@ namespace SQ {
         std::ofstream o(openScenePath);
         o << std::setw(4) << data << std::endl;
         o.close();
+    }
+
+    void EditorService::LoadResourceFromFile(std::string resourcePath)
+    {
+        std::string openResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
+        openResource = std::shared_ptr<Resource>(ResourceTypeDictionary[openResourceExtension].load(resourcePath));
+        openResourcePath = resourcePath;
+    }
+
+    void EditorService::CreateNewResource()
+    {
+        openResourceExtension = imguielement_resourceTypesExt[imguielement_resourceTypeSelected];
+        openResource = std::shared_ptr<Resource>(ResourceTypeDictionary[openResourceExtension].create());
+        openResourcePath = "";
+    }
+
+    void EditorService::SaveCurrentResource()
+    {
+        ;
+    }
+
+    void EditorService::DisplayScenePopups()
+    {
+        // == CREATE NEW SCENE POPUP ==
+        if (imguielement_openCreateNewScenePopup) {
+            ImGui::OpenPopup("EditorCreateNewScene");
+            imguielement_openCreateNewScenePopup = false;
+        }
+        // Always center this window when appearing
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorCreateNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Please enter a name for the new scene.");
+            ImGui::Separator();
+
+            ImGui::InputText("Scene Name", imguielement_newSceneName, 64);
+
+            if (ImGui::Button("Create", ImVec2(120, 0))) {
+                CreateNewScene();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
+        // == SAVE NEW SCENE POPUP ==
+        if (imguielement_openSaveNewScenePopup) {
+            ImGui::OpenPopup("EditorSaveNewScene");
+            imguielement_openSaveNewScenePopup = false;
+        }
+        // Always center this window when appearing
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorSaveNewScene", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Enter a scene path, relative to ./Resources/ (.nut not needed)");
+            ImGui::Text("Please note, if that scene already exists, it will be overwritten.");
+            ImGui::Separator();
+
+            ImGui::InputText("Scene Path", imguielement_newScenePath, 64);
+
+            if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newScenePath[0] != '\0') {
+                openScenePath = "./Resources/" + std::string(imguielement_newScenePath) + ".nut";
+                SaveCurrentScene();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
+    }
+    void EditorService::DisplayResourcePopups()
+    {
+        // == CREATE NEW RESOURCE POPUP ==
+        if (imguielement_openCreateNewResourcePopup) {
+            ImGui::OpenPopup("EditorCreateNewResource");
+            imguielement_openCreateNewResourcePopup = false;
+        }
+        // Always center this window when appearing
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorCreateNewResource", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Please enter a name for the new resource.");
+            ImGui::Separator();
+
+            ImGui::InputText("Name", imguielement_newSceneName, 64);
+            ImGui::Combo("Type", &imguielement_resourceTypeSelected, imguielement_resourceTypesText, 2);
+
+            if (ImGui::Button("Create", ImVec2(120, 0))) {
+                CreateNewResource();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
+        // == SAVE NEW SCENE POPUP ==
+        if (imguielement_openSaveNewResourcePopup) {
+            ImGui::OpenPopup("EditorSaveNewResource");
+            imguielement_openSaveNewResourcePopup = false;
+        }
+        // Always center this window when appearing
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("EditorSaveNewResource", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Enter a resource path, relative to ./Resources/ (extension not needed)");
+            ImGui::Text("Please note, if that resource already exists, it will be overwritten.");
+            ImGui::Separator();
+
+            ImGui::InputText("Path", imguielement_newResourcePath, 64);
+
+            if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newResourcePath[0] != '\0') {
+                //openResourcePath = "./Resources/" + std::string(imguielement_newResourcePath);
+                //SaveCurrentScene();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
     }
 }

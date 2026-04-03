@@ -1,4 +1,6 @@
 #pragma once
+#include "PCH.h"
+#include "Resource.h"
 #include "WorldNut.h"
 #include "EditorFileBrowser.h"
 
@@ -31,17 +33,39 @@ namespace SQ {
 		std::string openScenePath;
 		std::string openSceneName;
 
+		std::string openResourcePath;
+		std::shared_ptr<Resource> openResource;
+		std::string openResourceExtension;
+
 		void LoadNewSceneFromFile(std::string scenePath);
 		void CreateNewScene();
 		void SaveCurrentScene();
 
+		void LoadResourceFromFile(std::string resourcePath);
+		void CreateNewResource();
+		void SaveCurrentResource();
+
 		// ImGui Elements
 		EditorFileBrowser fileBrowser;
+
+		void DisplayScenePopups();
 
 		bool imguielement_openCreateNewScenePopup;
 		char imguielement_newSceneName[64];
 
 		bool imguielement_openSaveNewScenePopup;
 		char imguielement_newScenePath[64];
+
+		void DisplayResourcePopups();
+
+		const char* imguielement_resourceTypesText[2] = { "Collision Shape", "Material"}; // TODO Move to ser type dict of some sort like deserializing nodes
+		const char* imguielement_resourceTypesExt[2] = { ".shape", ".mat"};
+		int imguielement_resourceTypeSelected = 0;
+
+		bool imguielement_openCreateNewResourcePopup;
+		char imguielement_newResourceName[64];
+
+		bool imguielement_openSaveNewResourcePopup;
+		char imguielement_newResourcePath[64];
 	};
 }

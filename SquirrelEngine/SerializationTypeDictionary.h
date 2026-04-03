@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "json.hpp"
 #include "Nut.h"
+#include "Resource.h"
 
 namespace SQ {
 	/// <summary>
@@ -11,4 +12,15 @@ namespace SQ {
 	/// <para>Defined here, initialised in Game. </para>
 	/// </summary>
 	extern std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohmann::json)>> SerializationTypeDictionary;
+
+
+	struct ResourceInteractionFunctions {
+		std::function<Resource*(std::string)> load;
+		std::function<Resource*(void)> create;
+	};
+	/// <summary>
+	/// <para>The Resource Type Dictionary, used to match resource file extensions to their resource types. </para>
+	/// <para>Defined here, initialised in Game. </para>
+	/// </summary>
+	extern std::unordered_map<std::string, ResourceInteractionFunctions> ResourceTypeDictionary;
 }

@@ -11,12 +11,14 @@ namespace SQ {
 		void Render();
 
 		std::string GetObjectToOpenNext();
+		bool ObjectToOpenIsScene();
 
 		static const char* GetIconForExtension(std::string extension);
 	private:
 		std::filesystem::path currentDirectory;
 
 		std::string toOpenNext;
+		bool toOpenNextIsScene; // If false, its a resource
 
 		void RenderItemInTree(const std::filesystem::directory_entry& item);
 

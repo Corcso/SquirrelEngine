@@ -3,7 +3,7 @@
 #include "SerializationTypeDictionary.h"
 
 // ====================================
-// PLACE YOUR INCLUDES HERE
+// PLACE YOUR NUT INCLUDES HERE
 #include "FPVCamera.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -31,4 +31,26 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 	{"AirlockSceneLoading", AirlockSceneLoading::Deserialize}
 // ====================================
 
+});
+
+// ====================================
+// PLACE YOUR RESOURCE INCLUDES HERE
+
+// ====================================
+
+std::unordered_map<std::string, SQ::ResourceInteractionFunctions> SQ::ResourceTypeDictionary({
+	{".nut", {ShelledNut::Load, []() {return new ShelledNut(); }}},
+	{".shape", {CollisionShape::Load, []() {return new CollisionShape(); }}},
+	{".mat", {Material::Load, []() {return nullptr; }}}, // TODO Fix Unsupported!
+
+	// ====================================
+	// External Types 
+	{".obj", {Mesh::Load, []() {return new Mesh(); }}},
+	// ====================================
+
+	// ====================================
+	// PLACE YOUR RESOURCE FUNCTIONS HERE!
+	// {"file extension with .", {MYRESOURCE::Load, [](){return new MYRESOURCE();}}}
+	
+	// ====================================
 });

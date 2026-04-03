@@ -36,6 +36,7 @@ namespace SQ {
 				if (ImGui::Button((std::string(GetIconForExtension(entry.path().extension().string())) + "\n" + entry.path().filename().string()).c_str(), ImVec2(48, 48)))
 				{
 					toOpenNext = entry.path().string();
+					toOpenNextIsScene = entry.path().extension().string() == ".nut";
 				}
 				tally++;
 			}
@@ -50,9 +51,13 @@ namespace SQ {
 	{
 		return toOpenNext;
 	}
+	bool EditorFileBrowser::ObjectToOpenIsScene()
+	{
+		return toOpenNextIsScene;
+	}
 	const char* EditorFileBrowser::GetIconForExtension(std::string extension)
 	{
-		if (extension == ".nut") return ICON_LC_LAND_PLOT;
+		if (extension == ".nut") return ICON_LC_PACKAGE;
 		if (extension == ".obj") return ICON_LC_BOXES;
 		if (extension == ".mat") return ICON_LC_ECLIPSE;
 		return ICON_LC_SQUARE;
