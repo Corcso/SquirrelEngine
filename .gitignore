@@ -399,6 +399,7 @@ FodyWeavers.xsd
 
 # Compiled Shaders
 *CompiledShader.h
+VULKAN_COMPILED_*.spv
 
 # ALLOW JOLT PDB
 !Jolt.pdb
