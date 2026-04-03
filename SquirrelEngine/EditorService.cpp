@@ -133,7 +133,12 @@ namespace SQ {
 			
 		}
 		ImGui::End();
-		/*ImGui::Begin("Resource");
+
+        fileBrowser.Render();
+        if (fileBrowser.GetObjectToOpenNext() != "") {
+            LoadNewSceneFromFile(fileBrowser.GetObjectToOpenNext());
+        }
+        /*ImGui::Begin("Resource");
 		if (currentResourceInspectorTarget != nullptr) {
 			currentResourceInspectorTarget->ImGuiRenderMyInspector();
 		}

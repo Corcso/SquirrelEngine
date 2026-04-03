@@ -206,6 +206,7 @@
     <ClInclude Include="CameraNut.h" />
     <ClInclude Include="CollisionShape.h" />
     <ClInclude Include="EditorCameraNut.h" />
+    <ClInclude Include="EditorFileBrowser.h" />
     <ClInclude Include="EditorService.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsDX11.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="CameraNut.cpp" />
     <ClCompile Include="CollisionShape.cpp" />
     <ClCompile Include="EditorCameraNut.cpp" />
+    <ClCompile Include="EditorFileBrowser.cpp" />
     <ClCompile Include="EditorService.cpp" />
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Graphics.cpp" />

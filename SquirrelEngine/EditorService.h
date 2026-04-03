@@ -1,5 +1,6 @@
 #pragma once
 #include "WorldNut.h"
+#include "EditorFileBrowser.h"
 
 namespace SQ {
 	class EditorService
@@ -35,6 +36,8 @@ namespace SQ {
 		void SaveCurrentScene();
 
 		// ImGui Elements
+		EditorFileBrowser fileBrowser;
+
 		bool imguielement_openCreateNewScenePopup;
 		char imguielement_newSceneName[64];
 

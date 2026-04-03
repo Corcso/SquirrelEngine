@@ -37,6 +37,9 @@
     <Filter Include="Services\Vulkan">
       <UniqueIdentifier>{3add542b-6cb3-4538-9546-b5a216e5a14a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Services\EditorServiceComponents">
+      <UniqueIdentifier>{1088dd27-03f5-4518-8106-ad4798da464f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsDX11.h">
@@ -210,6 +213,9 @@
     <ClInclude Include="EditorService.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="EditorFileBrowser.h">
+      <Filter>Services\EditorServiceComponents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entry.cpp">
@@ -364,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="EditorService.cpp">
       <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFileBrowser.cpp">
+      <Filter>Services\EditorServiceComponents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
