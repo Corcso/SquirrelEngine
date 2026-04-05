@@ -275,8 +275,8 @@ namespace SQ {
             ResourceTypeDictionary[openResourceExtension].reload(openResourcePath);
         }
 
-        std::string newResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
-        openResource = ResourceTypeDictionary[newResourceExtension].load(resourcePath);
+        openResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
+        openResource = ResourceTypeDictionary[openResourceExtension].load(resourcePath);
         openResourcePath = resourcePath;
     }
 
@@ -289,7 +289,7 @@ namespace SQ {
 
     void EditorService::SaveCurrentResource()
     {
-        ;
+       ResourceTypeDictionary[openResourceExtension].save(*openResource.get(), openResourcePath);
     }
 
     void EditorService::DisplayScenePopups()
@@ -391,8 +391,8 @@ namespace SQ {
             ImGui::InputText("Path", imguielement_newResourcePath, 64);
 
             if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newResourcePath[0] != '\0') {
-                //openResourcePath = "./Resources/" + std::string(imguielement_newResourcePath);
-                //SaveCurrentScene();
+                openResourcePath = "./Resources/" + std::string(imguielement_newResourcePath) + openResourceExtension;
+                SaveCurrentResource();
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();

@@ -39,6 +39,30 @@ namespace SQ {
 
 		return newMaterial;
     }
+
+	void StandardMaterial::Save(const StandardMaterial& resource, std::string path)
+	{
+		nlohmann::json jsonData;
+
+		jsonData["diffuse"] = nlohmann::json::array();
+		jsonData["diffuse"][0] = resource.diffuseColor.X;
+		jsonData["diffuse"][1] = resource.diffuseColor.Y;
+		jsonData["diffuse"][2] = resource.diffuseColor.Z;
+
+		jsonData["specular"] = nlohmann::json::array();
+		jsonData["specular"][0] = resource.specularColor.X;
+		jsonData["specular"][1] = resource.specularColor.Y;
+		jsonData["specular"][2] = resource.specularColor.Z;
+
+		jsonData["specularity"] = resource.specularity;
+
+		jsonData["smoothness"] = resource.smoothness;
+
+		std::ofstream o(path);
+		o << std::setw(4) << jsonData << std::endl;
+		o.close();
+	}
+
     void StandardMaterial::ImGuiRenderMyInspector()
     {
         Resource::ImGuiRenderMyInspector();

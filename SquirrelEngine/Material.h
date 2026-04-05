@@ -18,6 +18,8 @@ namespace SQ {
         /// <returns>A pointer to the new material</returns>
         static StandardMaterial* Load(std::string path);
 
+        static void Save(const StandardMaterial& resource, std::string path);
+
         /// <summary>
         /// Set diffuse color, this is the color of the thing. 
         /// </summary>

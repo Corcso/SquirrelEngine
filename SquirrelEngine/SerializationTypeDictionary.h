@@ -14,14 +14,16 @@ namespace SQ {
 	extern std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohmann::json)>> SerializationTypeDictionary;
 
 
-	struct ResourceInteractionFunctions {
+	struct ResourceInteractionInformation {
+		std::string name;
 		std::function<std::shared_ptr<Resource>(std::string)> load;
 		std::function<void(std::string)> reload;
 		std::function<Resource*(void)> create;
+		std::function<void(const Resource&, std::string)> save;
 	};
 	/// <summary>
 	/// <para>The Resource Type Dictionary, used to match resource file extensions to their resource types. </para>
 	/// <para>Defined here, initialised in Game. </para>
 	/// </summary>
-	extern std::unordered_map<std::string, ResourceInteractionFunctions> ResourceTypeDictionary;
+	extern std::unordered_map<std::string, ResourceInteractionInformation> ResourceTypeDictionary;
 }
