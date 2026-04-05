@@ -55,7 +55,7 @@ namespace SQ {
                 imguielement_openSaveNewScenePopup = true;
             }
             if (ImGui::MenuItem(ICON_LC_PACKAGE_OPEN " Load")) {
-                LoadNewSceneFromFile(GetInput()->OpenSystemFileDialogue());
+                LoadNewSceneFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
             }
             ImGui::EndMenu();
         }
@@ -78,7 +78,7 @@ namespace SQ {
                 imguielement_openSaveNewResourcePopup = true;
             }
             if (ImGui::MenuItem(ICON_LC_SQUARE_ARROW_UP " Load")) {
-                LoadResourceFromFile(GetInput()->OpenSystemFileDialogue());
+                LoadResourceFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
             }
             ImGui::EndMenu();
         }

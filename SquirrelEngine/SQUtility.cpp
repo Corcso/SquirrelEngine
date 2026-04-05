@@ -1,6 +1,8 @@
 #include "PCH.h"
 #include "SQUtility.h"
 
+#include <filesystem>
+
 namespace SQ {
 	std::vector<std::string> SplitString(std::string string, char delimiter) {
 		std::vector<std::string> result;
@@ -41,5 +43,23 @@ namespace SQ {
 		}
 
 		return toReturn;
+	}
+	std::string ConvertFullPathToRelative(std::string fullPath)
+	{
+		std::string workingDirectory = std::filesystem::current_path().string();
+		std::replace(workingDirectory.begin(), workingDirectory.end(), '\\', '/');
+		std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+		std::string newString = ".";
+		newString.reserve(fullPath.length());
+		bool workingDirectoryPassed = false;
+		for (int c = 0; c < fullPath.length(); c++) {
+			if (workingDirectory.length() <= c || workingDirectory[c] != fullPath[c]) workingDirectoryPassed = true;
+
+			if (workingDirectoryPassed) {
+				newString += fullPath[c];
+			}
+		}
+
+		return newString;
 	}
 }

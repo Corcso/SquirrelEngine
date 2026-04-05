@@ -25,5 +25,12 @@ namespace SQ {
 	/// <param name="stringIn">Narrow string</param>
 	/// <returns>Wide string of input</returns>
 	std::wstring NStringToWString(const std::string& stringIn);
+
+	/// <summary>
+	/// Converts a full path to be relative to the working directory. 
+	/// </summary>
+	/// <param name="fullPath">The full path</param>
+	/// <returns>The relative path</returns>
+	std::string ConvertFullPathToRelative(std::string fullPath);
 }
 
