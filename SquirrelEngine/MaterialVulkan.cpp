@@ -26,45 +26,14 @@ namespace SQ {
 
 		return newMaterial;
 	}
-	void MaterialVulkan::SetDiffuseColor(Vec3 diffuseColor)
-	{
-		//this->diffuseColor = diffuseColor;
-		bufferData.diffuseColor = diffuseColor;
-	}
-	void MaterialVulkan::SetSpecularColor(Vec3 specularColor)
-	{
-		//this->specularColor = specularColor;
-		bufferData.specularColor = specularColor;
-	}
-	void MaterialVulkan::SetSpecularity(unsigned int specularity)
-	{
-		//this->specularity = specularity;
-		bufferData.specularity = specularity;
-	}
-	void MaterialVulkan::SetSmoothness(float smoothness)
-	{
-		//this->smoothness = smoothness;
-		bufferData.smoothness = smoothness;
-	}
-	Vec3 MaterialVulkan::GetDiffuseColor()
-	{
-		return bufferData.diffuseColor;
-	}
-	Vec3 MaterialVulkan::GetSpecularColor()
-	{
-		return bufferData.specularColor;
-	}
-	unsigned int MaterialVulkan::GetSpecularity()
-	{
-		return bufferData.specularity;
-	}
-	float MaterialVulkan::GetSmoothness()
-	{
-		return bufferData.smoothness;
-	}
 
 	MaterialVulkan::MaterialVulkanData* MaterialVulkan::GetBufferData()
 	{
+		bufferData.diffuseColor = diffuseColor;
+		bufferData.specularColor = specularColor;
+		bufferData.smoothness = smoothness;
+		bufferData.specularity = specularity;
+
 		return &bufferData;
 	}
 }

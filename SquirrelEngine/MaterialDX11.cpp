@@ -25,45 +25,14 @@ namespace SQ {
 
 		return newMaterial;
 	}
-	void MaterialDX11::SetDiffuseColor(Vec3 diffuseColor)
-	{
-		//this->diffuseColor = diffuseColor;
-		bufferData.diffuseColor = diffuseColor;
-	}
-	void MaterialDX11::SetSpecularColor(Vec3 specularColor)
-	{
-		//this->specularColor = specularColor;
-		bufferData.specularColor = specularColor;
-	}
-	void MaterialDX11::SetSpecularity(unsigned int specularity)
-	{
-		//this->specularity = specularity;
-		bufferData.specularity = specularity;
-	}
-	void MaterialDX11::SetSmoothness(float smoothness)
-	{
-		//this->smoothness = smoothness;
-		bufferData.smoothness = smoothness;
-	}
-	Vec3 MaterialDX11::GetDiffuseColor()
-	{
-		return V3(bufferData.diffuseColor.x, bufferData.diffuseColor.z, bufferData.diffuseColor.z);
-	}
-	Vec3 MaterialDX11::GetSpecularColor()
-	{
-		return V3(bufferData.specularColor.x, bufferData.specularColor.z, bufferData.specularColor.z);
-	}
-	unsigned int MaterialDX11::GetSpecularity()
-	{
-		return bufferData.specularity;
-	}
-	float MaterialDX11::GetSmoothness()
-	{
-		return bufferData.smoothness;
-	}
 
 	MaterialDX11::MaterialDX11Data* MaterialDX11::GetBufferData()
 	{
+		bufferData.diffuseColor = diffuseColor;
+		bufferData.specularColor = specularColor;
+		bufferData.smoothness = smoothness;
+		bufferData.specularity = specularity;
+
 		return &bufferData;
 	}
 	void MaterialDX11::ImGuiRenderMyInspector()

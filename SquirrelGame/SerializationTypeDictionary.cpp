@@ -39,13 +39,13 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 // ====================================
 
 std::unordered_map<std::string, SQ::ResourceInteractionFunctions> SQ::ResourceTypeDictionary({
-	{".nut", {ShelledNut::Load, []() {return new ShelledNut(); }}},
-	{".shape", {CollisionShape::Load, []() {return new CollisionShape(); }}},
-	{".mat", {StandardMaterial::Load, []() {return nullptr; }}}, // TODO Fix Unsupported!
+	{".nut", {[](std::string path) {return GetResourceManager()->Retrieve<ShelledNut>(path); }, []() {return new ShelledNut(); }}},
+	{".shape", {[](std::string path) {return GetResourceManager()->Retrieve<CollisionShape>(path); }, []() {return new CollisionShape(); }}},
+	{".mat", {[](std::string path) {return GetResourceManager()->Retrieve<StandardMaterial>(path); } , []() {return new StandardMaterial(); }}},
 
 	// ====================================
 	// External Types 
-	{".obj", {Mesh::Load, []() {return new Mesh(); }}},
+	{".obj", {[](std::string path) {return GetResourceManager()->Retrieve<Mesh>(path); }, []() {return new Mesh(); }}},
 	// ====================================
 
 	// ====================================

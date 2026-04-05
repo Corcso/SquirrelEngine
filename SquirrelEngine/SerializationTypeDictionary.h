@@ -15,7 +15,7 @@ namespace SQ {
 
 
 	struct ResourceInteractionFunctions {
-		std::function<Resource*(std::string)> load;
+		std::function<std::shared_ptr<Resource>(std::string)> load;
 		std::function<Resource*(void)> create;
 	};
 	/// <summary>

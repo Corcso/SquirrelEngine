@@ -9,7 +9,7 @@ namespace SQ {
     {
     public:
         /// <summary>
-        /// Loads a material and returns a pointer to it. 
+        /// UNUSED Loads a material and returns a pointer to it. 
         /// </summary>
         /// <param name="path">Path of the material .mat file</param>
         /// <returns>A pointer to the new material</returns>

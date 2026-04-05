@@ -270,7 +270,7 @@ namespace SQ {
     void EditorService::LoadResourceFromFile(std::string resourcePath)
     {
         std::string openResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
-        openResource = std::shared_ptr<Resource>(ResourceTypeDictionary[openResourceExtension].load(resourcePath));
+        openResource = ResourceTypeDictionary[openResourceExtension].load(resourcePath);
         openResourcePath = resourcePath;
     }
 
