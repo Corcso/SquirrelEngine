@@ -49,6 +49,7 @@ namespace SQ {
 	}
 	std::string EditorFileBrowser::GetObjectToOpenNext()
 	{
+		std::replace(toOpenNext.begin(), toOpenNext.end(), '\\', '/');
 		return toOpenNext;
 	}
 	bool EditorFileBrowser::ObjectToOpenIsScene()
