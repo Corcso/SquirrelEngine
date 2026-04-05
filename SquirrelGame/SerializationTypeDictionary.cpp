@@ -41,7 +41,7 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 std::unordered_map<std::string, SQ::ResourceInteractionFunctions> SQ::ResourceTypeDictionary({
 	{".nut", {ShelledNut::Load, []() {return new ShelledNut(); }}},
 	{".shape", {CollisionShape::Load, []() {return new CollisionShape(); }}},
-	{".mat", {Material::Load, []() {return nullptr; }}}, // TODO Fix Unsupported!
+	{".mat", {StandardMaterial::Load, []() {return nullptr; }}}, // TODO Fix Unsupported!
 
 	// ====================================
 	// External Types 

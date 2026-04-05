@@ -34,20 +34,20 @@ namespace SQ {
         /// <summary>
         /// Set the material this mesh should use
         /// </summary>
-        /// <param name="material">Material resource reference</param>
-        void SetMaterial(std::shared_ptr<Material> material);
+        /// <param name="material">StandardMaterial resource reference</param>
+        void SetMaterial(std::shared_ptr<StandardMaterial> material);
 
         /// <summary>
         /// Get the material this mesh uses
         /// </summary>
-        /// <returns>Material resource reference</returns>
-        std::shared_ptr<Material> GetMaterial();
+        /// <returns>StandardMaterial resource reference</returns>
+        std::shared_ptr<StandardMaterial> GetMaterial();
 
         virtual void ImGuiRenderMyInspector() override;
 
         virtual ~MeshNut() override {};
     private:
         std::shared_ptr<Mesh> mesh;
-        std::shared_ptr<Material> material;
+        std::shared_ptr<StandardMaterial> material;
     };
 }

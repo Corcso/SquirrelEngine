@@ -22,7 +22,7 @@ namespace SQ {
 
 		// Perform deserialization on our data. 
 		if (!serializedData["mesh"].is_null()) toWorkOn->SetMesh(Services::GetResourceManager()->Retrieve<Mesh>(serializedData["mesh"]));
-		if (!serializedData["material"].is_null()) toWorkOn->SetMaterial(Services::GetResourceManager()->Retrieve<Material>(serializedData["material"]));
+		if (!serializedData["material"].is_null()) toWorkOn->SetMaterial(Services::GetResourceManager()->Retrieve<StandardMaterial>(serializedData["material"]));
 
 		// Return toWorkOn
 		return owner;
@@ -49,11 +49,11 @@ namespace SQ {
 	{
 		return mesh;
 	}
-	void MeshNut::SetMaterial(std::shared_ptr<Material> material)
+	void MeshNut::SetMaterial(std::shared_ptr<StandardMaterial> material)
 	{
 		this->material = material;
 	}
-	std::shared_ptr<Material> MeshNut::GetMaterial()
+	std::shared_ptr<StandardMaterial> MeshNut::GetMaterial()
 	{
 		return material;
 	}
@@ -65,7 +65,7 @@ namespace SQ {
 			if (ImGui::Button("Open Mesh Resource")) {
 				Services::GetTree()->SetResourceInspector(mesh);
 			}
-			if (ImGui::Button("Open Material Resource")) {
+			if (ImGui::Button("Open StandardMaterial Resource")) {
 				Services::GetTree()->SetResourceInspector(material);
 			}
 

@@ -58,7 +58,7 @@ namespace SQ {
 
 		void DisplayResourcePopups();
 
-		const char* imguielement_resourceTypesText[2] = { "Collision Shape", "Material"}; // TODO Move to ser type dict of some sort like deserializing nodes
+		const char* imguielement_resourceTypesText[2] = { "Collision Shape", "StandardMaterial"}; // TODO Move to ser type dict of some sort like deserializing nodes
 		const char* imguielement_resourceTypesExt[2] = { ".shape", ".mat"};
 		int imguielement_resourceTypeSelected = 0;
 

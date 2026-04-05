@@ -5,10 +5,10 @@
 #include <fstream>
 
 namespace SQ {
-	Material* MaterialVulkan::Load(std::string path)
+	StandardMaterial* MaterialVulkan::Load(std::string path)
 	{
 		// Create a new material instance
-		Material* newMaterial = new MaterialVulkan();
+		StandardMaterial* newMaterial = new MaterialVulkan();
 
 		// Load File into json data then close file
 		std::ifstream file(path, std::istream::in);

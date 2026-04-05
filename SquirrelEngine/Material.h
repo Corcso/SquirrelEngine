@@ -5,9 +5,9 @@
 
 namespace SQ {
     /// <summary>
-    /// Material applied to mesh nuts
+    /// StandardMaterial applied to mesh nuts
     /// </summary>
-    class Material :
+    class StandardMaterial :
         public Resource
     {
     public:
@@ -16,7 +16,7 @@ namespace SQ {
         /// </summary>
         /// <param name="path">Path of the material .mat file</param>
         /// <returns>A pointer to the new material</returns>
-        static Material* Load(std::string path);
+        static StandardMaterial* Load(std::string path);
 
         /// <summary>
         /// Set diffuse color, this is the color of the thing. 

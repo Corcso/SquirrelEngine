@@ -96,7 +96,7 @@ void Player::Update()
         // Setup child properties
         childMesh->name = "Bullet Mesh";
         childMesh->SetMesh(bulletMeshPreload);
-        childMesh->SetMaterial(GetResourceManager()->Retrieve<Material>("./Resources/bullet.mat"));
+        childMesh->SetMaterial(GetResourceManager()->Retrieve<StandardMaterial>("./Resources/bullet.mat"));
         childMesh->SetEulerAngles(V3(0, 3.14f, 0));
         // Get observer to child (as we are relinquishing ownership) and use that to reparent the child to the bullet. 
         MeshNut* observerOfMesh = childMesh.get();

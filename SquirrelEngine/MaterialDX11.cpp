@@ -4,10 +4,10 @@
 #include <fstream>
 
 namespace SQ {
-	Material* MaterialDX11::Load(std::string path)
+	StandardMaterial* MaterialDX11::Load(std::string path)
 	{
 		// Create a new material instance
-		Material* newMaterial = new MaterialDX11();
+		StandardMaterial* newMaterial = new MaterialDX11();
 
 		// Load File into json data then close file
 		std::ifstream file(path, std::istream::in);
@@ -68,7 +68,7 @@ namespace SQ {
 	}
 	void MaterialDX11::ImGuiRenderMyInspector()
 	{
-		Material::ImGuiRenderMyInspector();
+		StandardMaterial::ImGuiRenderMyInspector();
 		if (ImGui::TreeNodeEx("MaterialDX11", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 			ImGui::ColorEdit3("Diffuse Color", reinterpret_cast<float*>(&bufferData.diffuseColor));

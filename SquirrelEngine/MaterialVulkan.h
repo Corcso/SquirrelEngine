@@ -5,7 +5,7 @@
 
 namespace SQ {
     class MaterialVulkan :
-        public Material
+        public StandardMaterial
     {
     public:
         /// <summary>
@@ -13,7 +13,7 @@ namespace SQ {
         /// </summary>
         /// <param name="path">Path of the material .mat file</param>
         /// <returns>A pointer to the new material</returns>
-        static Material* Load(std::string path);
+        static StandardMaterial* Load(std::string path);
 
         // Overrides for properties
 
@@ -28,7 +28,7 @@ namespace SQ {
         virtual float GetSmoothness() final;
 
         /// <summary>
-        /// Material data struct in a GPU friendly format
+        /// StandardMaterial data struct in a GPU friendly format
         /// </summary>
         struct MaterialVulkanData {
             alignas(16) Vec3 diffuseColor;
@@ -45,7 +45,7 @@ namespace SQ {
         /// <summary>
         /// Returns the buffer data in the correct GPU format for the constant buffer. 
         /// </summary>
-        /// <returns>Material buffer data</returns>
+        /// <returns>StandardMaterial buffer data</returns>
         MaterialVulkanData* GetBufferData();
 
     private:
