@@ -269,8 +269,14 @@ namespace SQ {
 
     void EditorService::LoadResourceFromFile(std::string resourcePath)
     {
-        std::string openResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
-        openResource = ResourceTypeDictionary[openResourceExtension].load(resourcePath);
+        if (openResourcePath != "") {
+            // Reload the current resource from file
+            std::string openResourceExtension = '.' + SplitString(openResourcePath, '.')[SplitString(openResourcePath, '.').size() - 1];
+            ResourceTypeDictionary[openResourceExtension].reload(openResourcePath);
+        }
+
+        std::string newResourceExtension = '.' + SplitString(resourcePath, '.')[SplitString(resourcePath, '.').size() - 1];
+        openResource = ResourceTypeDictionary[newResourceExtension].load(resourcePath);
         openResourcePath = resourcePath;
     }
 

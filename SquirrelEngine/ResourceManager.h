@@ -63,10 +63,10 @@ namespace SQ {
 				if (!resources[path].expired()) {
 					// Swap the data for the old resource to the new resources data. 
 					// NOT 100% CERTAIN IF THIS WORKS OR IS SAFE
-					Resource* newlyLoadedResource(T::Load(path));
-					Resource oldResourceData = *resources[path].get();
+					T* newlyLoadedResource(T::Load(path));
+					T oldResourceData = *(std::dynamic_pointer_cast<T, Resource>(resources[path].lock()));
 
-					*resources[path].get() = *resources[path].get();
+					*(std::dynamic_pointer_cast<T, Resource>(resources[path].lock())) = *newlyLoadedResource;
 
 					// Old resource will be deconstructed as it falls out of scope, cleaning any memory it owned, but the pointer address memory is still open as that is now newResource
 					// Newly loaded resource now exists inside the location of the old one, it should not be deconstructed (as that will break the kept version) but should be freed, so just use free do not use delete.

@@ -39,13 +39,13 @@ std::unordered_map<std::string, std::function<SQ::UniquePoolPtr<Nut>(Nut*, nlohm
 // ====================================
 
 std::unordered_map<std::string, SQ::ResourceInteractionFunctions> SQ::ResourceTypeDictionary({
-	{".nut", {[](std::string path) {return GetResourceManager()->Retrieve<ShelledNut>(path); }, []() {return new ShelledNut(); }}},
-	{".shape", {[](std::string path) {return GetResourceManager()->Retrieve<CollisionShape>(path); }, []() {return new CollisionShape(); }}},
-	{".mat", {[](std::string path) {return GetResourceManager()->Retrieve<StandardMaterial>(path); } , []() {return new StandardMaterial(); }}},
+	{".nut", {[](std::string path) {return GetResourceManager()->Retrieve<ShelledNut>(path); }, [](std::string path) {return GetResourceManager()->Reload<ShelledNut>(path); }, []() {return new ShelledNut(); }}},
+	{".shape", {[](std::string path) {return GetResourceManager()->Retrieve<CollisionShape>(path); }, [](std::string path) {return GetResourceManager()->Reload<CollisionShape>(path); }, []() {return new CollisionShape(); }}},
+	{".mat", {[](std::string path) {return GetResourceManager()->Retrieve<StandardMaterial>(path); }, [](std::string path) {return GetResourceManager()->Reload<StandardMaterial>(path); }, []() {return new StandardMaterial(); }}},
 
 	// ====================================
 	// External Types 
-	{".obj", {[](std::string path) {return GetResourceManager()->Retrieve<Mesh>(path); }, []() {return new Mesh(); }}},
+	{".obj", {[](std::string path) {return GetResourceManager()->Retrieve<Mesh>(path); }, [](std::string path) {return GetResourceManager()->Reload<Mesh>(path); }, []() {return new Mesh(); }}},
 	// ====================================
 
 	// ====================================
