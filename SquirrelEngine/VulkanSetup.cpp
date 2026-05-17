@@ -17,6 +17,10 @@ void SQ::VulkanSetup::CreateInstance(VkInstance* instance)
 {
     // First of all, check if we are having validation layers and set them up
     bool enableValidationLayers = false;
+    // Validation layers we are looking for 
+    const std::vector<const char*> validationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+    };
 #ifdef _DEBUG
     enableValidationLayers = true;
 
@@ -25,11 +29,6 @@ void SQ::VulkanSetup::CreateInstance(VkInstance* instance)
 
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-    // Validation layers we are looking for 
-    const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
-    };
 
     for (const char* layerName : validationLayers) {
         bool layerFound = false;

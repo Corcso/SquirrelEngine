@@ -58,11 +58,12 @@
 		#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 		#define JPH_PROFILE_ENABLED
 		#define JPH_OBJECT_STREAM
+		#define JPH_CROSS_PLATFORM_DETERMINISTIC
+		#define JPH_DEBUG_RENDERER
 		#pragma comment(lib, "Jolt.lib")
 	#else
-		#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 		#define JPH_OBJECT_STREAM
-		#define JPH_PROFILE_ENABLED
+		#define JPH_CROSS_PLATFORM_DETERMINISTIC
 		#pragma comment(lib, "Jolt_Release.lib")
 	#endif
 
