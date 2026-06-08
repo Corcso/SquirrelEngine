@@ -39,8 +39,11 @@ namespace SQ {
         if (ImGui::BeginMenu("Scene"))
         {
             if (ImGui::MenuItem(ICON_LC_PACKAGE_PLUS " New")) {
-                imguielement_newSceneName[0] = '\0'; // Clear String
-                imguielement_openCreateNewScenePopup = true;
+                //imguielement_newSceneName[0] = '\0'; // Clear String
+                //imguielement_openCreateNewScenePopup = true; Moved to after the confirmation
+
+                imguielement_openSaveSceneConfirmation = true;
+                imguielement_createAfterSaveSceneConfirmation = true;
             }
 
             if (ImGui::MenuItem(ICON_LC_SAVE " Save")) {
@@ -55,7 +58,10 @@ namespace SQ {
                 imguielement_openSaveNewScenePopup = true;
             }
             if (ImGui::MenuItem(ICON_LC_PACKAGE_OPEN " Load")) {
-                LoadNewSceneFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
+                //LoadNewSceneFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue())); Moved to after the confirmation
+
+                imguielement_openSaveSceneConfirmation = true;
+                imguielement_loadAfterSaveSceneConfirmation = true;
             }
             ImGui::EndMenu();
         }
@@ -113,7 +119,14 @@ namespace SQ {
 
         fileBrowser.Render();
         if (fileBrowser.GetObjectToOpenNext() != "") {
-            if (fileBrowser.ObjectToOpenIsScene()) LoadNewSceneFromFile(fileBrowser.GetObjectToOpenNext());
+            if (fileBrowser.ObjectToOpenIsScene()) {
+                //LoadNewSceneFromFile(fileBrowser.GetObjectToOpenNext()); Moved to after save confirmation
+
+                imguielement_openSaveSceneConfirmation = true;
+                imguielement_loadAfterSaveSceneConfirmation = true;
+                if (fileBrowser.GetObjectToOpenNext().length() > 64) throw("Cannot open scene, file name too long.");
+                memcpy(&imguielement_saveSceneConfirmationPathToLoad, fileBrowser.GetObjectToOpenNext().data(), fileBrowser.GetObjectToOpenNext().length());
+            }
             else LoadResourceFromFile(fileBrowser.GetObjectToOpenNext());
         }
         ImGui::Begin("Resource");
@@ -339,13 +352,86 @@ namespace SQ {
                 openScenePath = "./Resources/" + std::string(imguielement_newScenePath) + ".nut";
                 SaveCurrentScene();
                 ImGui::CloseCurrentPopup();
+
+                // Incase we came from a save confirmation, we have this here
+                PerformSaveConfirmationSubsequentAction();
             }
             ImGui::SetItemDefaultFocus();
             ImGui::SameLine();
             if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
+        // == SAVE CONFIRMATION POPUP
+        if (imguielement_openSaveSceneConfirmation)
+        {
+            ImGui::OpenPopup("SaveSceneConfirmation");
+            imguielement_openSaveSceneConfirmation = false;
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)); // Center the popup to be
+        }
+        if (ImGui::BeginPopupModal("SaveSceneConfirmation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Would you like to save your current scene?");
+            ImGui::Separator();
+            if (ImGui::Button("Save", ImVec2(120, 0))) {
+                // Run the same logic in the menu to check wether we are saving or save-as-ing
+                if (openScenePath == "") { // Save as
+                    imguielement_newScenePath[0] = '\0'; // Clear String
+                    imguielement_openSaveNewScenePopup = true;
+                }
+                else {
+                    SaveCurrentScene(); // Save
+                    PerformSaveConfirmationSubsequentAction();
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Save As New", ImVec2(120, 0))) {
+                imguielement_newScenePath[0] = '\0'; // Clear String
+                imguielement_openSaveNewScenePopup = true;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            if (ImGui::Button("Don't Save", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+                PerformSaveConfirmationSubsequentAction();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+                // Reset follow up action parameters, we do not what to do the thing we were going to do.
+                imguielement_saveSceneConfirmationPathToLoad[0] = '\0';
+                imguielement_createAfterSaveSceneConfirmation = false;
+                imguielement_loadAfterSaveSceneConfirmation = false;
+            }
+            ImGui::EndPopup();
+        }
     }
+
+    void EditorService::PerformSaveConfirmationSubsequentAction()
+    {
+        // If both the below are false nothing happens, but the path is reset!
+        if (imguielement_createAfterSaveSceneConfirmation) // If a new scene needs creating, create it
+        {
+            imguielement_newSceneName[0] = '\0'; // Clear String
+            imguielement_openCreateNewScenePopup = true;
+        }
+        else if (imguielement_loadAfterSaveSceneConfirmation) // If a scene needs loading, load it
+        {
+            if (imguielement_saveSceneConfirmationPathToLoad[0] == '\0') // If no scene to load set, load 
+            {
+                LoadNewSceneFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
+            }
+            else
+            {
+                LoadNewSceneFromFile(imguielement_saveSceneConfirmationPathToLoad);
+            }
+        }
+        // Reset
+        imguielement_saveSceneConfirmationPathToLoad[0] = '\0';
+        imguielement_createAfterSaveSceneConfirmation = false;
+        imguielement_loadAfterSaveSceneConfirmation = false;
+    }
+
     void EditorService::DisplayResourcePopups()
     {
         // == CREATE NEW RESOURCE POPUP ==

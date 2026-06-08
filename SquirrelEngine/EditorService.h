@@ -56,6 +56,18 @@ namespace SQ {
 		bool imguielement_openSaveNewScenePopup;
 		char imguielement_newScenePath[64];
 
+		bool imguielement_openSaveSceneConfirmation;
+		char imguielement_saveSceneConfirmationPathToLoad[64];
+		bool imguielement_loadAfterSaveSceneConfirmation;
+		bool imguielement_createAfterSaveSceneConfirmation;
+		/// <summary>
+		/// Quite specific function which runs over the above 3 parameters and either:
+		/// <para>Opens the create new scene menu</para>
+		/// <para>Opens the load scene dialogue</para>
+		/// <para>Loads the scene pathed in already</para>
+		/// </summary>
+		void PerformSaveConfirmationSubsequentAction();
+
 		void DisplayResourcePopups();
 
 		const char* imguielement_resourceTypesText[2] = { "Collision Shape", "StandardMaterial"}; // TODO Move to ser type dict of some sort like deserializing nodes
