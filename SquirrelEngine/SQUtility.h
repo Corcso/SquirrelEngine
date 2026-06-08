@@ -32,5 +32,13 @@ namespace SQ {
 	/// <param name="fullPath">The full path</param>
 	/// <returns>The relative path</returns>
 	std::string ConvertFullPathToRelative(std::string fullPath);
+
+	/// <summary>
+	/// Wraps the input text based on xLength of container passed in. 
+	/// </summary>
+	/// <param name="input">Input string</param>
+	/// <param name="xLength">Container length in X</param>
+	/// <returns>Wrapped string</returns>
+	std::string ImGuiTextWrap(std::string input, float xLength);
 }
 

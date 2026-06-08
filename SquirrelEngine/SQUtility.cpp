@@ -62,4 +62,20 @@ namespace SQ {
 
 		return newString;
 	}
+
+	std::string ImGuiTextWrap(std::string input, float xLength)
+	{
+		std::string wrapped = "";
+		std::string thisLine = "";
+		for (int c = 0; c < input.length(); c++) {
+			wrapped += input[c];
+			thisLine += input[c];
+			ImVec2 size = ImGui::CalcTextSize(thisLine.c_str());
+			if (size.x >= xLength) {
+				wrapped += "\n";
+				thisLine = "";
+			}
+		}
+		return wrapped;
+	}
 }

@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "EditorFileBrowser.h"
+#include "SQUtility.h"
 
 namespace SQ {
 	EditorFileBrowser::EditorFileBrowser()
@@ -9,31 +10,42 @@ namespace SQ {
 
 	void EditorFileBrowser::Render()
 	{
+		const int ICON_SIZE = 64;
+		const int TEXT_WRAP_X_MAX = 48;
+		const int ICON_SIZE_WITH_PADDING = 80; // Just an estimate but works
+
 		toOpenNext = "";
 		ImGui::Begin("Open Folder");
 		if (ImGui::Button("Up") && currentDirectory != ".\\Resources")
 		{
 			currentDirectory = currentDirectory.parent_path();
 		}
-		int tally = 0;
+		// Max icons per row. 
+		int maxPerRow = ImGui::GetWindowSize().x / ICON_SIZE_WITH_PADDING;
+		if (maxPerRow <= 0) maxPerRow = 8; // Sometimes the window size can be 0, just make it 8 per row if so.
+		int tally = 0;// Used for new line of icons
+		// Folder buttons first
 		for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(currentDirectory))
 		{
-			if (tally % 8 != 0) ImGui::SameLine();
+			if (tally % maxPerRow != 0) ImGui::SameLine();
 			if (entry.is_directory()) 
 			{
-				if (ImGui::Button((ICON_LC_FOLDER + entry.path().filename().string()).c_str(), ImVec2(48, 48)))
+				std::string buttonNameWrapped = ImGuiTextWrap(ICON_LC_FOLDER "\n" + entry.path().filename().string(), TEXT_WRAP_X_MAX);
+				if (ImGui::Button(buttonNameWrapped.c_str(), ImVec2(ICON_SIZE, ICON_SIZE)))
 				{
 					currentDirectory = entry.path();
 				}
 				tally++;
 			}
 		}
+		// Then file buttons
 		for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(currentDirectory))
 		{
-			if (tally % 8 != 0) ImGui::SameLine();
+			if (tally % maxPerRow != 0) ImGui::SameLine();
 			if (!entry.is_directory())
 			{
-				if (ImGui::Button((std::string(GetIconForExtension(entry.path().extension().string())) + "\n" + entry.path().filename().string()).c_str(), ImVec2(48, 48)))
+				std::string buttonNameWrapped = ImGuiTextWrap(std::string(GetIconForExtension(entry.path().extension().string())) + "\n" + entry.path().filename().string(), TEXT_WRAP_X_MAX);
+				if (ImGui::Button(buttonNameWrapped.c_str(), ImVec2(ICON_SIZE, ICON_SIZE)))
 				{
 					toOpenNext = entry.path().string();
 					toOpenNextIsScene = entry.path().extension().string() == ".nut";
