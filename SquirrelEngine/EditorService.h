@@ -66,7 +66,7 @@ namespace SQ {
 		/// <para>Opens the load scene dialogue</para>
 		/// <para>Loads the scene pathed in already</para>
 		/// </summary>
-		void PerformSaveConfirmationSubsequentAction();
+		void PerformSceneSaveConfirmationSubsequentAction();
 
 		void DisplayResourcePopups();
 
@@ -75,9 +75,20 @@ namespace SQ {
 		int imguielement_resourceTypeSelected = 0;
 
 		bool imguielement_openCreateNewResourcePopup;
-		char imguielement_newResourceName[64];
 
 		bool imguielement_openSaveNewResourcePopup;
 		char imguielement_newResourcePath[64];
+
+		bool imguielement_openSaveResourceConfirmation;
+		char imguielement_saveResourceConfirmationPathToLoad[64];
+		bool imguielement_loadAfterSaveResourceConfirmation;
+		bool imguielement_createAfterSaveResourceConfirmation;
+		/// <summary>
+		/// Quite specific function which runs over the above 3 parameters and either:
+		/// <para>Opens the create new resource menu</para>
+		/// <para>Opens the load resource dialogue</para>
+		/// <para>Loads the resource pathed in already</para>
+		/// </summary>
+		void PerformResourceSaveConfirmationSubsequentAction();
 	};
 }

@@ -68,8 +68,11 @@ namespace SQ {
         if (ImGui::BeginMenu("Resource"))
         {
             if (ImGui::MenuItem(ICON_LC_SQUARE_PLUS " New")) {
-                imguielement_newResourceName[0] = '\0'; // Clear String
-                imguielement_openCreateNewResourcePopup = true;
+                //imguielement_newResourceName[0] = '\0'; // Clear String
+                //imguielement_openCreateNewResourcePopup = true; Moved to after the confirmation
+
+                imguielement_openSaveResourceConfirmation = true;
+                imguielement_createAfterSaveResourceConfirmation = true;
             }
 
             if (ImGui::MenuItem(ICON_LC_SAVE " Save")) {
@@ -84,7 +87,10 @@ namespace SQ {
                 imguielement_openSaveNewResourcePopup = true;
             }
             if (ImGui::MenuItem(ICON_LC_SQUARE_ARROW_UP " Load")) {
-                LoadResourceFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
+                // LoadResourceFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue())); Moved to after the confirmation
+
+                imguielement_openSaveResourceConfirmation = true;
+                imguielement_loadAfterSaveResourceConfirmation = true;
             }
             ImGui::EndMenu();
         }
@@ -125,9 +131,17 @@ namespace SQ {
                 imguielement_openSaveSceneConfirmation = true;
                 imguielement_loadAfterSaveSceneConfirmation = true;
                 if (fileBrowser.GetObjectToOpenNext().length() > 64) throw("Cannot open scene, file name too long.");
-                memcpy(&imguielement_saveSceneConfirmationPathToLoad, fileBrowser.GetObjectToOpenNext().data(), fileBrowser.GetObjectToOpenNext().length());
+                memcpy(&imguielement_saveSceneConfirmationPathToLoad, fileBrowser.GetObjectToOpenNext().data(), fileBrowser.GetObjectToOpenNext().length() + 1); // +1 for end string character
             }
-            else LoadResourceFromFile(fileBrowser.GetObjectToOpenNext());
+            else
+            {
+                // LoadResourceFromFile(fileBrowser.GetObjectToOpenNext()); Moved to after save confirmation
+
+                imguielement_openSaveResourceConfirmation = true;
+                imguielement_loadAfterSaveResourceConfirmation = true;
+                if (fileBrowser.GetObjectToOpenNext().length() > 64) throw("Cannot open resource, file name too long.");
+                memcpy(&imguielement_saveResourceConfirmationPathToLoad, fileBrowser.GetObjectToOpenNext().data(), fileBrowser.GetObjectToOpenNext().length() + 1); // +1 for end string character
+            }
         }
         ImGui::Begin("Resource");
 		if (openResource.get() != nullptr) {
@@ -323,7 +337,8 @@ namespace SQ {
 
             ImGui::InputText("Scene Name", imguielement_newSceneName, 64);
 
-            if (ImGui::Button("Create", ImVec2(120, 0))) {
+            // Make sure name is not blank
+            if (imguielement_newSceneName[0] != '\0' && ImGui::Button("Create", ImVec2(120, 0))) {
                 CreateNewScene();
                 ImGui::CloseCurrentPopup();
             }
@@ -354,7 +369,7 @@ namespace SQ {
                 ImGui::CloseCurrentPopup();
 
                 // Incase we came from a save confirmation, we have this here
-                PerformSaveConfirmationSubsequentAction();
+                PerformSceneSaveConfirmationSubsequentAction();
             }
             ImGui::SetItemDefaultFocus();
             ImGui::SameLine();
@@ -364,9 +379,16 @@ namespace SQ {
         // == SAVE CONFIRMATION POPUP
         if (imguielement_openSaveSceneConfirmation)
         {
-            ImGui::OpenPopup("SaveSceneConfirmation");
             imguielement_openSaveSceneConfirmation = false;
-            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)); // Center the popup to be
+            // Actually only open the popup if there is a scene to be saved
+            if (openSceneName != "")
+            {
+                ImGui::OpenPopup("SaveSceneConfirmation");
+                ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)); // Center the popup to be
+            }
+            else {
+                PerformSceneSaveConfirmationSubsequentAction();
+            }
         }
         if (ImGui::BeginPopupModal("SaveSceneConfirmation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
         {
@@ -380,7 +402,7 @@ namespace SQ {
                 }
                 else {
                     SaveCurrentScene(); // Save
-                    PerformSaveConfirmationSubsequentAction();
+                    PerformSceneSaveConfirmationSubsequentAction();
                 }
                 ImGui::CloseCurrentPopup();
             }
@@ -393,7 +415,7 @@ namespace SQ {
             ImGui::SetItemDefaultFocus();
             if (ImGui::Button("Don't Save", ImVec2(120, 0))) {
                 ImGui::CloseCurrentPopup();
-                PerformSaveConfirmationSubsequentAction();
+                PerformSceneSaveConfirmationSubsequentAction();
             }
             ImGui::SameLine();
             if (ImGui::Button("Cancel", ImVec2(120, 0))) {
@@ -407,7 +429,7 @@ namespace SQ {
         }
     }
 
-    void EditorService::PerformSaveConfirmationSubsequentAction()
+    void EditorService::PerformSceneSaveConfirmationSubsequentAction()
     {
         // If both the below are false nothing happens, but the path is reset!
         if (imguielement_createAfterSaveSceneConfirmation) // If a new scene needs creating, create it
@@ -445,10 +467,9 @@ namespace SQ {
 
         if (ImGui::BeginPopupModal("EditorCreateNewResource", NULL, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            ImGui::Text("Please enter a name for the new resource.");
+            ImGui::Text("Please choose a type for the new resource.");
             ImGui::Separator();
 
-            ImGui::InputText("Name", imguielement_newSceneName, 64);
             ImGui::Combo("Type", &imguielement_resourceTypeSelected, imguielement_resourceTypesText, 2);
 
             if (ImGui::Button("Create", ImVec2(120, 0))) {
@@ -479,6 +500,7 @@ namespace SQ {
             if (ImGui::Button("Save", ImVec2(120, 0)) && imguielement_newResourcePath[0] != '\0') {
                 openResourcePath = "./Resources/" + std::string(imguielement_newResourcePath) + openResourceExtension;
                 SaveCurrentResource();
+                PerformResourceSaveConfirmationSubsequentAction();
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
@@ -486,5 +508,79 @@ namespace SQ {
             if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
+        // == SAVE CONFIRMATION POPUP
+        if (imguielement_openSaveResourceConfirmation)
+        {
+            imguielement_openSaveResourceConfirmation = false;
+            // Actually only open the popup if there is a resource to be saved
+            if (openResource.get() != nullptr) 
+            {
+                ImGui::OpenPopup("SaveResourceConfirmation");
+                ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)); // Center the popup to be
+            }
+            else {
+                PerformResourceSaveConfirmationSubsequentAction();
+            }
+        }
+        if (ImGui::BeginPopupModal("SaveResourceConfirmation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Would you like to save your current Resource?");
+            ImGui::Separator();
+            if (ImGui::Button("Save", ImVec2(120, 0))) {
+                // Run the same logic in the menu to check wether we are saving or save-as-ing
+                if (openResourcePath == "") { // Save as
+                    imguielement_newResourcePath[0] = '\0'; // Clear String
+                    imguielement_openSaveNewResourcePopup = true;
+                }
+                else {
+                    SaveCurrentResource(); // Save
+                    PerformResourceSaveConfirmationSubsequentAction();
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Save As New", ImVec2(120, 0))) {
+                imguielement_newResourcePath[0] = '\0'; // Clear String
+                imguielement_openSaveNewResourcePopup = true;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            if (ImGui::Button("Don't Save", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+                PerformResourceSaveConfirmationSubsequentAction();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+                // Reset follow up action parameters, we do not what to do the thing we were going to do.
+                imguielement_saveResourceConfirmationPathToLoad[0] = '\0';
+                imguielement_createAfterSaveResourceConfirmation = false;
+                imguielement_loadAfterSaveResourceConfirmation = false;
+            }
+            ImGui::EndPopup();
+        }
+    }
+    void EditorService::PerformResourceSaveConfirmationSubsequentAction()
+    {
+        // If both the below are false nothing happens, but the path is reset!
+        if (imguielement_createAfterSaveResourceConfirmation) // If a new resource needs creating, create it
+        {
+            imguielement_openCreateNewResourcePopup = true;
+        }
+        else if (imguielement_loadAfterSaveResourceConfirmation) // If a resource needs loading, load it
+        {
+            if (imguielement_saveResourceConfirmationPathToLoad[0] == '\0') // If no resource to load set, display file dialogue
+            {
+                LoadResourceFromFile(ConvertFullPathToRelative(GetInput()->OpenSystemFileDialogue()));
+            }
+            else
+            {
+                LoadResourceFromFile(imguielement_saveResourceConfirmationPathToLoad);
+            }
+        }
+        // Reset
+        imguielement_saveResourceConfirmationPathToLoad[0] = '\0';
+        imguielement_createAfterSaveResourceConfirmation = false;
+        imguielement_loadAfterSaveResourceConfirmation = false;
     }
 }
